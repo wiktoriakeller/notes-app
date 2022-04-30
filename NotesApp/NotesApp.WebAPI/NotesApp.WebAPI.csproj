@@ -17,6 +17,12 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NotesApp.DataAccess\NotesApp.DataAccess.csproj" />
+    <ProjectReference Include="..\NotesApp.Domain\NotesApp.Domain.csproj" />
   </ItemGroup>
 
 </Project>
