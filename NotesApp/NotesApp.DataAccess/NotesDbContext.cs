@@ -1,8 +1,8 @@
 ﻿using System;
-using NotesApp.Models.Entities;
+using NotesApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace NotesApp.Models
+namespace NotesApp.DataAccess
 {
     public class NotesDbContext : DbContext
     {
@@ -50,7 +50,7 @@ namespace NotesApp.Models
             foreach (var entityEntry in entries)
             {
                 var entity = entityEntry.Entity as BaseEntity;
-                if(entity is not null)
+                if (entity is not null)
                 {
                     entity.UpdatedDate = DateTimeOffset.Now;
 
