@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using NotesApp.Models;
+using NotesApp.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
