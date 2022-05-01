@@ -4,6 +4,8 @@ using NotesApp.DataAccess;
 using NotesApp.Services.Services;
 using NotesApp.Services.Interfaces;
 using NotesApp.DataAccess.Repositories;
+using NotesApp.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +22,12 @@ options.UseSqlServer(
 
 builder.Services.AddScoped<NotesSeeder>();
 builder.Services.AddScoped<INotesService, NotesService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 //Add automapper
 builder.Services.AddAutoMapper(

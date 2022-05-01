@@ -29,6 +29,10 @@ namespace NotesApp.DataAccess
                 .Property(u => u.Login)
                 .HasMaxLength(20);
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.PasswordHash)
+                .IsRequired();
+
             modelBuilder.Entity<Role>()
                 .Property(r => r.RoleName)
                 .IsRequired();

@@ -4,6 +4,6 @@
     {
         public string TagName { get; set; }
         public int NoteId { get; set; }
-        public Note Note { get; set; }
+        public virtual Note Note { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NotesApp.Domain.Entities;
 using NotesApp.Domain.Interfaces;
-
+ 
 namespace NotesApp.DataAccess.Repositories
 {
     public class NotesRepository : BaseRepositoryAsync<Note>, INotesRepository

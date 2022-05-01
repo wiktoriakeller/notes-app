@@ -4,7 +4,7 @@ using NotesApp.Services.Dto;
 
 namespace NotesApp.WebAPI.Controllers
 {
-    [Route("note/")]
+    [Route("notes-api/note")]
     [ApiController]
     public class NotesController : ControllerBase
     {
@@ -34,9 +34,9 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto noteDto)
+        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto dto)
         {
-            var id = await _notesService.AddNote(noteDto);
+            var id = await _notesService.AddNote(dto);
             return Created($"/note/{id}", null);
         }
     }
