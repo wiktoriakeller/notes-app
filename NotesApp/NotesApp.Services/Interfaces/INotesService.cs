@@ -5,11 +5,11 @@ namespace NotesApp.Services.Interfaces
 {
     public interface INotesService
     {
-        Task<Note?> GetNoteById(int id);
-        Task<IEnumerable<Note>> GetAllNotes();
-        Task<IEnumerable<Note>> GetNotesByName(string name);
-        Task<IEnumerable<Note>> GetNotesByContent(string content);
-        Task<IEnumerable<Note>> GetNotesByTags(IEnumerable<string> tags);
+        Task<NoteDto?> GetNoteById(int id);
+        Task<IEnumerable<NoteDto>> GetAllNotes();
+        Task<IEnumerable<NoteDto>> GetNotesByName(string name);
+        Task<IEnumerable<NoteDto>> GetNotesByContent(string content);
+        Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags);
         Task<int> AddNote(NoteDto noteDto);
     }
 }

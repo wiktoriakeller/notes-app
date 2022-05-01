@@ -26,10 +26,17 @@ namespace NotesApp.WebAPI.Controllers
             return Ok(note);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllNotes()
+        {
+            var notes = await _notesService.GetAllNotes();
+            return Ok(notes);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto)
         {
-            var id = _notesService.AddNote(noteDto);
+            var id = await _notesService.AddNote(noteDto);
             return Created($"/note/{id}", null);
         }
     }

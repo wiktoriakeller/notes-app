@@ -17,30 +17,33 @@ namespace NotesApp.Services.Services
             _mapper = mapper;
         }
 
-        public async Task<NoteDto> GetNoteById(int id)
+        public async Task<NoteDto?> GetNoteById(int id)
         {
             var note = await _notesRepository.GetById(id);
             return _mapper.Map<NoteDto>(note);
         }
 
-        public async Task<IEnumerable<Note>> GetAllNotes()
+        public async Task<IEnumerable<NoteDto>> GetAllNotes()
         {
-            return await _notesRepository.GetAllWithTags();
+            var notes = await _notesRepository.GetAllWithTags();
+            return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<Note>> GetNotesByName(string name)
+        public async Task<IEnumerable<NoteDto>> GetNotesByName(string name)
         {
             name = name.ToLower().Trim();
-            return await _notesRepository.GetAllWithTagsWhere(n => n.NoteName.ToLower().Contains(name));
+            var notes = await _notesRepository.GetAllWithTagsWhere(n => n.NoteName.ToLower().Contains(name));
+            return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<Note>> GetNotesByContent(string content)
+        public async Task<IEnumerable<NoteDto>> GetNotesByContent(string content)
         {
             content = content.ToLower().Trim();
-            return await _notesRepository.GetAllWithTagsWhere(n => n.Content.ToLower().Contains(content));
+            var notes = await _notesRepository.GetAllWithTagsWhere(n => n.Content.ToLower().Contains(content));
+            return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<Note>> GetNotesByTags(IEnumerable<string> tags)
+        public async Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags)
         {
             var searchedNotes = new List<Note>();
             var notes = await _notesRepository.GetAllWithTags();
@@ -55,7 +58,7 @@ namespace NotesApp.Services.Services
                 }
             }
 
-            return notes;
+            return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
         public async Task<int> AddNote(NoteDto noteDto)
