@@ -6,6 +6,7 @@ namespace NotesApp.DataAccess
     public class NotesDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
@@ -21,8 +22,16 @@ namespace NotesApp.DataAccess
                 .IsUnique();
 
             modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
                 .Property(u => u.Login)
                 .HasMaxLength(20);
+
+            modelBuilder.Entity<Role>()
+                .Property(r => r.RoleName)
+                .IsRequired();
 
             modelBuilder.Entity<Note>()
                 .HasIndex(n => new { n.NoteName, n.UserId })
