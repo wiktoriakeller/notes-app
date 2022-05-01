@@ -9,15 +9,25 @@ namespace NotesApp.DataAccess.Repositories
     {
         public NotesRepository(NotesDbContext dbContext) : base(dbContext)
         {
-
         }
 
-        public override Task<Note?> GetById(int id) => _dbContext.Notes.Include(n => n.Tags).FirstOrDefaultAsync(n => n.Id == id);
+        public override Task<Note?> GetById(int id) => _dbContext.Notes
+            .Include(n => n.Tags)
+            .FirstOrDefaultAsync(n => n.Id == id);
 
-        public Task<Note?> GetByName(string name) => _dbContext.Notes.FirstOrDefaultAsync(n => n.NoteName == name);
+        public Task<Note?> GetByName(string name) => _dbContext.Notes
+            .Include(n => n.Tags)
+            .FirstOrDefaultAsync(n => n.NoteName == name);
 
-        public async Task<ICollection<Note>> GetAllWithTags() => await _dbContext.Notes.Include(n => n.Tags).ToListAsync();
+        public async Task<ICollection<Note>> GetAllWithTags() => await _dbContext.Notes
+            .Include(n => n.Tags)
+            .OrderBy(n => n.CreatedDate)
+            .ToListAsync();
 
-        public async Task<ICollection<Note>> GetAllWithTagsWhere(Expression<Func<Note, bool>> predicate) => await _dbContext.Notes.Include(n => n.Tags).Where(predicate).ToListAsync();
+        public async Task<ICollection<Note>> GetAllWithTagsWhere(Expression<Func<Note, bool>> predicate) => await _dbContext.Notes
+            .Include(n => n.Tags)
+            .Where(predicate)
+            .OrderBy(n => n.CreatedDate)
+            .ToListAsync();
     }
 }

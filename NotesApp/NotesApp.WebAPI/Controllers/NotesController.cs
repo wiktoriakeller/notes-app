@@ -34,7 +34,7 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto)
+        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto noteDto)
         {
             var id = await _notesService.AddNote(noteDto);
             return Created($"/note/{id}", null);

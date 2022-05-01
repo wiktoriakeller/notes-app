@@ -1,5 +1,4 @@
-﻿using System;
-using NotesApp.Domain.Entities;
+﻿using NotesApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace NotesApp.DataAccess
@@ -26,17 +25,22 @@ namespace NotesApp.DataAccess
                 .HasMaxLength(20);
 
             modelBuilder.Entity<Note>()
+                .HasIndex(n => new { n.NoteName, n.UserId })
+                .IsUnique();
+
+            modelBuilder.Entity<Note>()
                 .Property(p => p.NoteName)
-                .IsRequired()
-                .HasMaxLength(30);
+                .HasMaxLength(40);
 
             modelBuilder.Entity<Note>()
                 .Property(n => n.Content)
                 .IsRequired();
 
             modelBuilder.Entity<Tag>()
+                .HasIndex(t => new { t.TagName, t.NoteId });
+
+            modelBuilder.Entity<Tag>()
                 .Property(t => t.TagName)
-                .IsRequired()
                 .HasMaxLength(10);
         }
 

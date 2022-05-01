@@ -16,7 +16,11 @@ namespace NotesApp.DataAccess.Repositories
 
         public virtual Task<T?> GetById(int id) => _dbContext.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
 
-        public virtual async Task<ICollection<T>> GetWhere(Expression<Func<T, bool>> predicate) => await _dbContext.Set<T>().Where(predicate).OrderBy(e => e.CreatedDate).ToListAsync();
+        public virtual async Task<ICollection<T>> GetWhere(Expression<Func<T, bool>> predicate) => await _dbContext
+            .Set<T>()
+            .Where(predicate)
+            .OrderBy(e => e.CreatedDate)
+            .ToListAsync();
 
         public virtual async Task<ICollection<T>> GetAll() => await _dbContext.Set<T>().OrderBy(e => e.CreatedDate).ToListAsync();
 

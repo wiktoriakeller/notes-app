@@ -39,8 +39,8 @@ namespace NotesApp.DataAccess.Migrations
 
                     b.Property<string>("NoteName")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
@@ -51,6 +51,9 @@ namespace NotesApp.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("NoteName", "UserId")
+                        .IsUnique();
 
                     b.ToTable("Notes");
                 });
@@ -66,6 +69,9 @@ namespace NotesApp.DataAccess.Migrations
                     b.Property<DateTimeOffset?>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TagName")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -75,6 +81,10 @@ namespace NotesApp.DataAccess.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
+
+                    b.HasIndex("TagName", "NoteId");
 
                     b.ToTable("Tags");
                 });
@@ -106,21 +116,6 @@ namespace NotesApp.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("NoteTag", b =>
-                {
-                    b.Property<int>("NotesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("NotesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("NoteTag");
-                });
-
             modelBuilder.Entity("NotesApp.Domain.Entities.Note", b =>
                 {
                     b.HasOne("NotesApp.Domain.Entities.User", "User")
@@ -132,19 +127,20 @@ namespace NotesApp.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NoteTag", b =>
+            modelBuilder.Entity("NotesApp.Domain.Entities.Tag", b =>
                 {
-                    b.HasOne("NotesApp.Domain.Entities.Note", null)
-                        .WithMany()
-                        .HasForeignKey("NotesId")
+                    b.HasOne("NotesApp.Domain.Entities.Note", "Note")
+                        .WithMany("Tags")
+                        .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NotesApp.Domain.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Note");
+                });
+
+            modelBuilder.Entity("NotesApp.Domain.Entities.Note", b =>
+                {
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("NotesApp.Domain.Entities.User", b =>

@@ -61,7 +61,7 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<int> AddNote(NoteDto noteDto)
+        public async Task<int> AddNote(CreateNoteDto noteDto)
         {
             var note = _mapper.Map<Note>(noteDto);
             await _notesRepository.Add(note);

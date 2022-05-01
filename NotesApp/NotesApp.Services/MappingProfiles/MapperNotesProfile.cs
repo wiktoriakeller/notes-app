@@ -8,9 +8,10 @@ namespace NotesApp.Services.MappingProfiles
     {
         public MapperNotesProfile()
         {
-            CreateMap<NoteDto, Note>()
-                .ForMember(dest => dest.Tags, opt => opt.MapFrom(t => t.Tags.Select(p => new Tag() { TagName = p })))
-                .ReverseMap();
+            CreateMap<NoteDto, Note>().ReverseMap();
+            CreateMap<TagDto, Tag>().ReverseMap();
+            CreateMap<CreateNoteDto, Note>().ReverseMap();  
+            CreateMap<CreateTagDto, Tag>().ReverseMap();
         }
     }
 }

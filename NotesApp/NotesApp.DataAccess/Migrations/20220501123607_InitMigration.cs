@@ -5,25 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NotesApp.DataAccess.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TagName = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -45,7 +30,7 @@ namespace NotesApp.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NoteName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    NoteName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -63,28 +48,32 @@ namespace NotesApp.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NoteTag",
+                name: "Tags",
                 columns: table => new
                 {
-                    NotesId = table.Column<int>(type: "int", nullable: false),
-                    TagsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TagName = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    NoteId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NoteTag", x => new { x.NotesId, x.TagsId });
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NoteTag_Notes_NotesId",
-                        column: x => x.NotesId,
+                        name: "FK_Tags_Notes_NoteId",
+                        column: x => x.NoteId,
                         principalTable: "Notes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_NoteTag_Tags_TagsId",
-                        column: x => x.TagsId,
-                        principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_NoteName_UserId",
+                table: "Notes",
+                columns: new[] { "NoteName", "UserId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notes_UserId",
@@ -92,9 +81,14 @@ namespace NotesApp.DataAccess.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteTag_TagsId",
-                table: "NoteTag",
-                column: "TagsId");
+                name: "IX_Tags_NoteId",
+                table: "Tags",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_TagName_NoteId",
+                table: "Tags",
+                columns: new[] { "TagName", "NoteId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Login",
@@ -106,13 +100,10 @@ namespace NotesApp.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "NoteTag");
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Notes");
-
-            migrationBuilder.DropTable(
-                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Users");

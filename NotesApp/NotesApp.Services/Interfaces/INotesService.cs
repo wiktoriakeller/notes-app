@@ -10,6 +10,6 @@ namespace NotesApp.Services.Interfaces
         Task<IEnumerable<NoteDto>> GetNotesByName(string name);
         Task<IEnumerable<NoteDto>> GetNotesByContent(string content);
         Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags);
-        Task<int> AddNote(NoteDto noteDto);
+        Task<int> AddNote(CreateNoteDto noteDto);
     }
 }
