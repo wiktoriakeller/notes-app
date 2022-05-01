@@ -18,6 +18,7 @@ options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly(typeof(NotesDbContext).Assembly.FullName)));
 
+builder.Services.AddScoped<NotesSeeder>();
 builder.Services.AddScoped<INotesService, NotesService>();
 
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
@@ -28,6 +29,7 @@ builder.Services.AddAutoMapper(
 );
 
 var app = builder.Build();
+await SeedDatabase();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -43,3 +45,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+async Task SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<NotesSeeder>();
+        await dbInitializer.Seed();
+    }
+}
