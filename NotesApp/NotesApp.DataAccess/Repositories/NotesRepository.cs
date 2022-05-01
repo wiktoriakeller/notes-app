@@ -12,6 +12,8 @@ namespace NotesApp.DataAccess.Repositories
 
         }
 
+        public override Task<Note?> GetById(int id) => _dbContext.Notes.Include(n => n.Tags).FirstOrDefaultAsync(n => n.Id == id);
+
         public Task<Note?> GetByName(string name) => _dbContext.Notes.FirstOrDefaultAsync(n => n.NoteName == name);
 
         public async Task<ICollection<Note>> GetAllWithTags() => await _dbContext.Notes.Include(n => n.Tags).ToListAsync();

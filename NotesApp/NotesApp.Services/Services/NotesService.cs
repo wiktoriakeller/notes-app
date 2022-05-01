@@ -17,10 +17,10 @@ namespace NotesApp.Services.Services
             _mapper = mapper;
         }
 
-        public async Task AddNote(CreateNoteDto noteDto)
+        public async Task<NoteDto> GetNoteById(int id)
         {
-            var note = _mapper.Map<Note>(noteDto);
-            await _notesRepository.Add(note);
+            var note = await _notesRepository.GetById(id);
+            return _mapper.Map<NoteDto>(note);
         }
 
         public async Task<IEnumerable<Note>> GetAllNotes()
@@ -56,6 +56,13 @@ namespace NotesApp.Services.Services
             }
 
             return notes;
+        }
+
+        public async Task<int> AddNote(NoteDto noteDto)
+        {
+            var note = _mapper.Map<Note>(noteDto);
+            await _notesRepository.Add(note);
+            return note.Id;
         }
     }
 }

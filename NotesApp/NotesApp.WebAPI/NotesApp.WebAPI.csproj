@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,13 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NotesApp.DataAccess\NotesApp.DataAccess.csproj" />
     <ProjectReference Include="..\NotesApp.Domain\NotesApp.Domain.csproj" />
+    <ProjectReference Include="..\NotesApp.Services\NotesApp.Services.csproj" />
   </ItemGroup>
 
 </Project>
