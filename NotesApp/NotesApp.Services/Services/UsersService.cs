@@ -30,7 +30,7 @@ namespace NotesApp.Services.Services
             var hashedPassword = _passwordHasher.HashPassword(user, dto.Password);
             user.PasswordHash = hashedPassword;
 
-            await _userRepository.Add(user);
+            await _userRepository.AddAsync(user);
             return user.Id;
         }
     }

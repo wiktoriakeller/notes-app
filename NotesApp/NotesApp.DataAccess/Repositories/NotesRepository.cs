@@ -5,26 +5,30 @@ using NotesApp.Domain.Interfaces;
  
 namespace NotesApp.DataAccess.Repositories
 {
-    public class NotesRepository : BaseRepositoryAsync<Note>, INotesRepository
+    public class NotesRepository : BaseRepository<Note>, INotesRepository
     {
         public NotesRepository(NotesDbContext dbContext) : base(dbContext)
         {
         }
 
-        public override Task<Note?> GetById(int id) => _dbContext.Notes
+        public override Task<Note?> GetByIdAsync(int id) => 
+            _dbContext.Notes
             .Include(n => n.Tags)
             .FirstOrDefaultAsync(n => n.Id == id);
 
-        public Task<Note?> GetByName(string name) => _dbContext.Notes
+        public Task<Note?> GetByNameAsync(string name) => 
+            _dbContext.Notes
             .Include(n => n.Tags)
             .FirstOrDefaultAsync(n => n.NoteName == name);
 
-        public async Task<ICollection<Note>> GetAllWithTags() => await _dbContext.Notes
+        public async Task<ICollection<Note>> GetAllWithTagsAsync() => 
+            await _dbContext.Notes
             .Include(n => n.Tags)
             .OrderBy(n => n.CreatedDate)
             .ToListAsync();
 
-        public async Task<ICollection<Note>> GetAllWithTagsWhere(Expression<Func<Note, bool>> predicate) => await _dbContext.Notes
+        public async Task<ICollection<Note>> GetAllWithTagsWhereAsync(Expression<Func<Note, bool>> predicate) => 
+            await _dbContext.Notes
             .Include(n => n.Tags)
             .Where(predicate)
             .OrderBy(n => n.CreatedDate)

@@ -6,11 +6,15 @@ using NotesApp.Services.Interfaces;
 using NotesApp.DataAccess.Repositories;
 using NotesApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using NotesApp.Services.Dto;
+using NotesApp.Services.Dto.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -18,16 +22,22 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<NotesDbContext>(options =>
 options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly(typeof(NotesDbContext).Assembly.FullName)));
+    b => b.MigrationsAssembly(typeof(NotesDbContext).Assembly.FullName)),
+    ServiceLifetime.Transient,
+    ServiceLifetime.Transient);
 
-builder.Services.AddScoped<NotesSeeder>();
-builder.Services.AddScoped<INotesService, NotesService>();
-builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddTransient<NotesSeeder>();
+builder.Services.AddTransient<INotesService, NotesService>();
+builder.Services.AddTransient<IUsersService, UsersService>();
 
-builder.Services.AddScoped<INotesRepository, NotesRepository>();
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<INotesRepository, NotesRepository>();
+builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
+
+//Validators
+builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
+ValidatorOptions.Global.LanguageManager.Enabled = false;
 
 //Add automapper
 builder.Services.AddAutoMapper(

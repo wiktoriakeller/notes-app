@@ -5,8 +5,8 @@ namespace NotesApp.Domain.Interfaces
 {
     public interface INotesRepository : IRepository<Note>
     {
-        Task<Note?> GetByName(string name);
-        Task<ICollection<Note>> GetAllWithTags();
-        Task<ICollection<Note>> GetAllWithTagsWhere(Expression<Func<Note, bool>> predicate);
+        Task<Note?> GetByNameAsync(string name);
+        Task<ICollection<Note>> GetAllWithTagsAsync();
+        Task<ICollection<Note>> GetAllWithTagsWhereAsync(Expression<Func<Note, bool>> predicate);
     }
 }

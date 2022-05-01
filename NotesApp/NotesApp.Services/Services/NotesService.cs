@@ -19,34 +19,34 @@ namespace NotesApp.Services.Services
 
         public async Task<NoteDto?> GetNoteById(int id)
         {
-            var note = await _notesRepository.GetById(id);
+            var note = await _notesRepository.GetByIdAsync(id);
             return _mapper.Map<NoteDto>(note);
         }
 
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
         {
-            var notes = await _notesRepository.GetAllWithTags();
+            var notes = await _notesRepository.GetAllWithTagsAsync();
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
         public async Task<IEnumerable<NoteDto>> GetNotesByName(string name)
         {
             name = name.ToLower().Trim();
-            var notes = await _notesRepository.GetAllWithTagsWhere(n => n.NoteName.ToLower().Contains(name));
+            var notes = await _notesRepository.GetAllWithTagsWhereAsync(n => n.NoteName.ToLower().Contains(name));
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
         public async Task<IEnumerable<NoteDto>> GetNotesByContent(string content)
         {
             content = content.ToLower().Trim();
-            var notes = await _notesRepository.GetAllWithTagsWhere(n => n.Content.ToLower().Contains(content));
+            var notes = await _notesRepository.GetAllWithTagsWhereAsync(n => n.Content.ToLower().Contains(content));
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
         public async Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags)
         {
             var searchedNotes = new List<Note>();
-            var notes = await _notesRepository.GetAllWithTags();
+            var notes = await _notesRepository.GetAllWithTagsAsync();
         
             foreach (var note in notes)
             {
@@ -64,7 +64,7 @@ namespace NotesApp.Services.Services
         public async Task<int> AddNote(CreateNoteDto noteDto)
         {
             var note = _mapper.Map<Note>(noteDto);
-            await _notesRepository.Add(note);
+            await _notesRepository.AddAsync(note);
             return note.Id;
         }
     }
