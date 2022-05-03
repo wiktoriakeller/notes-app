@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NotesApp.Services.Interfaces;
 using NotesApp.Services.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NotesApp.WebAPI.Controllers
 {
@@ -27,6 +28,7 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllNotes()
         {
             var notes = await _notesService.GetAllNotes();
