@@ -13,25 +13,22 @@ namespace NotesApp.Services.Dto.Validators
                 .NotEmpty();
 
             RuleFor(x => x.Password)
-                .NotEmpty()
-                .MinimumLength(6)
-                .MaximumLength(20);
+                .NotEmpty();
         
             RuleFor(x => x)
                 .Custom((dto, context) =>
                 {
-                    var users = usersRepository.GetAllWhere(u => u.Login == dto.Login);
+                    var user = usersRepository.GetFirstOrDefault(u => u.Login == dto.Login);
                     var failedAuthentication = false;
 
-                    if(users.Count == 0)
+                    if(user == null)
                         failedAuthentication = true;
 
-                    var user = users.First();
-                    if (_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password) == PasswordVerificationResult.Failed)
+                    if (user != null && _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password) == PasswordVerificationResult.Failed)
                         failedAuthentication = true;
 
                     if (failedAuthentication)
-                        context.AddFailure("Provided username or password is invalid");
+                        context.AddFailure("Wrong credentials", "Provided username or password is invalid");
                 });
         }
     }

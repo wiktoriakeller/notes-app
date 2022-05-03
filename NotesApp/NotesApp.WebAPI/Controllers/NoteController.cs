@@ -4,7 +4,7 @@ using NotesApp.Services.Dto;
 
 namespace NotesApp.WebAPI.Controllers
 {
-    [Route("notes-api/note")]
+    [Route("notes-api/notes")]
     [ApiController]
     public class NoteController : ControllerBase
     {

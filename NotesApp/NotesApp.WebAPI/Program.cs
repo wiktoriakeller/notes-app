@@ -30,13 +30,12 @@ options.UseSqlServer(
     ServiceLifetime.Transient);
 
 builder.Services.AddTransient<NotesSeeder>();
-builder.Services.AddTransient<INoteService, NoteService>();
-builder.Services.AddTransient<IUserService, UserService>();
+
+builder.Services.AddScoped<INoteService, NoteService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddTransient<INoteRepository, NoteRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-
-builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
 //Validators
 builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
@@ -48,9 +47,13 @@ builder.Services.AddAutoMapper(
     typeof(NoteService).Assembly
 );
 
-//Authentication
+//Authentication and authorization
+builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
+
 var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+builder.Services.AddSingleton(authenticationSettings);
 
 builder.Services.AddAuthentication(options =>
 {

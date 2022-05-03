@@ -4,7 +4,7 @@ using NotesApp.Services.Dto;
 
 namespace NotesApp.WebAPI.Controllers
 {
-    [Route("notes-api/account")]
+    [Route("notes-api/accounts")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -23,9 +23,10 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var users = 
+            string token = await _usersService.GenerateJwt(dto);
+            return Ok(token);
         }
     }
 }
