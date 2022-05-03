@@ -6,11 +6,11 @@ namespace NotesApp.WebAPI.Controllers
 {
     [Route("notes-api/account")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IUsersService _usersService;
+        private readonly IUserService _usersService;
 
-        public UsersController(IUsersService usersService)
+        public UserController(IUserService usersService)
         {
             _usersService = usersService;
         }
@@ -20,6 +20,12 @@ namespace NotesApp.WebAPI.Controllers
         {
             await _usersService.AddUser(dto);
             return Ok();
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginDto dto)
+        {
+            var users = 
         }
     }
 }

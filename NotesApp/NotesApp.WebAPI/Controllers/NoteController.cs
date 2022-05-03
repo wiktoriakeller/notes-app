@@ -6,11 +6,11 @@ namespace NotesApp.WebAPI.Controllers
 {
     [Route("notes-api/note")]
     [ApiController]
-    public class NotesController : ControllerBase
+    public class NoteController : ControllerBase
     {
-        private readonly INotesService _notesService;
+        private readonly INoteService _notesService;
 
-        public NotesController(INotesService notesService)
+        public NoteController(INoteService notesService)
         {
             _notesService = notesService;
         }

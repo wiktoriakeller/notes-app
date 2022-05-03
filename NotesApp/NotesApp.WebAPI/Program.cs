@@ -10,6 +10,9 @@ using NotesApp.Services.Dto;
 using NotesApp.Services.Dto.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using NotesApp.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,22 +30,44 @@ options.UseSqlServer(
     ServiceLifetime.Transient);
 
 builder.Services.AddTransient<NotesSeeder>();
-builder.Services.AddTransient<INotesService, NotesService>();
-builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddTransient<INoteService, NoteService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
-builder.Services.AddTransient<INotesRepository, NotesRepository>();
-builder.Services.AddTransient<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<INoteRepository, NoteRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
 //Validators
 builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
+builder.Services.AddTransient<IValidator<LoginDto>, LoginUserValidator>();
 ValidatorOptions.Global.LanguageManager.Enabled = false;
 
 //Add automapper
 builder.Services.AddAutoMapper(
-    typeof(NotesService).Assembly
+    typeof(NoteService).Assembly
 );
+
+//Authentication
+var authenticationSettings = new AuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer";
+    options.DefaultScheme = "Bearer";
+    options.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = authenticationSettings.JwtIssuer,
+        ValidAudience = authenticationSettings.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+    };
+});
 
 var app = builder.Build();
 await SeedDatabase();

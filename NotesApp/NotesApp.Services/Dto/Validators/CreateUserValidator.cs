@@ -5,10 +5,12 @@ namespace NotesApp.Services.Dto.Validators
 {
     public class CreateUserValidator : AbstractValidator<CreateUserDto>
     {
-        public CreateUserValidator(IUsersRepository usersRepository)
+        public CreateUserValidator(IUserRepository usersRepository)
         {
             RuleFor(x => x.Login)
-                .NotEmpty();
+                .NotEmpty()
+                .MinimumLength(3)
+                .MaximumLength(20);
 
             RuleFor(x => x.Email)
                 .NotEmpty()

@@ -12,6 +12,7 @@ namespace NotesApp.Services.MappingProfiles
             CreateMap<TagDto, Tag>().ReverseMap();
             CreateMap<CreateNoteDto, Note>().ReverseMap();  
             CreateMap<CreateTagDto, Tag>().ReverseMap();
+            CreateMap<CreateUserDto, User>().ReverseMap();
         }
     }
 }

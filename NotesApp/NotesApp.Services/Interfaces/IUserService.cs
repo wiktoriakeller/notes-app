@@ -2,8 +2,9 @@
 
 namespace NotesApp.Services.Interfaces
 {
-    public interface IUsersService
+    public interface IUserService
     {
         Task<int> AddUser(CreateUserDto dto);
+        Task<string> GenerateJwt(LoginDto dto);
     }
 }
