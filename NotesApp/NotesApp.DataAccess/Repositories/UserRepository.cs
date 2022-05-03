@@ -5,20 +5,20 @@ using System.Linq.Expressions;
 
 namespace NotesApp.DataAccess.Repositories
 {
-    public class UsersRepository : BaseRepository<User>, IUsersRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UsersRepository(NotesDbContext dbContext) : base(dbContext)
+        public UserRepository(NotesDbContext dbContext) : base(dbContext)
         {
         }
 
-        public async Task<ICollection<User>> GetAllWithNotesAsync() => 
+        public async Task<ICollection<User>> GetAllWithNotesAndTagsAsync() => 
             await _dbContext.Users
             .Include(u => u.Notes)
             .ThenInclude(n => n.Tags)
             .OrderBy(u => u.CreatedDate)
             .ToListAsync();
 
-        public async Task<ICollection<User>> GetAllWithNotesWhereAsync(Expression<Func<User, bool>> predicate) => 
+        public async Task<ICollection<User>> GetAllWithNotesAndTagsAsync(Expression<Func<User, bool>> predicate) => 
             await _dbContext.Users
             .Include(u => u.Notes)
             .ThenInclude(n => n.Tags)

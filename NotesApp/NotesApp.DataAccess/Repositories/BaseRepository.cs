@@ -19,6 +19,14 @@ namespace NotesApp.DataAccess.Repositories
 
         public virtual Task<T?> GetByIdAsync(int id) => _dbContext.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
 
+        public virtual Task<T?> GetByIdAsync(int id, string include)
+        {
+            if (include != string.Empty && IsVirtualProperty(include))
+                return _dbContext.Set<T>().Include(include).FirstOrDefaultAsync(e => e.Id == id);
+
+            return GetByIdAsync(id);
+        }
+
         public virtual T? GetFirstOrDefault(Expression<Func<T, bool>> predicate) => _dbContext.Set<T>().FirstOrDefault(predicate);
 
         public virtual Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => _dbContext.Set<T>().FirstOrDefaultAsync<T>(predicate);
@@ -31,29 +39,21 @@ namespace NotesApp.DataAccess.Repositories
             return GetFirstOrDefaultAsync(predicate);
         }
 
-        public virtual ICollection<T> GetAllWhere(Expression<Func<T, bool>> predicate) =>
+        public virtual ICollection<T> GetAll(Expression<Func<T, bool>> predicate) =>
             _dbContext
             .Set<T>()
             .Where(predicate)
             .ToList();
 
-        public virtual async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate) => 
+        public ICollection<T> GetAll() => _dbContext.Set<T>().ToList();
+
+        public virtual async Task<ICollection<T>> GetAllAsync() => await _dbContext.Set<T>().ToListAsync();
+
+        public virtual async Task<ICollection<T>> GetAllAsync(Expression<Func<T, bool>> predicate) => 
             await _dbContext
             .Set<T>()
             .Where(predicate)
             .ToListAsync();
-
-        public virtual async Task<ICollection<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate, string include)
-        {
-            if (include != string.Empty && IsVirtualProperty(include))
-                return await _dbContext.Set<T>().Include(include).Where(predicate).ToListAsync();
-
-            return await GetAllWhereAsync(predicate);
-        }
-
-        public ICollection<T> GetAll() => _dbContext.Set<T>().ToList();
-
-        public virtual async Task<ICollection<T>> GetAllAsync() => await _dbContext.Set<T>().ToListAsync();
 
         public virtual async Task<ICollection<T>> GetAllAsync(string include)
         {
@@ -61,6 +61,14 @@ namespace NotesApp.DataAccess.Repositories
                 return await _dbContext.Set<T>().Include(include).ToListAsync();
 
             return await GetAllAsync();
+        }
+
+        public virtual async Task<ICollection<T>> GetAllAsync(Expression<Func<T, bool>> predicate, string include)
+        {
+            if (include != string.Empty && IsVirtualProperty(include))
+                return await _dbContext.Set<T>().Include(include).Where(predicate).ToListAsync();
+
+            return await GetAllAsync(predicate);
         }
 
         public virtual async Task AddAsync(T entity)
