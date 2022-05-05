@@ -13,6 +13,7 @@ using FluentValidation.AspNetCore;
 using NotesApp.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using NotesApp.Services.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,9 +39,13 @@ builder.Services.AddTransient<INoteRepository, NoteRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 //Validators
+builder.Services.AddFluentValidation();
 builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
 builder.Services.AddTransient<IValidator<LoginDto>, LoginUserValidator>();
 ValidatorOptions.Global.LanguageManager.Enabled = false;
+
+//Add middleware
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 //Add automapper
 builder.Services.AddAutoMapper(
@@ -87,6 +92,8 @@ app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 
