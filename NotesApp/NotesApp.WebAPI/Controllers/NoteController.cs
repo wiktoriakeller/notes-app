@@ -7,6 +7,7 @@ namespace NotesApp.WebAPI.Controllers
 {
     [Route("notes-api/notes")]
     [ApiController]
+    [Authorize]
     public class NoteController : ControllerBase
     {
         private readonly INoteService _notesService;
@@ -28,7 +29,6 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllNotes()
         {
             var notes = await _notesService.GetAllNotes();
