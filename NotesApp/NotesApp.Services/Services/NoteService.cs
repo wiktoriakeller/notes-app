@@ -93,6 +93,23 @@ namespace NotesApp.Services.Services
             return note.Id;
         }
 
+        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, int id)
+        {
+            var note = await _notesRepository.GetByIdAsync(id);
+            await CheckAuthorization(note);
+
+            if (note == null)
+                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+
+            note.NoteName = noteDto.NoteName;
+            note.Content = noteDto.Content;
+            note.Tags = _mapper.Map<ICollection<Tag>>(noteDto.Tags);
+
+            await _notesRepository.UpdateAsync(note);
+
+            return _mapper.Map<NoteDto>(note);
+        }
+
         private async Task CheckAuthorization(IEnumerable<Note> notes, Operation operation = Operation.Read)
         {
             var authorizationResult = await _authorizationService.AuthorizeAsync(_userContextService.User, notes,

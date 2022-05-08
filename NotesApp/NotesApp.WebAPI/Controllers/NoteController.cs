@@ -37,5 +37,12 @@ namespace NotesApp.WebAPI.Controllers
             var id = await _notesService.AddNote(dto);
             return Created($"/note/{id}", null);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateNote([FromBody] UpdateNoteDto dto, [FromRoute] int id)
+        {
+            var note = await _notesService.UpdateNote(dto, id);
+            return Ok(note);
+        }
     }
 }
