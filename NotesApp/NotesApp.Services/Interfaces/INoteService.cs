@@ -11,6 +11,7 @@ namespace NotesApp.Services.Interfaces
         Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags);
         Task<int> AddNote(CreateNoteDto noteDto);
         Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, int id);
+        Task DeleteNote(int id);
     }
 }
  

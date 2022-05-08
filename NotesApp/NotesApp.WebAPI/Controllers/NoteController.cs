@@ -44,5 +44,12 @@ namespace NotesApp.WebAPI.Controllers
             var note = await _notesService.UpdateNote(dto, id);
             return Ok(note);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNote([FromRoute] int id)
+        {
+            await _notesService.DeleteNote(id);
+            return Ok();
+        }
     }
 }

@@ -110,6 +110,17 @@ namespace NotesApp.Services.Services
             return _mapper.Map<NoteDto>(note);
         }
 
+        public async Task DeleteNote(int id)
+        {
+            var note = await _notesRepository.GetByIdAsync(id);
+            await CheckAuthorization(note);
+
+            if (note == null)
+                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+
+            await _notesRepository.DeleteAsync(note);
+        }
+
         private async Task CheckAuthorization(IEnumerable<Note> notes, Operation operation = Operation.Read)
         {
             var authorizationResult = await _authorizationService.AuthorizeAsync(_userContextService.User, notes,
