@@ -4,5 +4,6 @@
     {
         public string NoteName { get; set; }
         public string Content { get; set; }
+        public ICollection<CreateTagDto> Tags { get; set; }
     }
 }
