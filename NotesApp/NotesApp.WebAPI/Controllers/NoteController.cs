@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NotesApp.Services.Interfaces;
 using NotesApp.Services.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NotesApp.WebAPI.Controllers
 {
-    [Route("note/")]
+    [Route("notes-api/notes")]
     [ApiController]
-    public class NotesController : ControllerBase
+    [Authorize]
+    public class NoteController : ControllerBase
     {
-        private readonly INotesService _notesService;
+        private readonly INoteService _notesService;
 
-        public NotesController(INotesService notesService)
+        public NoteController(INoteService notesService)
         {
             _notesService = notesService;
         }
@@ -19,10 +21,6 @@ namespace NotesApp.WebAPI.Controllers
         public async Task<IActionResult> GetNote(int id)
         {
             var note = await _notesService.GetNoteById(id);
-            
-            if(note == null)
-                return NotFound();
-
             return Ok(note);
         }
 
@@ -34,9 +32,9 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto noteDto)
+        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto dto)
         {
-            var id = await _notesService.AddNote(noteDto);
+            var id = await _notesService.AddNote(dto);
             return Created($"/note/{id}", null);
         }
     }

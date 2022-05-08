@@ -4,11 +4,8 @@ namespace NotesApp.Domain.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        Task<T?> GetById(int id);
-        Task<ICollection<T>> GetWhere(Expression<Func<T, bool>> predicate);
-        Task<ICollection<T>> GetAll();
-        Task Add(T entity);
-        Task Update(T entity);
-        Task Delete(T entity);
+        T? GetFirstOrDefault(Expression<Func<T, bool>> predicate);
+        ICollection<T> GetAll();
+        ICollection<T> GetAll(Expression<Func<T, bool>> predicate);
     }
 }

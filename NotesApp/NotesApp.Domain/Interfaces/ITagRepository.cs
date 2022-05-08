@@ -2,7 +2,7 @@
 
 namespace NotesApp.Domain.Interfaces
 {
-    public interface IUsersRepository : IRepository<User>
+    public interface ITagRepository : IRepository<Tag>, IRepositoryAsync<Tag>
     {
 
     }

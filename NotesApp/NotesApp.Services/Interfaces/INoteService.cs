@@ -1,9 +1,8 @@
-﻿using NotesApp.Domain.Entities;
-using NotesApp.Services.Dto;
+﻿using NotesApp.Services.Dto;
 
 namespace NotesApp.Services.Interfaces
 {
-    public interface INotesService
+    public interface INoteService
     {
         Task<NoteDto?> GetNoteById(int id);
         Task<IEnumerable<NoteDto>> GetAllNotes();
@@ -13,3 +12,4 @@ namespace NotesApp.Services.Interfaces
         Task<int> AddNote(CreateNoteDto noteDto);
     }
 }
+ 
