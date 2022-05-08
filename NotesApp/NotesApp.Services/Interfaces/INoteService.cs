@@ -1,5 +1,4 @@
-﻿using NotesApp.Domain.Entities;
-using NotesApp.Services.Dto;
+﻿using NotesApp.Services.Dto;
 
 namespace NotesApp.Services.Interfaces
 {
@@ -13,3 +12,4 @@ namespace NotesApp.Services.Interfaces
         Task<int> AddNote(CreateNoteDto noteDto);
     }
 }
+ 

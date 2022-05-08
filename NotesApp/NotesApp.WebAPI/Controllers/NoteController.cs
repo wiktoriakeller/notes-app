@@ -21,10 +21,6 @@ namespace NotesApp.WebAPI.Controllers
         public async Task<IActionResult> GetNote(int id)
         {
             var note = await _notesService.GetNoteById(id);
-            
-            if(note == null)
-                return NotFound();
-
             return Ok(note);
         }
 

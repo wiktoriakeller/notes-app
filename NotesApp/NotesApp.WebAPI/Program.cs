@@ -10,10 +10,11 @@ using NotesApp.Services.Dto;
 using NotesApp.Services.Dto.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using NotesApp.Services;
+using NotesApp.Services.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NotesApp.Services.Middleware;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,9 +45,6 @@ builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
 builder.Services.AddTransient<IValidator<LoginDto>, LoginUserValidator>();
 ValidatorOptions.Global.LanguageManager.Enabled = false;
 
-//Add middleware
-builder.Services.AddScoped<ErrorHandlingMiddleware>();
-
 //Add automapper
 builder.Services.AddAutoMapper(
     typeof(NoteService).Assembly
@@ -57,7 +55,6 @@ builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
-
 builder.Services.AddSingleton(authenticationSettings);
 
 builder.Services.AddAuthentication(options =>
@@ -76,6 +73,13 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
     };
 });
+
+builder.Services.AddScoped<IAuthorizationHandler, NotesAuthorizationHandler>();
+builder.Services.AddScoped<IUserContextService, UserContextService>();
+builder.Services.AddHttpContextAccessor();
+
+//Add middleware
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 var app = builder.Build();
 await SeedDatabase();

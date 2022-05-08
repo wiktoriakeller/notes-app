@@ -16,9 +16,17 @@ namespace NotesApp.Services.Middleware
             {
                 await next.Invoke(context);
             }
-            catch(ForbiddenException e)
+            catch (UnauthenticatedException e)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            }
+            catch (ForbiddenException e)
             {
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            }
+            catch(NotFoundException e)
+            {
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
             }
             catch(Exception e)
             {
