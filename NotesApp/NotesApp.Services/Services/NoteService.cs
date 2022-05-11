@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using NotesApp.Services.Authorization;
 using NotesApp.Services.Exceptions;
+using HashidsNet;
 
 namespace NotesApp.Services.Services
 {
@@ -15,16 +16,19 @@ namespace NotesApp.Services.Services
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserContextService _userContextService;
+        private readonly IHashids _hashids;
 
         public NoteService(INoteRepository notesRepository, 
             IMapper mapper,
             IAuthorizationService authorizationService,
-            IUserContextService userContextService)
+            IUserContextService userContextService,
+            IHashids hashids)
         {
             _notesRepository = notesRepository;
             _mapper = mapper;
             _authorizationService = authorizationService;
             _userContextService = userContextService;
+            _hashids = hashids;
         }
 
         public async Task<NoteDto?> GetNoteById(int id)
@@ -82,6 +86,57 @@ namespace NotesApp.Services.Services
             }
 
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
+        }
+
+        public async Task<string> GenerateNoteHash(int id)
+        {
+            var note = await _notesRepository.GetByIdAsync(id);
+            await CheckAuthorization(note);
+
+            if (note == null)
+                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+
+            var rng = new Random();
+            var salt = rng.Next();
+            var hashId = _hashids.EncodeLong(id + salt);
+
+            note.HashId = hashId;
+            note.HashIdSalt = salt;
+            note.PublicLinkValidTill = DateTimeOffset.Now + TimeSpan.FromDays(1);
+            await _notesRepository.UpdateAsync(note);
+
+            return hashId;
+        }
+
+        public async Task DeleteHashId(int id)
+        {
+            var note = await _notesRepository.GetByIdAsync(id);
+            await CheckAuthorization(note);
+
+            if (note == null)
+                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+
+            note.HashId = string.Empty;
+            await _notesRepository.UpdateAsync(note);
+        }
+
+        public async Task<PublicNoteDto> GetPublicNote(string hashId)
+        {
+            var notes = await _notesRepository.GetAllAsync(n => n.HashId != string.Empty && n.HashId == hashId);
+            
+            if (notes.Count == 1)
+            {
+                var note = notes.First();
+
+                if(note.PublicLinkValidTill > DateTimeOffset.Now)
+                    throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
+
+                return _mapper.Map<PublicNoteDto>(note);
+            }
+            else
+            {
+                throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
+            }
         }
 
         public async Task<int> AddNote(CreateNoteDto noteDto)
