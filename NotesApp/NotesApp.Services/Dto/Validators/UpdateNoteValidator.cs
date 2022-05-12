@@ -17,9 +17,9 @@ namespace NotesApp.Services.Dto.Validators
             RuleFor(x => x)
                 .Custom((value, context) =>
                 {
-                    var notes = notesRepository.GetAll(n => n.NoteName == value.NoteName && n.Id != value.Id);
+                    var note = notesRepository.GetFirstOrDefault(n => n.NoteName == value.NoteName && n.Id != value.Id);
 
-                    if (notes.Count > 0)
+                    if (note != null)
                         context.AddFailure("NoteName", $"Note with that name already exists");
                 });
 

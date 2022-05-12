@@ -48,6 +48,8 @@ builder.Services.AddTransient<IValidator<RegisterUserDto>, RegisterUserValidator
 builder.Services.AddTransient<IValidator<LoginDto>, LoginUserValidator>();
 builder.Services.AddTransient<IValidator<CreateNoteDto>, CreateNoteValidator>();
 builder.Services.AddTransient<IValidator<UpdateNoteDto>, UpdateNoteValidator>();
+builder.Services.AddTransient<IValidator<ForgotPasswordRequestDto>, ForgotPasswordRequestValidator>();
+builder.Services.AddTransient<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
 ValidatorOptions.Global.LanguageManager.Enabled = false;
 
 //Add automapper
