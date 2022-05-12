@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NotesApp.Services.Interfaces;
 using NotesApp.Services.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NotesApp.WebAPI.Controllers
 {
@@ -15,8 +16,16 @@ namespace NotesApp.WebAPI.Controllers
             _usersService = usersService;
         }
 
+        [HttpPost("admin/create")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+        {
+            await _usersService.AddUser(dto);
+            return Ok();
+        }
+
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
             await _usersService.AddUser(dto);
             return Ok();

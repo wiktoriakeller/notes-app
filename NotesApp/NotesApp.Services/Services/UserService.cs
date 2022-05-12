@@ -41,6 +41,18 @@ namespace NotesApp.Services.Services
             return user.Id;
         }
 
+        public async Task<int> AddUser(RegisterUserDto dto)
+        {
+            var user = _mapper.Map<User>(dto);
+            user.RoleId = 2;
+
+            var hashedPassword = _passwordHasher.HashPassword(user, dto.Password);
+            user.PasswordHash = hashedPassword;
+
+            await _userRepository.AddAsync(user);
+            return user.Id;
+        }
+
         public async Task<string> GenerateJwt(LoginDto dto)
         {
             var user = await _userRepository.GetFirstOrDefaultAsync(u => u.Login == dto.Login, "Role");
