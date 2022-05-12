@@ -37,5 +37,20 @@ namespace NotesApp.WebAPI.Controllers
             string token = await _usersService.GenerateJwt(dto);
             return Ok(token);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto dto)
+        {
+            await _usersService.ForgotPassword(dto);
+            return Ok();
+        }
+
+        [HttpPost("reset-password/{token}")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto, [FromRoute] string token)
+        {
+            await _usersService.ResetPassword(dto, token);
+            return Ok();
+        }
+
     }
 }

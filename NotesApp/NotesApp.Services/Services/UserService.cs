@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using NotesApp.Services.Authorization;
+using System.Security.Cryptography;
+using NotesApp.Services.Exceptions;
 
 namespace NotesApp.Services.Services
 {
@@ -17,17 +19,20 @@ namespace NotesApp.Services.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
         private readonly AuthenticationSettings _authenticationSettings;
 
         public UserService(
             IUserRepository usersRepository, 
             IPasswordHasher<User> passwordHasher, 
             IMapper mapper,
+            IEmailService emailService,
             AuthenticationSettings authenticationSettings)
         {
             _userRepository = usersRepository;
             _passwordHasher = passwordHasher;
             _mapper = mapper;
+            _emailService = emailService;
             _authenticationSettings = authenticationSettings;
         }
 
@@ -77,6 +82,49 @@ namespace NotesApp.Services.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.WriteToken(token);
+        }
+
+        public async Task ForgotPassword(ForgotPasswordRequestDto dto)
+        {
+            var user = await _userRepository.GetFirstOrDefaultAsync(u => u.Email == dto.Email);
+            
+            if(user == null)
+                throw new NotFoundException($"User with email: {dto.Email} doesn't exists");
+
+            var token = GenerateResetToken();
+            user.ResetToken = token;
+            user.ResetTokenExpires = DateTimeOffset.Now.AddHours(2);
+
+            await _userRepository.UpdateAsync(user);
+
+            var passwordResetLink = "https://localhost:7164/notes-api/accounts/reset-password/";
+            await _emailService.SendEmailAsync(new EmailMessage() { 
+                To = dto.Email, 
+                Subject = "Notes reset password", 
+                Content = $"Click here to reset you password: {passwordResetLink}{token}\nThis link is only valid till: {user.ResetTokenExpires.Value}"
+            });
+        }
+
+        public async Task ResetPassword(ResetPasswordDto dto, string token)
+        {
+            var user = await _userRepository.GetFirstOrDefaultAsync(u => u.ResetToken == token);
+
+            if (user == null || user.ResetTokenExpires < DateTimeOffset.Now)
+                throw new BadRequestException("Invalid or expired link");
+
+            user.ResetToken = null;
+            user.ResetTokenExpires = null;
+            var hashedPassword = _passwordHasher.HashPassword(user, dto.Password);
+            user.PasswordHash = hashedPassword;
+            await _userRepository.UpdateAsync(user);
+        }
+
+        private string GenerateResetToken()
+        {
+            var bytes = RandomNumberGenerator.GetBytes(64);
+            var token = Convert.ToHexString(bytes);
+
+            return token;
         }
     }
 }

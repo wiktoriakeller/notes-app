@@ -105,7 +105,7 @@ namespace NotesApp.Services.Services
 
                 note.HashId = hashId;
                 note.HashIdSalt = salt;
-                note.PublicLinkValidTill = DateTimeOffset.Now + TimeSpan.FromDays(1);
+                note.PublicLinkValidTill = DateTimeOffset.Now.AddDays(1);
             }
             else
             {
