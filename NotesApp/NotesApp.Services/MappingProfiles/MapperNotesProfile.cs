@@ -13,6 +13,9 @@ namespace NotesApp.Services.MappingProfiles
             CreateMap<CreateNoteDto, Note>().ReverseMap();  
             CreateMap<CreateTagDto, Tag>().ReverseMap();
             CreateMap<CreateUserDto, User>().ReverseMap();
+            CreateMap<Note, PublicNoteDto>()
+                .ForMember(dest => dest.Author,
+                            opt => opt.MapFrom(src => $"{src.User.Name} {src.User.Surname}"));
         }
     }
 }

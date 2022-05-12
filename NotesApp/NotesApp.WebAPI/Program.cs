@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NotesApp.Services.Middleware;
 using Microsoft.AspNetCore.Authorization;
+using HashidsNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +78,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IAuthorizationHandler, NotesAuthorizationHandler>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddHttpContextAccessor();
+
+//HashId
+builder.Services.AddScoped<IHashids>(_ => 
+    new Hashids(builder.Configuration.GetSection("HashIdSalt").ToString()));
 
 //Add middleware
 builder.Services.AddScoped<ErrorHandlingMiddleware>();

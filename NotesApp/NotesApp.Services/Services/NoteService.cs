@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using NotesApp.Services.Authorization;
 using NotesApp.Services.Exceptions;
+using HashidsNet;
 
 namespace NotesApp.Services.Services
 {
@@ -15,16 +16,19 @@ namespace NotesApp.Services.Services
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserContextService _userContextService;
+        private readonly IHashids _hashids;
 
         public NoteService(INoteRepository notesRepository, 
             IMapper mapper,
             IAuthorizationService authorizationService,
-            IUserContextService userContextService)
+            IUserContextService userContextService,
+            IHashids hashids)
         {
             _notesRepository = notesRepository;
             _mapper = mapper;
             _authorizationService = authorizationService;
             _userContextService = userContextService;
+            _hashids = hashids;
         }
 
         public async Task<NoteDto?> GetNoteById(int id)
@@ -41,7 +45,7 @@ namespace NotesApp.Services.Services
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
         {
             var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.UserId == userId,"Tags");
+            var notes = await _notesRepository.GetAllAsync(n => n.UserId == userId, "Tags");
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
@@ -84,6 +88,51 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
+        public async Task<string> UpdateHashId(UpdateNoteHashIdDto dto, int id)
+        {
+            var note = await _notesRepository.GetByIdAsync(id);
+            await CheckAuthorization(note);
+            string hashId = string.Empty;
+
+            if (note == null)
+                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+
+            if(!dto.ResetHashId)
+            {
+                var rng = new Random();
+                var salt = rng.Next();
+                hashId = _hashids.EncodeLong(id + salt);
+
+                note.HashId = hashId;
+                note.HashIdSalt = salt;
+                note.PublicLinkValidTill = DateTimeOffset.Now + TimeSpan.FromDays(1);
+            }
+            else
+            {
+                note.HashId = string.Empty;
+            }
+
+            await _notesRepository.UpdateAsync(note);
+            return hashId;
+        }
+
+        public async Task<PublicNoteDto> GetNoteByHashId(string hashId)
+        {
+            var notes = await _notesRepository.GetAllAsync(n => n.HashId != string.Empty && n.HashId == hashId, "User");
+            
+            if (notes.Count == 1)
+            {
+                var note = notes.First();
+
+                if(note.PublicLinkValidTill < DateTimeOffset.Now)
+                    throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
+
+                return _mapper.Map<PublicNoteDto>(note);
+            }
+
+            throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
+        }
+
         public async Task<int> AddNote(CreateNoteDto noteDto)
         {
             var note = _mapper.Map<Note>(noteDto);
@@ -96,7 +145,7 @@ namespace NotesApp.Services.Services
         public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, int id)
         {
             var note = await _notesRepository.GetByIdAsync(id);
-            await CheckAuthorization(note);
+            await CheckAuthorization(note, Operation.Update);
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
@@ -113,7 +162,7 @@ namespace NotesApp.Services.Services
         public async Task DeleteNote(int id)
         {
             var note = await _notesRepository.GetByIdAsync(id);
-            await CheckAuthorization(note);
+            await CheckAuthorization(note, Operation.Delete);
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");

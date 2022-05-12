@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NotesApp.DataAccess;
 
@@ -11,9 +12,10 @@ using NotesApp.DataAccess;
 namespace NotesApp.DataAccess.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    partial class NotesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220512064230_AddNotePublicLink")]
+    partial class AddNotePublicLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,9 +40,10 @@ namespace NotesApp.DataAccess.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("HashId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("HashIdSalt")
+                    b.Property<int>("HashIdSalt")
                         .HasColumnType("int");
 
                     b.Property<string>("NoteName")
@@ -48,7 +51,7 @@ namespace NotesApp.DataAccess.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<DateTimeOffset?>("PublicLinkValidTill")
+                    b.Property<DateTimeOffset>("PublicLinkValidTill")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
@@ -141,20 +144,12 @@ namespace NotesApp.DataAccess.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
