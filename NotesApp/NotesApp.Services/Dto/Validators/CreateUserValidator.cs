@@ -16,6 +16,14 @@ namespace NotesApp.Services.Dto.Validators
                 .NotEmpty()
                 .EmailAddress();
 
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .Matches(@"[A-Za-z]*");
+
+            RuleFor(x => x.Surname)
+                .NotEmpty()
+                .Matches(@"[A-Za-z]*");
+
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
                 {

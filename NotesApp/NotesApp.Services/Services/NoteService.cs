@@ -118,7 +118,7 @@ namespace NotesApp.Services.Services
 
         public async Task<PublicNoteDto> GetNoteByHashId(string hashId)
         {
-            var notes = await _notesRepository.GetAllAsync(n => n.HashId != string.Empty && n.HashId == hashId);
+            var notes = await _notesRepository.GetAllAsync(n => n.HashId != string.Empty && n.HashId == hashId, "User");
             
             if (notes.Count == 1)
             {
