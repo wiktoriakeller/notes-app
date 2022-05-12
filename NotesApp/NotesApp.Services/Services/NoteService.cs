@@ -45,7 +45,7 @@ namespace NotesApp.Services.Services
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
         {
             var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.UserId == userId,"Tags");
+            var notes = await _notesRepository.GetAllAsync(n => n.UserId == userId, "Tags");
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
@@ -88,39 +88,35 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<string> GenerateNoteHash(int id)
+        public async Task<string> UpdateHashId(UpdateNoteHashIdDto dto, int id)
         {
             var note = await _notesRepository.GetByIdAsync(id);
             await CheckAuthorization(note);
+            string hashId = string.Empty;
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
 
-            var rng = new Random();
-            var salt = rng.Next();
-            var hashId = _hashids.EncodeLong(id + salt);
+            if(!dto.ResetHashId)
+            {
+                var rng = new Random();
+                var salt = rng.Next();
+                hashId = _hashids.EncodeLong(id + salt);
 
-            note.HashId = hashId;
-            note.HashIdSalt = salt;
-            note.PublicLinkValidTill = DateTimeOffset.Now + TimeSpan.FromDays(1);
+                note.HashId = hashId;
+                note.HashIdSalt = salt;
+                note.PublicLinkValidTill = DateTimeOffset.Now + TimeSpan.FromDays(1);
+            }
+            else
+            {
+                note.HashId = string.Empty;
+            }
+
             await _notesRepository.UpdateAsync(note);
-
             return hashId;
         }
 
-        public async Task DeleteHashId(int id)
-        {
-            var note = await _notesRepository.GetByIdAsync(id);
-            await CheckAuthorization(note);
-
-            if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
-
-            note.HashId = string.Empty;
-            await _notesRepository.UpdateAsync(note);
-        }
-
-        public async Task<PublicNoteDto> GetPublicNote(string hashId)
+        public async Task<PublicNoteDto> GetNoteByHashId(string hashId)
         {
             var notes = await _notesRepository.GetAllAsync(n => n.HashId != string.Empty && n.HashId == hashId);
             
@@ -128,15 +124,13 @@ namespace NotesApp.Services.Services
             {
                 var note = notes.First();
 
-                if(note.PublicLinkValidTill > DateTimeOffset.Now)
+                if(note.PublicLinkValidTill < DateTimeOffset.Now)
                     throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
 
                 return _mapper.Map<PublicNoteDto>(note);
             }
-            else
-            {
-                throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
-            }
+
+            throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
         }
 
         public async Task<int> AddNote(CreateNoteDto noteDto)
@@ -151,7 +145,7 @@ namespace NotesApp.Services.Services
         public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, int id)
         {
             var note = await _notesRepository.GetByIdAsync(id);
-            await CheckAuthorization(note);
+            await CheckAuthorization(note, Operation.Update);
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
@@ -168,7 +162,7 @@ namespace NotesApp.Services.Services
         public async Task DeleteNote(int id)
         {
             var note = await _notesRepository.GetByIdAsync(id);
-            await CheckAuthorization(note);
+            await CheckAuthorization(note, Operation.Delete);
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
