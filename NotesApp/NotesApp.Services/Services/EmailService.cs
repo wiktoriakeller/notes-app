@@ -20,7 +20,6 @@ namespace NotesApp.Services.Services
             var email = CreateEmail(message);
             using var smtpClient = new SmtpClient();
             await smtpClient.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port, true);
-            smtpClient.AuthenticationMechanisms.Remove("XOAUTH2");
             await smtpClient.AuthenticateAsync(_emailSettings.Username, _emailSettings.Password);
             await smtpClient.SendAsync(email);
             await smtpClient.DisconnectAsync(true);

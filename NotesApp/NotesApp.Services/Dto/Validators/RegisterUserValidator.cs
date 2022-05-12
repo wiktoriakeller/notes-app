@@ -3,7 +3,7 @@ using NotesApp.Domain.Interfaces;
 
 namespace NotesApp.Services.Dto.Validators
 {
-    public class RegisterUserValidator : AbstractValidator<CreateUserDto>
+    public class RegisterUserValidator : AbstractValidator<RegisterUserDto>
     {
         public RegisterUserValidator(IUserRepository usersRepository)
         {
