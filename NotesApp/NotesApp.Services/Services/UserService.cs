@@ -92,7 +92,9 @@ namespace NotesApp.Services.Services
                 throw new NotFoundException($"User with email: {dto.Email} doesn't exists");
 
             var token = GenerateResetToken();
-            user.ResetToken = token;
+            var tokenHash = ComputeHash(token);
+
+            user.ResetToken = tokenHash;
             user.ResetTokenExpires = DateTimeOffset.Now.AddHours(2);
 
             await _userRepository.UpdateAsync(user);
@@ -107,7 +109,8 @@ namespace NotesApp.Services.Services
 
         public async Task ResetPassword(ResetPasswordDto dto, string token)
         {
-            var user = await _userRepository.GetFirstOrDefaultAsync(u => u.ResetToken == token);
+            var tokenHash = ComputeHash(token);
+            var user = await _userRepository.GetFirstOrDefaultAsync(u => u.ResetToken == tokenHash);
 
             if (user == null || user.ResetTokenExpires < DateTimeOffset.Now)
                 throw new BadRequestException("Invalid or expired link");
@@ -123,8 +126,14 @@ namespace NotesApp.Services.Services
         {
             var bytes = RandomNumberGenerator.GetBytes(64);
             var token = Convert.ToHexString(bytes);
-
             return token;
+        }
+
+        private string ComputeHash(string data)
+        {
+            using var sha256 = SHA256.Create();
+            var tokenHash = string.Join("", sha256.ComputeHash(Encoding.UTF8.GetBytes(data)).Select(x => x.ToString("x2")));
+            return tokenHash;
         }
     }
 }
