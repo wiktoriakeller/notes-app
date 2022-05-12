@@ -16,6 +16,7 @@ using System.Text;
 using NotesApp.Services.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using HashidsNet;
+using NotesApp.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,6 +88,13 @@ builder.Services.AddScoped<IHashids>(_ =>
 
 //Add middleware
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
+//Add email service and configuration
+var emailConfiguration = new EmailSettings();
+builder.Configuration.GetSection("EmailConfiguration").Bind(emailConfiguration);
+builder.Services.AddSingleton(emailConfiguration);
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 await SeedDatabase();
