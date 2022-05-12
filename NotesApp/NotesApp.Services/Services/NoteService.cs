@@ -33,7 +33,7 @@ namespace NotesApp.Services.Services
 
         public async Task<NoteDto?> GetNoteById(int id)
         {
-            var note = await _notesRepository.GetByIdAsync(id);
+            var note = await _notesRepository.GetByIdAsync(id, "Tags");
             await CheckAuthorization(note);
 
             if (note == null)

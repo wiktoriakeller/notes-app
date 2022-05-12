@@ -44,6 +44,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddFluentValidation();
 builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
 builder.Services.AddTransient<IValidator<LoginDto>, LoginUserValidator>();
+builder.Services.AddTransient<IValidator<CreateNoteDto>, CreateNoteValidator>();
 ValidatorOptions.Global.LanguageManager.Enabled = false;
 
 //Add automapper
