@@ -57,10 +57,10 @@ namespace NotesApp.WebAPI.Controllers
             return Created($"notes-api/notes/{id}", null);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote([FromBody] UpdateNoteDto dto, [FromRoute] int id)
+        [HttpPut]
+        public async Task<IActionResult> UpdateNote([FromBody] UpdateNoteDto dto)
         {
-            var note = await _notesService.UpdateNote(dto, id);
+            var note = await _notesService.UpdateNote(dto);
             return Ok(note);
         }
 

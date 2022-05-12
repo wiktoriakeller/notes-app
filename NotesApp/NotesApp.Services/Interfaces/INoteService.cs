@@ -12,7 +12,7 @@ namespace NotesApp.Services.Interfaces
         Task<PublicNoteDto> GetNoteByHashId(string hashId);
         Task<string> UpdateHashId(UpdateNoteHashIdDto dto, int id);
         Task<int> AddNote(CreateNoteDto noteDto);
-        Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, int id);
+        Task<NoteDto> UpdateNote(UpdateNoteDto noteDto);
         Task DeleteNote(int id);
     }
 }

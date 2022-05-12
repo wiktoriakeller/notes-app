@@ -118,7 +118,7 @@ namespace NotesApp.Services.Services
 
         public async Task<PublicNoteDto> GetNoteByHashId(string hashId)
         {
-            var notes = await _notesRepository.GetAllAsync(n => n.HashId != string.Empty && n.HashId == hashId, "User");
+            var notes = await _notesRepository.GetAllNotesWithUsersAndTagsAsync(n => n.HashId != string.Empty && n.HashId == hashId);
             
             if (notes.Count == 1)
             {
@@ -142,9 +142,10 @@ namespace NotesApp.Services.Services
             return note.Id;
         }
 
-        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, int id)
+        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto)
         {
-            var note = await _notesRepository.GetByIdAsync(id);
+            var id = noteDto.Id;
+            var note = await _notesRepository.GetByIdAsync(id, "Tags");
             await CheckAuthorization(note, Operation.Update);
 
             if (note == null)
@@ -153,7 +154,6 @@ namespace NotesApp.Services.Services
             note.NoteName = noteDto.NoteName;
             note.Content = noteDto.Content;
             note.Tags = _mapper.Map<ICollection<Tag>>(noteDto.Tags);
-
             await _notesRepository.UpdateAsync(note);
 
             return _mapper.Map<NoteDto>(note);
