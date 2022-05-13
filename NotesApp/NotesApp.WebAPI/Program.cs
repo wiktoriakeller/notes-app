@@ -99,7 +99,19 @@ builder.Services.AddSingleton(emailConfiguration);
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+//Add CORS
+var client = "notes-ui";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(client, builder =>
+        builder.AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithOrigins("https://localhost:3000")
+    );
+});
+
 var app = builder.Build();
+app.UseCors(client);
 await SeedDatabase();
 
 // Configure the HTTP request pipeline.
