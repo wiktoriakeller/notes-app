@@ -89,8 +89,6 @@ const RegisterForm = () => {
     }
   };
 
-
-
   return (
     <div className='register-form'>
       <form onSubmit={handleSubmit}>
