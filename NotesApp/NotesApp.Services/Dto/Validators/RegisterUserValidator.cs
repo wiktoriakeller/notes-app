@@ -8,9 +8,9 @@ namespace NotesApp.Services.Dto.Validators
         public RegisterUserValidator(IUserRepository usersRepository)
         {
             RuleFor(x => x.Login)
-                            .NotEmpty()
-                            .MinimumLength(3)
-                            .MaximumLength(20);
+                .NotEmpty()
+                .MinimumLength(3)
+                .MaximumLength(20);
 
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -18,10 +18,14 @@ namespace NotesApp.Services.Dto.Validators
 
             RuleFor(x => x.Name)
                 .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
             RuleFor(x => x.Surname)
                 .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
             RuleFor(x => x.Email)
@@ -30,7 +34,7 @@ namespace NotesApp.Services.Dto.Validators
                     var emailInUse = usersRepository.GetFirstOrDefault(u => u.Email == value) != null;
 
                     if (emailInUse)
-                        context.AddFailure("Email", $"Email {value} is already in use");
+                        context.AddFailure("Email", $"Email is already");
                 });
 
             RuleFor(x => x.Login)
@@ -39,7 +43,7 @@ namespace NotesApp.Services.Dto.Validators
                     var loginInUse = usersRepository.GetFirstOrDefault(u => u.Login == value) != null;
 
                     if (loginInUse)
-                        context.AddFailure("Login", $"Login {value} is already in use");
+                        context.AddFailure("Login", $"Login is already taken");
                 });
 
             RuleFor(x => x.Password)
