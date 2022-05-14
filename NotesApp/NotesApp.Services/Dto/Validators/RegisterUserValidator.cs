@@ -8,9 +8,9 @@ namespace NotesApp.Services.Dto.Validators
         public RegisterUserValidator(IUserRepository usersRepository)
         {
             RuleFor(x => x.Login)
-                            .NotEmpty()
-                            .MinimumLength(3)
-                            .MaximumLength(20);
+                .NotEmpty()
+                .MinimumLength(3)
+                .MaximumLength(20);
 
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -18,10 +18,14 @@ namespace NotesApp.Services.Dto.Validators
 
             RuleFor(x => x.Name)
                 .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
             RuleFor(x => x.Surname)
                 .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
             RuleFor(x => x.Email)

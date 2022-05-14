@@ -18,10 +18,14 @@ namespace NotesApp.Services.Dto.Validators
 
             RuleFor(x => x.Name)
                 .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
             RuleFor(x => x.Surname)
                 .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
             RuleFor(x => x.Email)
