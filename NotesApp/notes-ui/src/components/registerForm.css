@@ -20,7 +20,7 @@ form {
 h1 {
     text-align: center;
     padding: 0px;
-    margin: 25px 0px;
+    margin: 20px 0px;
     margin-bottom: 8px;
     font-size: 2.6rem;
     font-family: 'Courgette', cursive;
@@ -66,4 +66,26 @@ button:disabled {
 a {
     text-decoration: none;
     font-weight: bolder;
+}
+
+.hide {
+    color: white;
+    height: 0;
+    font-size: 0.8rem;
+}
+
+.error {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: rgba(239, 20, 20, 0.702);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.error:nth-child(1) {
+    margin-top: 15px;
 }

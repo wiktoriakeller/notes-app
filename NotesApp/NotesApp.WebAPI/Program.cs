@@ -103,15 +103,15 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 var origins = builder.Configuration["AllowedOrigins"];
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(origins, builder =>
+    options.AddPolicy("notes-client", builder =>
         builder.AllowAnyMethod()
         .AllowAnyHeader()
-        .WithOrigins()
+        .WithOrigins(origins)
     );
 });
 
 var app = builder.Build();
-app.UseCors(origins);
+app.UseCors("notes-client");
 await SeedDatabase();
 
 // Configure the HTTP request pipeline.

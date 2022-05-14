@@ -28,7 +28,7 @@ namespace NotesApp.Services.Dto.Validators
                         failedAuthentication = true;
 
                     if (failedAuthentication)
-                        context.AddFailure("Wrong credentials", "Provided username or password is invalid");
+                        context.AddFailure("WrongCredentials", "Provided username or password is invalid");
                 });
         }
     }

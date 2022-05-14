@@ -34,7 +34,7 @@ namespace NotesApp.Services.Dto.Validators
                     var emailInUse = usersRepository.GetFirstOrDefault(u => u.Email == value) != null;
 
                     if (emailInUse)
-                        context.AddFailure("Email", $"Email {value} is already in use");
+                        context.AddFailure("Email", $"Email is already taken");
                 });
 
             RuleFor(x => x.Login)
@@ -43,7 +43,7 @@ namespace NotesApp.Services.Dto.Validators
                     var loginInUse = usersRepository.GetFirstOrDefault(u => u.Login == value) != null;
 
                     if (loginInUse)
-                        context.AddFailure("Login", $"Login {value} is already in use");
+                        context.AddFailure("Login", $"Login is already taken");
                 });
 
             RuleFor(x => x.Password)

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import InputForm from './inputForm.js'
-import './registerForm.css'
+import React, { useEffect, useState } from 'react';
+import InputForm from './inputForm.js';
+import './registerForm.css';
+import register from '../notes-api.js';
 
 const loginRegex = /^[A-Za-z][A-Za-z0-9-_]{2,19}$/;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -39,8 +40,8 @@ const RegisterForm = () => {
   const [confirmFocus, setConfirmFocus] = useState(false);
   const confirmErrorMsg = 'Passwords should match';
 
-  const [errorMsg, setErrorMsg] = useState('')
-  const [success, setSuccess] = useState(false)
+  const [errorMsg, setErrorMsg] = useState([])
+  const [success, setSuccess] = useState(true)
 
   useEffect(() => {
     setIsLoginValid(loginRegex.test(login));
@@ -64,19 +65,44 @@ const RegisterForm = () => {
   }, [password, confirm]);
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    let data = {
+      'login': login,
+      'email': email,
+      'name': name,
+      'surname': surname,
+      'password': password,
+      'confirmPassword': confirm
+    };
 
+    let response = await register(data);
+    if(response.success === true) {
+      setSuccess(true);
+    }
+    else {
+      setSuccess(false);
+      let errorMessages = [];
+      for(const [_, value] of Object.entries(response.errors)) {
+        errorMessages.push(value);
+      }
+      setErrorMsg(errorMessages);
+    }
   };
+
+
 
   return (
     <div className='register-form'>
       <form onSubmit={handleSubmit}>
+        {errorMsg.map((msg) => {
+          return <p class={success ? 'hide' : 'error'}>{msg}</p>
+        })}
         <h1>Register</h1>
         <InputForm
           label='Login'
           name='login'
           type='text'
           value={login}
-          autoComplete='off'
           errorMessage={loginErrorMsg}
           isValid={isLoginValid}
           isFocused={loginFocus}
@@ -88,7 +114,6 @@ const RegisterForm = () => {
           name='email'
           type='text'
           value={email}
-          autoComplete='off'
           errorMessage={emailErrorMsg}
           isValid={isEmailValid}
           isFocused={emailFocus}
@@ -100,7 +125,6 @@ const RegisterForm = () => {
           name='name'
           type='text'
           value={name}
-          autoComplete='off'
           errorMessage={nameErrorMsg}
           isValid={isNameValid}
           isFocused={nameFocus}
@@ -112,7 +136,6 @@ const RegisterForm = () => {
           name='surname'
           type='text'
           value={surname}
-          autoComplete='off'
           errorMessage={surnameErrorMsg}
           isValid={isSurnameValid}
           isFocused={surnameFocus}
@@ -122,7 +145,7 @@ const RegisterForm = () => {
         <InputForm
           label='Password'
           name='password'
-          type='text'
+          type='password'
           value={password}
           autoComplete='off'
           errorMessage={passwordErrorMsg}
