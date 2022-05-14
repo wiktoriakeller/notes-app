@@ -17,11 +17,11 @@ input:focus {
 }
 
 .input-valid {
-    outline: 1px solid rgb(37, 179, 37);
+    border: 1px solid rgb(37, 179, 37);
 }
 
 .input-invalid {
-    outline: red;
+    border: 1px solid red;
 }
 
 .input-form {
