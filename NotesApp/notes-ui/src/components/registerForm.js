@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InputForm from './inputForm.js';
 import './registerForm.css';
-import register from '../notes-api.js';
+import {register} from '../notes-api.js';
 
 const loginRegex = /^[A-Za-z][A-Za-z0-9-_]{2,19}$/;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -10,38 +10,39 @@ const nameRegex = /[A-Za-z]{1,20}/;
 const surnameRegex = /[A-Za-z]{1,20}/;
 
 const RegisterForm = () => {
-  const[login, setLogin] = useState('');
-  const[isLoginValid, setIsLoginValid] = useState(false);
+  const [login, setLogin] = useState('');
+  const [isLoginValid, setIsLoginValid] = useState(false);
   const [loginFocus, setLoginFocus] = useState(false);
   const loginErrorMsg = 'Login should be 3-20 characters long and must begin with a letter.';
 
-  const[email, setEmail] = useState('');
-  const[isEmailValid, setIsEmailValid] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
   const emailErrorMsg = 'Email should be valid.';
 
-  const[name, setName] = useState('');
-  const[isNameValid, setIsNameValid] = useState(false);
+  const [name, setName] = useState('');
+  const [isNameValid, setIsNameValid] = useState(false);
   const [nameFocus, setNameFocus] = useState(false);
   const nameErrorMsg = 'Name must be 1-20 characters long and can only contain letters.';
 
-  const[surname, setSurname] = useState('');
-  const[isSurnameValid, setIsSurnameValid] = useState(false);
+  const [surname, setSurname] = useState('');
+  const [isSurnameValid, setIsSurnameValid] = useState(false);
   const [surnameFocus, setSurnameFocus] = useState(false);
   const surnameErrorMsg = 'Surname must be 1-20 characters long and can only contain letters.';
 
-  const[password, setPassword] = useState('');
-  const[isPasswordValid, setIsPasswordValid] = useState(false);
+  const [password, setPassword] = useState('');
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
   const passwordErrorMsg = 'Password should be 6-20 characters long, must include uppercase and lowercase letters, a number and a special character.';
 
-  const[confirm, setConfirm] = useState('')
-  const[isConfirmValid, setIsConfirmValid] = useState(false);
+  const [confirm, setConfirm] = useState('')
+  const [isConfirmValid, setIsConfirmValid] = useState(false);
   const [confirmFocus, setConfirmFocus] = useState(false);
   const confirmErrorMsg = 'Passwords should match';
 
   const [errorMsg, setErrorMsg] = useState([])
   const [success, setSuccess] = useState(true)
+  const [disableButton, setDisableButton] = useState(false);
 
   useEffect(() => {
     setIsLoginValid(loginRegex.test(login));
@@ -66,6 +67,9 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg([]);
+    setDisableButton(true);
+
     let data = {
       'login': login,
       'email': email,
@@ -87,10 +91,12 @@ const RegisterForm = () => {
       }
       setErrorMsg(errorMessages);
     }
+
+    setDisableButton(false);
   };
 
   return (
-    <div className='register-form'>
+    <div className='login-register-form'>
       <form onSubmit={handleSubmit}>
         {errorMsg.map((msg) => {
           return <p class={success ? 'hide' : 'error'}>{msg}</p>
@@ -165,10 +171,10 @@ const RegisterForm = () => {
           onChange={(e) => setConfirm(e.target.value)}
         />  
         <button type='submit' disabled=
-          {!isLoginValid || !isEmailValid || !isNameValid || !isSurnameValid || !isPasswordValid || !isConfirmValid }>
+          {!isLoginValid || !isEmailValid || !isNameValid || !isSurnameValid || !isPasswordValid || !isConfirmValid || disableButton }>
             Submit
         </button>
-        <p className='registered'>
+        <p className='account-info'>
             Already registered?<br/>
             <a href="#">Sign In</a>
         </p>
