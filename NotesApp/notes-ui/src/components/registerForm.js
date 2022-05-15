@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import InputForm from './inputForm.js';
-import './registerForm.css';
 import {register} from '../notes-api.js';
+import { Link } from 'react-router-dom';
+import './registerForm.css';
 
 const loginRegex = /^[A-Za-z][A-Za-z0-9-_]{2,19}$/;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -176,7 +177,7 @@ const RegisterForm = () => {
         </button>
         <p className='account-info'>
             Already registered?<br/>
-            <a href="#">Sign In</a>
+            <Link to='/login'>Sign In</Link>
         </p>
       </form>
     </div>

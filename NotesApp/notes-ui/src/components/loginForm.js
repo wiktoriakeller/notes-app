@@ -1,8 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import {signIn} from '../notes-api';
-import InputForm from './inputForm';
+import { signIn } from '../notes-api';
+import { Link } from 'react-router-dom';
 import './registerForm.css';
+import InputForm from './inputForm';
 
 const LoginForm = () => {
     const [login, setLogin] = useState('');
@@ -88,7 +89,7 @@ const LoginForm = () => {
             </button>
             <p className='account-info'>
                 Need an account?<br/>
-                <a href="#">Sign Up</a>
+                <Link to='/register'>Sign Up</Link>
             </p>
         </form>
     </div>
