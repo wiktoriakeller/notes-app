@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import InputForm from './inputForm.js';
 import {register} from '../notes-api.js';
 import { Link } from 'react-router-dom';
+import Navbar from './navbar.js';
 import './registerForm.css';
 
 const loginRegex = /^[A-Za-z][A-Za-z0-9-_]{2,19}$/;
@@ -97,10 +98,11 @@ const RegisterForm = () => {
   };
 
   return (
+    <><Navbar />
     <div className='register-form'>
       <form className='inner-form' onSubmit={handleSubmit}>
         {errorMsg.map((msg) => {
-          return <p className={success ? 'hide' : 'error'}>{msg}</p>
+          return <p className={success ? 'hide' : 'error'}>{msg}</p>;
         })}
         <h1>Register</h1>
         <InputForm
@@ -112,8 +114,7 @@ const RegisterForm = () => {
           isValid={isLoginValid}
           isFocused={loginFocus}
           onChange={(e) => setLogin(e.target.value)}
-          onFocus={() => setLoginFocus(true)}
-        />  
+          onFocus={() => setLoginFocus(true)} />
         <InputForm
           label='Email'
           name='email'
@@ -123,8 +124,7 @@ const RegisterForm = () => {
           isValid={isEmailValid}
           isFocused={emailFocus}
           onFocus={() => setEmailFocus(true)}
-          onChange={(e) => setEmail(e.target.value)}
-        /> 
+          onChange={(e) => setEmail(e.target.value)} />
         <InputForm
           label='Name'
           name='name'
@@ -134,8 +134,7 @@ const RegisterForm = () => {
           isValid={isNameValid}
           isFocused={nameFocus}
           onFocus={() => setNameFocus(true)}
-          onChange={(e) => setName(e.target.value)}
-        /> 
+          onChange={(e) => setName(e.target.value)} />
         <InputForm
           label='Surname'
           name='surname'
@@ -145,8 +144,7 @@ const RegisterForm = () => {
           isValid={isSurnameValid}
           isFocused={surnameFocus}
           onFocus={() => setSurnameFocus(true)}
-          onChange={(e) => setSurname(e.target.value)}
-        />
+          onChange={(e) => setSurname(e.target.value)} />
         <InputForm
           label='Password'
           name='password'
@@ -157,8 +155,7 @@ const RegisterForm = () => {
           isValid={isPasswordValid}
           isFocused={passwordFocus}
           onFocus={() => setPasswordFocus(true)}
-          onChange={(e) => setPassword(e.target.value)}
-        />  
+          onChange={(e) => setPassword(e.target.value)} />
         <InputForm
           label='Confirm password'
           name='confirm'
@@ -169,18 +166,16 @@ const RegisterForm = () => {
           isValid={isConfirmValid}
           isFocused={confirmFocus}
           onFocus={() => setConfirmFocus(true)}
-          onChange={(e) => setConfirm(e.target.value)}
-        />  
-        <button type='submit' disabled=
-          {!isLoginValid || !isEmailValid || !isNameValid || !isSurnameValid || !isPasswordValid || !isConfirmValid || disableButton }>
-            Submit
+          onChange={(e) => setConfirm(e.target.value)} />
+        <button type='submit' disabled={!isLoginValid || !isEmailValid || !isNameValid || !isSurnameValid || !isPasswordValid || !isConfirmValid || disableButton}>
+          Submit
         </button>
         <p className='account-info'>
-            Already registered?<br/>
-            <Link to='/login'>Sign In</Link>
+          Already registered?<br />
+          <Link to='/login'>Sign In</Link>
         </p>
       </form>
-    </div>
+    </div></>
   )
 }
 

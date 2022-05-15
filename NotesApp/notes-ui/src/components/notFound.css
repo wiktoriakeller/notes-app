@@ -1,0 +1,15 @@
+.not-found {
+    font-family: 'Nunito', sans-serif;
+}
+
+.back {
+    text-align: center;
+}
+
+.error-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100vh;
+}

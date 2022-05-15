@@ -4,6 +4,7 @@ import { signIn } from '../notes-api';
 import { Link } from 'react-router-dom';
 import './registerForm.css';
 import InputForm from './inputForm';
+import Navbar from './navbar.js';
 
 const LoginForm = () => {
     const [login, setLogin] = useState('');
@@ -55,44 +56,43 @@ const LoginForm = () => {
     };
 
     return (
-    <div className='register-form'>
-        <form className='inner-form' onSubmit={handleSubmit}>
-            {errorMsg.map((msg) => {
-                return <p className={success ? 'hide' : 'error'}>{msg}</p>
-            })}
-            <h1>Login</h1>
-            <InputForm
-                label='Login'
-                name='login'
-                type='text'
-                value={login}
-                errorMessage={loginErrorMsg}
-                isValid={isLoginValid}
-                isFocused={loginFocus}
-                onChange={(e) => setLogin(e.target.value)}
-                onFocus={() => setLoginFocus(true)}
-            />  
-            <InputForm
-                label='Password'
-                name='password'
-                type='password'
-                value={password}
-                autoComplete='off'
-                errorMessage={passwordErrorMsg}
-                isValid={isPasswordValid}
-                isFocused={passwordFocus}
-                onFocus={() => setPasswordFocus(true)}
-                onChange={(e) => setPassword(e.target.value)}
-            />  
-            <button type='submit' disabled= {!isLoginValid || !isPasswordValid || disableButton }>
-                Login
-            </button>
-            <p className='account-info'>
-                Forgot your password?<br/>
-                <Link to='/forgot-password'>Go here!</Link>
-            </p>
-        </form>
-    </div>
+        <><Navbar />
+        <div className='register-form'>
+            <form className='inner-form' onSubmit={handleSubmit}>
+                {errorMsg.map((msg) => {
+                    return <p className={success ? 'hide' : 'error'}>{msg}</p>;
+                })}
+                <h1>Login</h1>
+                <InputForm
+                    label='Login'
+                    name='login'
+                    type='text'
+                    value={login}
+                    errorMessage={loginErrorMsg}
+                    isValid={isLoginValid}
+                    isFocused={loginFocus}
+                    onChange={(e) => setLogin(e.target.value)}
+                    onFocus={() => setLoginFocus(true)} />
+                <InputForm
+                    label='Password'
+                    name='password'
+                    type='password'
+                    value={password}
+                    autoComplete='off'
+                    errorMessage={passwordErrorMsg}
+                    isValid={isPasswordValid}
+                    isFocused={passwordFocus}
+                    onFocus={() => setPasswordFocus(true)}
+                    onChange={(e) => setPassword(e.target.value)} />
+                <button type='submit' disabled={!isLoginValid || !isPasswordValid || disableButton}>
+                    Login
+                </button>
+                <p className='account-info'>
+                    Forgot your password?<br />
+                    <Link to='/forgot-password'>Go here!</Link>
+                </p>
+            </form>
+        </div></>
     )
 }
 
