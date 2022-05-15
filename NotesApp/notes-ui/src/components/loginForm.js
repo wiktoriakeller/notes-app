@@ -13,7 +13,7 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [isPasswordValid, setIsPasswordValid] = useState(false);
     const [passwordFocus, setPasswordFocus] = useState(false);
-    const passwordErrorMsg = 'Password cannot be empty';
+    const passwordErrorMsg = 'Password cannot be empty.';
   
     const [errorMsg, setErrorMsg] = useState([])
     const [success, setSuccess] = useState(true)
@@ -54,8 +54,8 @@ const LoginForm = () => {
     };
 
     return (
-    <div className='login-register-form'>
-        <form onSubmit={handleSubmit}>
+    <div className='register-form'>
+        <form className='inner-form' onSubmit={handleSubmit}>
             {errorMsg.map((msg) => {
                 return <p class={success ? 'hide' : 'error'}>{msg}</p>
             })}

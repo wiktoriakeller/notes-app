@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
 
-.login-register-form {
+.register-form {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,7 +8,7 @@
     min-height: 100vh;
 }
 
-form {
+.inner-form {
     background-color: white;
     padding: 0 60px;
     border-radius: 10px;
@@ -45,18 +45,12 @@ button:hover {
 
 button:disabled {
     background-color: rgb(149, 149, 149);
-}
-
-@media screen and (max-width: 900px) {
-    form {
-        padding: 0 5%;
-        margin: 5% 15%;
-    }
+    cursor: default;
 }
 
 @media screen and (max-width: 700px) {
-    form {
-        padding: 0 3%;
+    .inner-form {
+        padding: 0 8%;
         margin: 5% 5%;
     }
 }

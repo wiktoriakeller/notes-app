@@ -96,8 +96,8 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className='login-register-form'>
-      <form onSubmit={handleSubmit}>
+    <div className='register-form'>
+      <form className='inner-form' onSubmit={handleSubmit}>
         {errorMsg.map((msg) => {
           return <p class={success ? 'hide' : 'error'}>{msg}</p>
         })}
