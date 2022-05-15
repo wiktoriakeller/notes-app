@@ -1,0 +1,52 @@
+@import url('base.css');
+
+.navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    min-height: 3.2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 10px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    color: var(--navbar-text, white);
+    margin-bottom: 0;
+}
+
+.navbar-button > a:visited {
+    color: white;
+}
+
+.navbar-button {
+    background-color: var(--button, green);
+    color: var(--navbar-text, white);
+    border: none;
+    border-radius: 5px;
+    width: auto;
+    font-size: 1.12rem;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.navbar-button:hover {
+    background-color: var(--faded-button, green);
+}
+
+#sign-in-button {
+    margin-left: auto;
+}
+
+#sign-up-button {
+    margin-right: 10px;
+}
+
+.title {
+    color: black;
+    font-size: 1.8rem;
+    font-weight: bolder;
+    margin: 0 0 0 10px;
+    font-family: 'Courgette', cursive;
+}

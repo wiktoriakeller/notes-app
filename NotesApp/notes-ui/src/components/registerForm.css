@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+@import url('base.css');
 
 .register-form {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    min-height: 100vh;
+    min-height: 90vh;
 }
 
 .inner-form {
@@ -31,7 +31,7 @@ button {
     padding: 10px;
     margin-top: 15px;
     border: none;
-    background-color: rgb(37, 179, 37);
+    background-color: var(--button, green);
     border-radius: 8px;
     font-size: 1.2rem;
     font-weight: bolder;
@@ -40,11 +40,11 @@ button {
 }
 
 button:hover {
-    background-color: rgb(101, 185, 101);
+    background-color: var(--faded-button, green);
 }
 
 button:disabled {
-    background-color: rgb(149, 149, 149);
+    background-color: var(--button-disabled, grey);
     cursor: default;
 }
 
@@ -78,7 +78,7 @@ a {
     padding: 7px 0px;
     margin-top: 4px;
     margin-bottom: 4px;
-    background-color: rgba(239, 20, 20, 0.702);
+    background-color: var(--error-block, red);
     width: 100%;
     border-radius: 5px;
     font-size: 1rem;

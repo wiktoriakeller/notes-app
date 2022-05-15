@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+
+:root {
+    --navbar-color: white;
+    --navbar-text: white;
+    --button: rgb(37, 179, 37);
+    --faded-button: rgb(101, 185, 101);
+    --button-disabled: rgb(149, 149, 149);
+    --error-block: rgba(239, 20, 20, 0.702);
+}
