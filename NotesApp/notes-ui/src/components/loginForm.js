@@ -58,7 +58,7 @@ const LoginForm = () => {
     <div className='register-form'>
         <form className='inner-form' onSubmit={handleSubmit}>
             {errorMsg.map((msg) => {
-                return <p class={success ? 'hide' : 'error'}>{msg}</p>
+                return <p className={success ? 'hide' : 'error'}>{msg}</p>
             })}
             <h1>Login</h1>
             <InputForm
@@ -88,8 +88,8 @@ const LoginForm = () => {
                 Login
             </button>
             <p className='account-info'>
-                Need an account?<br/>
-                <Link to='/register'>Sign Up</Link>
+                Forgot your password?<br/>
+                <Link to='/forgot-password'>Go here!</Link>
             </p>
         </form>
     </div>

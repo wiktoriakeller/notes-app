@@ -1,17 +1,11 @@
 const baseUri = 'https://localhost:7164';
 const registerPath = '/notes-api/accounts/register';
 const loginPath = '/notes-api/accounts/login';
+const forgotPasswordPath = '/notes-api/accounts/forgot-password';
 
 async function register(data) {
     try {
-        const response = await fetch(baseUri + registerPath, 
-        {
-            method: 'POST',
-            headers: {
-                'Content-type' : 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        let response = await fetchData(registerPath, data);
     
         if(response.ok === true) {
             return {success: true, errors: {}};
@@ -28,14 +22,7 @@ async function register(data) {
 
 async function login(data) {
     try {
-        const response = await fetch(baseUri + loginPath, 
-        {
-            method: 'POST',
-            headers: {
-                'Content-type' : 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        let response = await fetchData(loginPath, data);
     
         if(response.ok === true) {
             return {success: true, errors: {}};
@@ -49,4 +36,34 @@ async function login(data) {
     }
 }
 
-export { register, login as signIn };
+async function forgotPassword(data) {
+    try {
+        let response = await fetchData(forgotPasswordPath, data);
+    
+        if(response.ok === true) {
+            return {success: true, errors: {}};
+        }
+        else {
+            let errors = JSON.parse(await response.text()).errors;
+            return {success: false, errors: errors};
+        }
+    }
+    catch(e) {
+        return {success: false, errors: {'serverError': 'Server is down'}};
+    }
+}
+
+async function fetchData(path, data) {
+    const response = await fetch(baseUri + path, 
+    {
+        method: 'POST',
+        headers: {
+            'Content-type' : 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    return response;
+}
+
+export { register, login as signIn, forgotPassword };
