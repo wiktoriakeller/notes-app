@@ -6,8 +6,8 @@ const Navbar = () => {
   return (
     <nav className='navbar'>
         <span className='title'><Link to='/'>NotesHub</Link></span>
-        <button className='navbar-button' id='sign-in-button'><Link to='/login'>Sign In</Link></button>
-        <button className='navbar-button' id='sign-up-button'><Link to='/register'>Sign Up</Link></button>
+        <Link to='/login' id='sign-in-button'><button className='navbar-button'>Sign In</button></Link>
+        <Link to='/register' id='sign-up-button'><button className='navbar-button'>Sign Up</button></Link>
     </nav>
   )
 }
