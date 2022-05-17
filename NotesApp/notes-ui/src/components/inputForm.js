@@ -24,7 +24,7 @@ const InputForm = (props) => {
           required
           className={getClassName()}
         />
-        <span className={!isValid && isFocused ? 'error-msg' : 'hide'}>{errorMessage}</span>
+        <span className={!isValid && isFocused ? 'error-msg' : 'hide-error-msg'}>{errorMessage}</span>
     </div>
   )
 }

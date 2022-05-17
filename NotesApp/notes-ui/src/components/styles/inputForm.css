@@ -5,7 +5,7 @@ input {
     border-radius: 8px;
     background-color: transparent;
     border: 1px solid gray;
-    min-width: 22rem;
+    min-width: 19rem;
 }
 
 input:focus {
@@ -32,7 +32,7 @@ label {
     padding: 0px;
 }
 
-.hide {
+.hide-error-msg {
     color: white;
     height: 0;
 }

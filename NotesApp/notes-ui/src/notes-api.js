@@ -6,6 +6,8 @@ const loginPath = '/notes-api/accounts/login';
 const forgotPasswordPath = '/notes-api/accounts/forgot-password';
 const resetPasswordPath = '/notes-api/accounts/reset-password';
 
+const getAllNotesPath = '/notes-api/notes/';
+
 const StatusCodes = {
     Status400: 400,
     Status401: 401,
@@ -15,28 +17,33 @@ const StatusCodes = {
 };
 
 async function register(data, navigate) {
-    return await fetchData(registerPath, data, navigate);
+    return await fetchData(registerPath, data, 'POST', navigate);
 }
 
 async function login(data, navigate) {
-    return await fetchData(loginPath, data, navigate);
+    return await fetchData(loginPath, data, 'POST', navigate);
 }
 
 async function forgotPassword(data, navigate) {
-    return await fetchData(forgotPasswordPath, data, navigate);
+    return await fetchData(forgotPasswordPath, data, 'POST', navigate);
 }
 
 async function resetPassword(data, token, navigate) {
-    return await fetchData(resetPasswordPath + '/' + token, data, navigate);
+    return await fetchData(resetPasswordPath + '/' + token, data, 'POST', navigate);
 }
 
-async function fetchData(path, data, navigate) {
+async function getAllNotes(data, jwtToken, navigate) {
+    return await fetchData(getAllNotes, data, 'GET', navigate, jwtToken);
+}
+
+async function fetchData(path, data, method, navigate, jwtToken = '') {
     try {
         const response = await fetch(baseUri + path, 
         {
-            method: 'POST',
+            method: method,
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': 'Bearer ' + jwtToken
             },
             body: JSON.stringify(data)
         });
@@ -67,7 +74,6 @@ async function fetchData(path, data, navigate) {
     }
     catch(e) {
         return {success: false, errors: {'serverError': 'Server is down'}};
-        //navigate("/login", { state: { msg:'Server is down', isError: true } });
     }
 }
 
