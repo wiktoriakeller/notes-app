@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using NotesApp.Services.Authorization;
 using System.Security.Cryptography;
 using NotesApp.Services.Exceptions;
+using NotesApp.Services.Email;
 
 namespace NotesApp.Services.Services
 {
@@ -20,6 +21,7 @@ namespace NotesApp.Services.Services
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
+        private readonly EmailSettings _emailSettings;  
         private readonly AuthenticationSettings _authenticationSettings;
 
         public UserService(
@@ -27,12 +29,14 @@ namespace NotesApp.Services.Services
             IPasswordHasher<User> passwordHasher, 
             IMapper mapper,
             IEmailService emailService,
+            EmailSettings emailSettings,
             AuthenticationSettings authenticationSettings)
         {
             _userRepository = usersRepository;
             _passwordHasher = passwordHasher;
             _mapper = mapper;
             _emailService = emailService;
+            _emailSettings = emailSettings;
             _authenticationSettings = authenticationSettings;
         }
 
@@ -94,17 +98,24 @@ namespace NotesApp.Services.Services
             var token = GenerateResetToken();
             var tokenHash = ComputeHash(token);
 
+            try
+            {
+                await _emailService.SendEmailAsync(new EmailMessage()
+                {
+                    To = dto.Email,
+                    Subject = "Notes reset password",
+                    Content = $"Click here to reset you password: {_emailSettings.ResetPasswordRoute}{token}\nThis link is only valid till: {user.ResetTokenExpires.Value}"
+                });
+            }
+            catch(Exception e)
+            {
+                throw new InternalServerErrorException("An email couldn't be send");
+            }
+
             user.ResetToken = tokenHash;
             user.ResetTokenExpires = DateTimeOffset.Now.AddHours(2);
 
             await _userRepository.UpdateAsync(user);
-
-            var passwordResetLink = "https://localhost:7164/notes-api/accounts/reset-password/";
-            await _emailService.SendEmailAsync(new EmailMessage() { 
-                To = dto.Email, 
-                Subject = "Notes reset password", 
-                Content = $"Click here to reset you password: {passwordResetLink}{token}\nThis link is only valid till: {user.ResetTokenExpires.Value}"
-            });
         }
 
         public async Task ResetPassword(ResetPasswordDto dto, string token)

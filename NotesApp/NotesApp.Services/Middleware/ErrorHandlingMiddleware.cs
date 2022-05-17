@@ -36,7 +36,11 @@ namespace NotesApp.Services.Middleware
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
             }
-            catch(Exception e)
+            catch(InternalServerErrorException e)
+            {
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            }
+            catch (Exception)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             }
