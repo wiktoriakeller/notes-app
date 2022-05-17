@@ -4,9 +4,7 @@ import Navbar from '../navbar.js';
 const MainLayout = ({children}) => {
   return (
     <>
-    <div>
-        <Navbar/>
-    </div>
+    <Navbar/>
     <main>{children}</main>
     </>
   )

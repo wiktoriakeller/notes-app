@@ -82,9 +82,9 @@ const RegisterForm = () => {
       'confirmPassword': confirm
     };
 
-    let response = await register(data);
+    let response = await register(data, navigate);
     if(response.success === true) {
-      navigate("/login", { state: { msg:'Account registered!' } });      
+      navigate("/login", { state: { msg:'Account registered!', isError: false } });      
     }
     else {
       setSuccess(false);

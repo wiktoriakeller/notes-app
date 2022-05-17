@@ -10,7 +10,7 @@
 
 .inner-form {
     background-color: white;
-    padding: 0 60px;
+    padding: 5px 70px;
     border-radius: 10px;
     margin: 5% 18%;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -73,7 +73,7 @@ a {
 .hide {
     color: white;
     height: 0;
-    font-size: 0.8rem;
+    font-size: 0;
 }
 
 .error {
@@ -99,6 +99,18 @@ a {
     margin-top: 15px;
     margin-bottom: 4px;
     background-color: var(--success-block, green);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.error-info {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 15px;
+    margin-bottom: 4px;
+    background-color: var(--error-block, red);
     width: 100%;
     border-radius: 5px;
     font-size: 1rem;

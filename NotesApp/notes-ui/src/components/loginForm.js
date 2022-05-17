@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { signIn } from '../notes-api';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 
@@ -21,14 +21,18 @@ const LoginForm = (props) => {
     const [disableButton, setDisableButton] = useState(false);  
 
     const [showMessage, setShowMessage] = useState(false);
+    const [isMsgError, setIsMsgError] = useState(false);
     const [message, setMessage] = useState('');
     const {state} = useLocation();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (state !== undefined && state !== null) {
             setShowMessage(true);     
-            const {msg} = state;
+            const {msg, isError} = state;
             setMessage(msg);
+            setIsMsgError(isError);
         }
     }, []);
 
@@ -36,6 +40,7 @@ const LoginForm = (props) => {
         setIsLoginValid(login !== '');
         if (login != '') {
             setShowMessage(false);
+            setMessage('');
         }
     }, [login]);
 
@@ -43,6 +48,7 @@ const LoginForm = (props) => {
         setIsPasswordValid(password != '');
         if(password != '') {
             setShowMessage(false);
+            setMessage('');
         }
     }, [password]);
 
@@ -56,7 +62,7 @@ const LoginForm = (props) => {
           'password': password
         };
     
-        let response = await signIn(data);
+        let response = await signIn(data, navigate);
         if(response.success === true) {
           setSuccess(true);
         }
@@ -78,7 +84,8 @@ const LoginForm = (props) => {
                 {errorMsg.map((msg) => {
                     return <p className={success ? 'hide' : 'error'}>{msg}</p>;
                 })}
-                <p className={showMessage ? 'message-info' : 'hide' }>{message}</p>
+                <p className={showMessage && !isMsgError ? 'message-info' : 'hide' }>{message}</p>
+                <p className={showMessage && isMsgError ? 'error-info' : 'hide' }>{message}</p>
                 <h1>Login</h1>
                 <InputForm
                     label='Login'

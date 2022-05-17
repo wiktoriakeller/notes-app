@@ -34,9 +34,9 @@ const ForgotPassword = () => {
         'email': email
       };
   
-      let response = await forgotPassword(data);
+      let response = await forgotPassword(data, navigate);
       if(response.success === true) {
-        navigate("/login", { state: { msg: 'An email has been sent!' } });
+        navigate("/login", { state: { msg: 'An email has been sent!', isError: false } });
       }
       else {
         setShowError(true);
