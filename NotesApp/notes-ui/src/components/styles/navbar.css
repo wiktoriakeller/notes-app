@@ -16,11 +16,15 @@
     margin-bottom: 0;
 }
 
-.navbar > a:visited {
-    color: white;
+.title {
+    color: black;
+    font-size: 1.8rem;
+    font-weight: bolder;
+    margin: 0 0 0 40px;
+    font-family: 'Courgette', cursive;
 }
 
-.title > a:visited {
+.title > a {
     color: black;
 }
 
@@ -30,7 +34,7 @@
     border: none;
     border-radius: 5px;
     width: auto;
-    font-size: 1.12rem;
+    font-size: 1.1rem;
     margin-top: 4px;
     margin-bottom: 4px;
 }
@@ -45,12 +49,4 @@
 
 #sign-up-button {
     margin-right: 10px;
-}
-
-.title {
-    color: black;
-    font-size: 1.8rem;
-    font-weight: bolder;
-    margin: 0 0 0 50px;
-    font-family: 'Courgette', cursive;
 }
