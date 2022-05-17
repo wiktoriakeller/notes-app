@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './notFound.css';
+import './styles/notFound.css';
 
 const NotFound = () => (
   <div className='error-page'>

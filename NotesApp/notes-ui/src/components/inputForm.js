@@ -1,5 +1,5 @@
 import React from 'react';
-import './inputForm.css';
+import './styles/inputForm.css';
 
 const InputForm = (props) => {
   const {label, name, onChange, errorMessage, isValid, isFocused, onFocus, ...inputProps} = props;

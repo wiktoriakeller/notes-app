@@ -2,10 +2,9 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { forgotPassword } from '../notes-api';
 import { Link } from 'react-router-dom';
-import Navbar from './navbar.js';
-import './registerForm.css';
-import './forgotPassword.css';
 import InputForm from './inputForm';
+import './styles/registerForm.css';
+import './styles/forgotPassword.css';
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -49,7 +48,6 @@ const ForgotPassword = () => {
   };
 
   return (
-    <><Navbar />
     <div className='register-form'>
       <form className='inner-form' id='forgot-password-form' onSubmit={handleSubmit}>
         {errorMsg.map((msg) => {
@@ -76,7 +74,7 @@ const ForgotPassword = () => {
           <Link to='/login'>Back</Link>
         </p>
       </form>
-    </div></>)
+    </div>)
 }
 
 export default ForgotPassword

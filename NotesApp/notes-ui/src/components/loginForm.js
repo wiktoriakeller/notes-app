@@ -2,9 +2,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { signIn } from '../notes-api';
 import { Link } from 'react-router-dom';
-import './registerForm.css';
 import InputForm from './inputForm';
-import Navbar from './navbar.js';
+import './styles/registerForm.css';
 
 const LoginForm = () => {
     const [login, setLogin] = useState('');
@@ -56,7 +55,6 @@ const LoginForm = () => {
     };
 
     return (
-        <><Navbar />
         <div className='register-form'>
             <form className='inner-form' onSubmit={handleSubmit}>
                 {errorMsg.map((msg) => {
@@ -92,7 +90,7 @@ const LoginForm = () => {
                     <Link to='/forgot-password'>Go here!</Link>
                 </p>
             </form>
-        </div></>
+        </div>
     )
 }
 
