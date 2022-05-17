@@ -4,7 +4,7 @@
     position: sticky;
     top: 0;
     width: 100%;
-    min-height: 3.5rem;
+    min-height: 4rem;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -18,7 +18,7 @@
 
 .title {
     color: black;
-    font-size: 1.8rem;
+    font-size: 2.3rem;
     font-weight: bolder;
     margin: 0 0 0 40px;
     font-family: 'Courgette', cursive;
@@ -34,7 +34,7 @@
     border: none;
     border-radius: 5px;
     width: auto;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     margin-top: 4px;
     margin-bottom: 4px;
 }

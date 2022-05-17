@@ -20,9 +20,9 @@
 h1 {
     text-align: center;
     padding: 0px;
-    margin: 20px 0px;
+    margin: 10px 0px;
     margin-bottom: 8px;
-    font-size: 2.6rem;
+    font-size: 2.75rem;
     font-family: 'Courgette', cursive;
 }
 
@@ -33,10 +33,14 @@ button {
     border: none;
     background-color: var(--button, green);
     border-radius: 8px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: bolder;
     color: white;
     cursor: pointer;
+}
+
+.submit-button {
+    padding: 8px;
 }
 
 button:hover {
@@ -86,4 +90,16 @@ a {
 
 .error:nth-child(1) {
     margin-top: 15px;
+}
+
+.message-info {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 15px;
+    margin-bottom: 4px;
+    background-color: var(--success-block, green);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
 }

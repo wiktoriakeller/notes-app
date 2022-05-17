@@ -1,11 +1,11 @@
 input {
     padding: 10px 0;
     padding-left: 10px;
-    margin: 5px 0px 3px 0px;
+    margin: 8px 0px 3px 0px;
     border-radius: 8px;
     background-color: transparent;
     border: 1px solid gray;
-    min-width: 18rem;
+    min-width: 19rem;
 }
 
 input:focus {
@@ -35,10 +35,9 @@ label {
 .hide {
     color: white;
     height: 0;
-    font-size: 0.8rem;
 }
 
 .error-msg {
     color: red;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
 }

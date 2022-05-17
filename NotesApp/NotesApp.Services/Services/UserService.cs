@@ -97,6 +97,7 @@ namespace NotesApp.Services.Services
 
             var token = GenerateResetToken();
             var tokenHash = ComputeHash(token);
+            var expiredDate = DateTimeOffset.Now.AddHours(2);
 
             try
             {
@@ -104,7 +105,7 @@ namespace NotesApp.Services.Services
                 {
                     To = dto.Email,
                     Subject = "Notes reset password",
-                    Content = $"Click here to reset you password: {_emailSettings.ResetPasswordRoute}{token}\nThis link is only valid till: {user.ResetTokenExpires.Value}"
+                    Content = $"Click here to reset you password: {_emailSettings.ResetPasswordRoute}{token}\nThis link is only valid till: {expiredDate}"
                 });
             }
             catch(Exception e)
@@ -113,7 +114,7 @@ namespace NotesApp.Services.Services
             }
 
             user.ResetToken = tokenHash;
-            user.ResetTokenExpires = DateTimeOffset.Now.AddHours(2);
+            user.ResetTokenExpires = expiredDate;
 
             await _userRepository.UpdateAsync(user);
         }

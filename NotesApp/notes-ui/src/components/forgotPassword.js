@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { forgotPassword } from '../notes-api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 import './styles/forgotPassword.css';
@@ -14,9 +14,11 @@ const ForgotPassword = () => {
   const [emailFocus, setEmailFocus] = useState(false);
   const emailErrorMsg = 'Email should be valid.';
 
-  const [errorMsg, setErrorMsg] = useState([])
-  const [sendEmail, setSendEmail] = useState(false)
+  const [errorMsg, setErrorMsg] = useState([]);
+  const [showError, setShowError] = useState(false)
   const [disableButton, setDisableButton] = useState(false);  
+
+  const navigate = useNavigate();
 
   useEffect(() => {
       setIsEmailValid(emailRegex.test(email));
@@ -25,6 +27,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
       e.preventDefault();
       setErrorMsg([]);
+      setShowError(false);
       setDisableButton(true);
 
       let data = {
@@ -33,10 +36,10 @@ const ForgotPassword = () => {
   
       let response = await forgotPassword(data);
       if(response.success === true) {
-        setSendEmail(true);
+        navigate("/login", { state: { msg: 'An email has been sent!' } });
       }
       else {
-        setSendEmail(false);
+        setShowError(true);
         let errorMessages = [];
         for(const [_, value] of Object.entries(response.errors)) {
           errorMessages.push(value);
@@ -50,26 +53,23 @@ const ForgotPassword = () => {
   return (
     <div className='register-form'>
       <form className='inner-form' id='forgot-password-form' onSubmit={handleSubmit}>
+        <>
         {errorMsg.map((msg) => {
-          return <p className={sendEmail ? 'hide' : 'error'}>{msg}</p>;
+          return <p className={showError ? 'error' : 'hide'}>{msg}</p>;
         })}
-        {!sendEmail ?
-          <><div className='info-title'>Trouble with logging in?</div><br /><div className='info'>Enter your email address and we'll send you a link to get back into your account.</div>
-            <InputForm
-              label='Email'
-              name='email'
-              type='email'
-              value={email}
-              errorMessage={emailErrorMsg}
-              isValid={isEmailValid}
-              isFocused={emailFocus}
-              onChange={(e) => setEmail(e.target.value)}
-              onFocus={() => setEmailFocus(true)} />
-            <button type='submit' disabled={!isEmailValid || disableButton}>
-              Send Link
-            </button></>
-          :
-          <p className='success-msg'>An email has been successfully send!</p>}
+        <div className='info-title'>Trouble with logging in?</div><br /><div className='info'>Enter your email address and we'll send you a link to get back into your account.</div>
+          <InputForm
+            label='Email'
+            name='email'
+            type='email'
+            value={email}
+            errorMessage={emailErrorMsg}
+            isValid={isEmailValid}
+            isFocused={emailFocus}
+            onChange={(e) => setEmail(e.target.value)}
+            onFocus={() => setEmailFocus(true)} />
+          <button type='submit' disabled={!isEmailValid || disableButton}>Send Link</button>
+        </>
         <p className='account-info'>
           <Link to='/login'>Back</Link>
         </p>

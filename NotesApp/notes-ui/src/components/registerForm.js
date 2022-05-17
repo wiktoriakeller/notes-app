@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InputForm from './inputForm.js';
 import {register} from '../notes-api.js';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './styles/registerForm.css';
 
 const loginRegex = /^[A-Za-z][A-Za-z0-9-_]{2,19}$/;
@@ -14,7 +14,7 @@ const RegisterForm = () => {
   const [login, setLogin] = useState('');
   const [isLoginValid, setIsLoginValid] = useState(false);
   const [loginFocus, setLoginFocus] = useState(false);
-  const loginErrorMsg = 'Login should be 3-20 characters long and must begin with a letter.';
+  const loginErrorMsg = 'Login should be 3-20 characters long and must begin with a letter. Lowercase and uppercase letters, numbers and underscores are allowed.';
 
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
@@ -44,6 +44,8 @@ const RegisterForm = () => {
   const [errorMsg, setErrorMsg] = useState([])
   const [success, setSuccess] = useState(true)
   const [disableButton, setDisableButton] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoginValid(loginRegex.test(login));
@@ -82,7 +84,7 @@ const RegisterForm = () => {
 
     let response = await register(data);
     if(response.success === true) {
-      setSuccess(true);
+      navigate("/login", { state: { msg:'Account registered!' } });      
     }
     else {
       setSuccess(false);

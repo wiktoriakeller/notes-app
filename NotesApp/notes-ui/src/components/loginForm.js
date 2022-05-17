@@ -1,11 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { signIn } from '../notes-api';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 
-const LoginForm = () => {
+const LoginForm = (props) => {
     const [login, setLogin] = useState('');
     const [isLoginValid, setIsLoginValid] = useState(false);
     const [loginFocus, setLoginFocus] = useState(false);
@@ -20,12 +20,30 @@ const LoginForm = () => {
     const [success, setSuccess] = useState(true)
     const [disableButton, setDisableButton] = useState(false);  
 
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState('');
+    const {state} = useLocation();
+
+    useEffect(() => {
+        if (state !== undefined && state !== null) {
+            setShowMessage(true);     
+            const {msg} = state;
+            setMessage(msg);
+        }
+    }, []);
+
     useEffect(() => {
         setIsLoginValid(login !== '');
+        if (login != '') {
+            setShowMessage(false);
+        }
     }, [login]);
 
     useEffect(() => {
         setIsPasswordValid(password != '');
+        if(password != '') {
+            setShowMessage(false);
+        }
     }, [password]);
 
     const handleSubmit = async (e) => {
@@ -60,6 +78,7 @@ const LoginForm = () => {
                 {errorMsg.map((msg) => {
                     return <p className={success ? 'hide' : 'error'}>{msg}</p>;
                 })}
+                <p className={showMessage ? 'message-info' : 'hide' }>{message}</p>
                 <h1>Login</h1>
                 <InputForm
                     label='Login'
@@ -82,7 +101,7 @@ const LoginForm = () => {
                     isFocused={passwordFocus}
                     onFocus={() => setPasswordFocus(true)}
                     onChange={(e) => setPassword(e.target.value)} />
-                <button type='submit' disabled={!isLoginValid || !isPasswordValid || disableButton}>
+                <button className='submit-button' type='submit' disabled={!isLoginValid || !isPasswordValid || disableButton}>
                     Login
                 </button>
                 <p className='account-info'>
