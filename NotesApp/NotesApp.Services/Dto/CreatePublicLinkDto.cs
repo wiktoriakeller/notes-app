@@ -1,6 +1,6 @@
 ﻿namespace NotesApp.Services.Dto
 {
-    public class UpdateNoteHashIdDto
+    public class CreatePublicLinkDto
     {
         public bool ResetHashId { get; set; }
     }
