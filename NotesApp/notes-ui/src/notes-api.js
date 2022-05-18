@@ -79,11 +79,13 @@ async function fetchData(path, data, method, navigate, jwtToken = '') {
                     navigate('/accounts/login', { state: { msg:'You are unauthorized', isError: true } });
                 }
                 else if(response.status === StatusCodes.Status404) {
-                    navigate('/accounts/not-found'); 
+                    navigate('/not-found'); 
                 }
                 else if(response.status === StatusCodes.Status500) {
                     navigate('/login', { state: { msg:'Internal server error', isError: true } });
                 }
+
+                return {success: false, errors: {}};
             }
         }
     }
