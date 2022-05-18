@@ -1,9 +1,10 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { signIn } from '../notes-api';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
+import UserContext from './userContext';
 
 const LoginForm = (props) => {
     const [login, setLogin] = useState('');
@@ -26,6 +27,7 @@ const LoginForm = (props) => {
     const {state} = useLocation();
 
     const navigate = useNavigate();
+    const {jwtToken, setJwtToken} = useContext(UserContext);
 
     useEffect(() => {
         if (state !== undefined && state !== null) {
@@ -65,6 +67,8 @@ const LoginForm = (props) => {
         let response = await signIn(data, navigate);
         if(response.success === true) {
           setSuccess(true);
+          setJwtToken(response.jwt);
+          navigate('/notes');
         }
         else {
           setSuccess(false);

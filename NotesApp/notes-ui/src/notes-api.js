@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-
 const baseUri = 'https://localhost:7164';
 const registerPath = '/notes-api/accounts/register';
 const loginPath = '/notes-api/accounts/login';
@@ -21,7 +19,13 @@ async function register(data, navigate) {
 }
 
 async function login(data, navigate) {
-    return await fetchData(loginPath, data, 'POST', navigate);
+    let result = await fetchData(loginPath, data, 'POST', navigate);
+    if(result.success === true) {
+        let jwt = await result.response.text();
+        result.jwt = jwt;
+    }
+
+    return result;
 }
 
 async function forgotPassword(data, navigate) {
@@ -32,24 +36,35 @@ async function resetPassword(data, token, navigate) {
     return await fetchData(resetPasswordPath + '/' + token, data, 'POST', navigate);
 }
 
-async function getAllNotes(data, jwtToken, navigate) {
-    return await fetchData(getAllNotes, data, 'GET', navigate, jwtToken);
+async function getAllNotes(jwtToken, navigate) {
+    let result = await fetchData(getAllNotesPath, {}, 'GET', navigate, jwtToken);
+    
+    if(result.success === true) {
+        let data = await result.response.json();
+        result.data = data;
+    }
+
+    return result;
 }
 
 async function fetchData(path, data, method, navigate, jwtToken = '') {
     try {
-        const response = await fetch(baseUri + path, 
-        {
+        const fetchData = {
             method: method,
             headers: {
                 'Content-type' : 'application/json',
-                'Authorization': 'Bearer ' + jwtToken
-            },
-            body: JSON.stringify(data)
-        });
+                'Authorization': `Bearer ${jwtToken}`
+            }
+        };
+
+        if(method === 'POST') {
+            fetchData.body = JSON.stringify(data);            
+        }
+
+        const response = await fetch(baseUri + path, fetchData);
 
         if(response.ok === true) {
-            return {success: true, errors: {}};
+            return {success: true, errors: {}, response: response};
         }
         else {
             try {
@@ -77,4 +92,4 @@ async function fetchData(path, data, method, navigate, jwtToken = '') {
     }
 }
 
-export { register, login as signIn, forgotPassword, resetPassword };
+export { register, login as signIn, forgotPassword, resetPassword, getAllNotes };
