@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import UserContext from './userContext.js';
-import { getAllNotes } from '../notes-api.js';
+import { getAllNotes } from '../notesApi.js';
 import { useNavigate } from 'react-router-dom';
 
 const UserNotes = () => {

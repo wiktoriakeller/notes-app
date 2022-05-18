@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import InputForm from './inputForm.js';
-import {register} from '../notes-api.js';
+import {register} from '../notesApi';
 import { Link, useNavigate } from 'react-router-dom';
 import './styles/registerForm.css';
 

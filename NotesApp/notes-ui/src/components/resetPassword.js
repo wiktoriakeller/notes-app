@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 import './styles/forgotPassword.css';
-import { resetPassword } from '../notes-api';
+import { resetPassword } from '../notesApi';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{6,20}$/;
 

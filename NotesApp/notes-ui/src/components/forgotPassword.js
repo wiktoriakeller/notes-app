@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { forgotPassword } from '../notes-api';
+import { forgotPassword } from '../notesApi';
 import { Link, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
