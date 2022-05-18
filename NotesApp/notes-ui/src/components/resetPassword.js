@@ -45,7 +45,7 @@ const ResetPassword = () => {
     
         let response = await resetPassword(data, token, navigate);
         if(response.success === true) {
-            navigate("/login", { state: { msg: 'Password has been reset!', isError: false } });
+            navigate("/accounts/login", { state: { msg: 'Password has been reset!', isError: false } });
         }
         else {
             setShowError(true);
@@ -92,7 +92,7 @@ const ResetPassword = () => {
             <button type='submit' disabled={!isPasswordValid || !isConfirmValid || disableButton}>Reset password</button>
             </>
             <p className='account-info'>
-            <Link to='/login'>Back</Link>
+            <Link to='/accounts/login'>Back</Link>
             </p>
         </form>
         </div>

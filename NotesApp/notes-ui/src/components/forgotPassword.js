@@ -36,7 +36,7 @@ const ForgotPassword = () => {
   
       let response = await forgotPassword(data, navigate);
       if(response.success === true) {
-        navigate("/login", { state: { msg: 'An email has been sent!', isError: false } });
+        navigate("/accounts/login", { state: { msg: 'An email has been sent!', isError: false } });
       }
       else {
         setShowError(true);
@@ -71,7 +71,7 @@ const ForgotPassword = () => {
           <button type='submit' disabled={!isEmailValid || disableButton}>Send Link</button>
         </>
         <p className='account-info'>
-          <Link to='/login'>Back</Link>
+          <Link to='/accounts/login'>Back</Link>
         </p>
       </form>
     </div>)

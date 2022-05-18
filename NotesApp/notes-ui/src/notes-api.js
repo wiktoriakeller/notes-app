@@ -73,16 +73,16 @@ async function fetchData(path, data, method, navigate, jwtToken = '') {
             }
             catch(e) {
                 if(response.status === StatusCodes.Status400) {
-                    navigate("/login", { state: { msg:'Invalid request', isError: true } });
+                    navigate('/accounts/login', { state: { msg:'Invalid request', isError: true } });
                 }
                 else if(response.status === StatusCodes.Status401 || response.status == StatusCodes.Status403){
-                    navigate("/login", { state: { msg:'You are unauthorized', isError: true } });
+                    navigate('/accounts/login', { state: { msg:'You are unauthorized', isError: true } });
                 }
                 else if(response.status === StatusCodes.Status404) {
-                    navigate("/not-found"); 
+                    navigate('/accounts/not-found'); 
                 }
                 else if(response.status === StatusCodes.Status500) {
-                    navigate("/login", { state: { msg:'Internal server error', isError: true } });
+                    navigate('/login', { state: { msg:'Internal server error', isError: true } });
                 }
             }
         }

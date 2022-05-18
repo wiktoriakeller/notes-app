@@ -84,7 +84,7 @@ const RegisterForm = () => {
 
     let response = await register(data, navigate);
     if(response.success === true) {
-      navigate("/login", { state: { msg:'Account registered!', isError: false } });      
+      navigate("/accounts/login", { state: { msg:'Account registered!', isError: false } });      
     }
     else {
       setSuccess(false);
@@ -172,7 +172,7 @@ const RegisterForm = () => {
         </button>
         <p className='account-info'>
           Already registered?<br />
-          <Link to='/login'>Sign In</Link>
+          <Link to='/accounts/login'>Sign In</Link>
         </p>
       </form>
     </div>

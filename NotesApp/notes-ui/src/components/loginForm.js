@@ -117,7 +117,7 @@ const LoginForm = (props) => {
                 </button>
                 <p className='account-info'>
                     Forgot your password?<br />
-                    <Link to='/forgot-password'>Go here!</Link>
+                    <Link to='/accounts/forgot-password'>Go here!</Link>
                 </p>
             </form>
         </div>
