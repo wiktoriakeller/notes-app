@@ -1,12 +1,11 @@
 import React from 'react';
-import { useState, useEffect, useContext } from 'react';
-import { signIn } from '../notesApi';
+import { useState, useEffect } from 'react';
+import useNotesApi from '../services/useNotesApi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
-import UserContext from './userContext';
 
-const LoginForm = (props) => {
+const LoginForm = () => {
     const [login, setLogin] = useState('');
     const [isLoginValid, setIsLoginValid] = useState(false);
     const [loginFocus, setLoginFocus] = useState(false);
@@ -27,7 +26,7 @@ const LoginForm = (props) => {
     const {state} = useLocation();
 
     const navigate = useNavigate();
-    const {jwtToken, setJwtToken} = useContext(UserContext);
+    const notesApi = useNotesApi();
 
     useEffect(() => {
         if (state !== undefined && state !== null) {
@@ -64,18 +63,17 @@ const LoginForm = (props) => {
           'password': password
         };
     
-        let response = await signIn(data, navigate);
+        let response = await notesApi.login(data);
+
         if(response.success === true) {
-          setSuccess(true);
-          setJwtToken(response.jwt);
           navigate('/notes');
         }
         else {
-          setSuccess(false);
           let errorMessages = [];
           for(const [_, value] of Object.entries(response.errors)) {
             errorMessages.push(value);
           }
+          setSuccess(false);
           setErrorMsg(errorMessages);
         }
 

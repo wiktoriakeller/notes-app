@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react'
-import UserContext from './userContext.js';
-import { getAllNotes } from '../notesApi.js';
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import useNotesApi from '../services/useNotesApi';
 
 const UserNotes = () => {
     const [userNotes, setUserNotes] = useState([]);
     const [emptyNotesMsg, setEmptyNotesMsg] = useState('');
-    const {jwtToken, setJwtToken} = useContext(UserContext);
     const navigate = useNavigate();
+    const notesApi = useNotesApi();
 
     useEffect(() => {
         (
             async() => {
-                let response = await getAllNotes(jwtToken, navigate);
+                let response = await notesApi.getAllNotes();
         
                 if(response.success === true) {
                     setUserNotes(response.data);

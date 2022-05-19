@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { forgotPassword } from '../notesApi';
+import useNotesApi from '../services/useNotesApi';
 import { Link, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
@@ -19,6 +19,7 @@ const ForgotPassword = () => {
   const [disableButton, setDisableButton] = useState(false);  
 
   const navigate = useNavigate();
+  const notesApi = useNotesApi();
 
   useEffect(() => {
       setIsEmailValid(emailRegex.test(email));
@@ -34,16 +35,17 @@ const ForgotPassword = () => {
         'email': email
       };
   
-      let response = await forgotPassword(data, navigate);
+      let response = await notesApi.forgotPassword(data);
+
       if(response.success === true) {
         navigate("/accounts/login", { state: { msg: 'An email has been sent!', isError: false } });
       }
       else {
-        setShowError(true);
         let errorMessages = [];
         for(const [_, value] of Object.entries(response.errors)) {
           errorMessages.push(value);
         }
+        setShowError(true);
         setErrorMsg(errorMessages);
       }
 

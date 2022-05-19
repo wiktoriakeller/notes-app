@@ -1,8 +1,11 @@
 import React from 'react'
 import { Link, Outlet } from 'react-router-dom';
 import './styles/navbar.css'
+import useNotesApi from '../services/useNotesApi';
 
 const Navbar = () => {
+  const notesApi = useNotesApi();
+
   return (
     <>
     <nav className='navbar'>

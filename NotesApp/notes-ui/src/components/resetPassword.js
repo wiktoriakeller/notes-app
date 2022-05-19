@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 import './styles/forgotPassword.css';
-import { resetPassword } from '../notesApi';
+import useNotesApi from '../services/useNotesApi';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{6,20}$/;
 
@@ -25,6 +25,7 @@ const ResetPassword = () => {
 
     const navigate = useNavigate();
     const params = useParams();
+    const notesApi = useNotesApi();
 
     useEffect(() => {
         setIsPasswordValid(passwordRegex.test([password]));
@@ -43,16 +44,16 @@ const ResetPassword = () => {
             'confirmPassword': confirm
         };
     
-        let response = await resetPassword(data, token, navigate);
+        let response = await notesApi.resetPassword(data, token);
         if(response.success === true) {
             navigate("/accounts/login", { state: { msg: 'Password has been reset!', isError: false } });
         }
         else {
-            setShowError(true);
             let errorMessages = [];
             for(const [_, value] of Object.entries(response.errors)) {
                 errorMessages.push(value);
             }
+            setShowError(true);
             setErrorMsg(errorMessages);
         }
 

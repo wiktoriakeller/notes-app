@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import InputForm from './inputForm.js';
-import {register} from '../notesApi';
+import useNotesApi from '../services/useNotesApi';
 import { Link, useNavigate } from 'react-router-dom';
 import './styles/registerForm.css';
 
@@ -46,6 +46,7 @@ const RegisterForm = () => {
   const [disableButton, setDisableButton] = useState(false);
 
   const navigate = useNavigate();
+  const notesApi = useNotesApi();
 
   useEffect(() => {
     setIsLoginValid(loginRegex.test(login));
@@ -82,16 +83,16 @@ const RegisterForm = () => {
       'confirmPassword': confirm
     };
 
-    let response = await register(data, navigate);
+    let response = await notesApi.register(data);
     if(response.success === true) {
       navigate("/accounts/login", { state: { msg:'Account registered!', isError: false } });      
     }
     else {
-      setSuccess(false);
       let errorMessages = [];
       for(const [_, value] of Object.entries(response.errors)) {
         errorMessages.push(value);
       }
+      setSuccess(false);
       setErrorMsg(errorMessages);
     }
 
