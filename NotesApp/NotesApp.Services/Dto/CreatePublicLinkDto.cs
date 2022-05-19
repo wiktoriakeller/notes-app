@@ -2,6 +2,6 @@
 {
     public class CreatePublicLinkDto
     {
-        public bool ResetHashId { get; set; }
+        public bool ResetPublicHashId { get; set; }
     }
 }

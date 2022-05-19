@@ -99,7 +99,7 @@ namespace NotesApp.Services.Services
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
 
-            if(!dto.ResetHashId)
+            if(!dto.ResetPublicHashId)
             {
                 var rng = new Random();
                 var salt = rng.Next();
