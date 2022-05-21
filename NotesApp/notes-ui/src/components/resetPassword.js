@@ -1,9 +1,10 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 import './styles/forgotPassword.css';
+import LoginMessageContext from '../services/loginMessageContext';
 import useNotesApi from '../services/useNotesApi';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{6,20}$/;
@@ -20,12 +21,13 @@ const ResetPassword = () => {
     const confirmErrorMsg = 'Passwords should match';
 
     const [errorMsg, setErrorMsg] = useState([]);
-    const [showError, setShowError] = useState(false)
+    const [showErrors, setShowErrors] = useState(false)
     const [disableButton, setDisableButton] = useState(false);  
 
     const navigate = useNavigate();
     const params = useParams();
     const notesApi = useNotesApi();
+    const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
     useEffect(() => {
         setIsPasswordValid(passwordRegex.test([password]));
@@ -35,7 +37,7 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMsg([]);
-        setShowError(false);
+        setShowErrors(false);
         setDisableButton(true);
 
         const token = params.id;
@@ -46,14 +48,16 @@ const ResetPassword = () => {
     
         let response = await notesApi.resetPassword(data, token);
         if(response.success === true) {
-            navigate("/accounts/login", { state: { msg: 'Password has been reset!', isError: false } });
+            setLoginMessage('Password has been reset!');
+            setIsLoginMsgError(false);
+            navigate("/accounts/login");
         }
         else {
             let errorMessages = [];
             for(const [_, value] of Object.entries(response.errors)) {
                 errorMessages.push(value);
             }
-            setShowError(true);
+            setShowErrors(true);
             setErrorMsg(errorMessages);
         }
 
@@ -65,7 +69,7 @@ const ResetPassword = () => {
         <form className='inner-form' id='forgot-password-form' onSubmit={handleSubmit}>
             <>
             {errorMsg.map((msg) => {
-            return <p className={showError ? 'error' : 'hide'}>{msg}</p>;
+            return <p className={showErrors ? 'error' : 'hide'}>{msg}</p>;
             })}
             <div className='info-title'>Trouble with logging in?</div><br /><div className='info'>You can enter your new password here.</div>
             <InputForm

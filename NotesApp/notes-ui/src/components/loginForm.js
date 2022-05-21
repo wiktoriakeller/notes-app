@@ -1,7 +1,8 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import useNotesApi from '../services/useNotesApi';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import LoginMessageContext from '../services/loginMessageContext';
+import { Link, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 
@@ -18,48 +19,46 @@ const LoginForm = () => {
   
     const [errorMsg, setErrorMsg] = useState([])
     const [disableButton, setDisableButton] = useState(false);  
-    const [showInternalErrors, setShowInternalErrors] = useState(false);
+    const [showErrors, setShowErrors] = useState(false);
 
-    const [showLocationMsg, setShowLocationMsg] = useState(false);
-    const [isLocationMsgError, setIsLocationMsgError] = useState(false);
-    const [locationMsg, setLocationMessage] = useState('');
-    const {state} = useLocation();
+    const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
     const navigate = useNavigate();
     const notesApi = useNotesApi();
-
-    useEffect(() => {
-        if (state !== undefined && state !== null) {
-            const {msg, isError} = state;
-            setShowLocationMsg(true);     
-            setLocationMessage(msg);
-            setIsLocationMsgError(isError);
-        }
-    });
+    const initialLoginCount = useRef(0);
+    const initialPasswordCount = useRef(0);
+    const previousLogin = useRef(login);
+    const previousPassword = useRef(password);
 
     useEffect(() => {
         setIsLoginValid(login !== '');
-        if (login != '') {
-            setLocationMessage('');
-            setShowLocationMsg(false);
-            setShowInternalErrors(false);
+        setShowErrors(false);
+        if((previousLogin.current === '' && login.length === 1 && initialLoginCount.current > 1) 
+            || (login !== '' && initialLoginCount.current > 2)) {
+            setLoginMessage('');
         }
+        initialLoginCount.current++;
+        previousLogin.current = login;
     }, [login]);
 
     useEffect(() => {
         setIsPasswordValid(password != '');
-        if(password != '') {
-            setLocationMessage('');
-            setShowLocationMsg(false);
-            setShowInternalErrors(false);
+        setShowErrors(false);
+        if((previousPassword.current === '' && password.length === 1 && initialPasswordCount.current > 1) 
+            || (password !== '' && initialPasswordCount.current > 2)) {
+            setLoginMessage('');
         }
+        initialPasswordCount.current++;
+        previousPassword.current = password;
     }, [password]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMsg([]);
         setDisableButton(true);
-        setShowInternalErrors(false);
+        setShowErrors(false);
+        setLoginMessage('');
+        setIsLoginMsgError(false);
 
         let data = {
           'login': login,
@@ -76,7 +75,7 @@ const LoginForm = () => {
           for(const [_, value] of Object.entries(response.errors)) {
             errorMessages.push(value);
           }
-          setShowInternalErrors(true);
+          setShowErrors(true);
           setErrorMsg(errorMessages);
         }
 
@@ -87,16 +86,17 @@ const LoginForm = () => {
         <div className='register-form'>
             <form className='inner-form' onSubmit={handleSubmit}>
                 {errorMsg.map((msg) => {
-                    return <p className={showInternalErrors ? 'error' : 'hide'}>{msg}</p>;
+                    return <p className={showErrors ? 'error' : 'hide'}>{msg}</p>;
                 })}
-                <p className={showLocationMsg && !isLocationMsgError ? 'message-info' : 'hide' }>{locationMsg}</p>
-                <p className={showLocationMsg && isLocationMsgError ? 'error-info' : 'hide' }>{locationMsg}</p>
+                <p className={loginMessage.length != 0 && !isLoginMsgError ? 'message-info' : 'hide' }>{loginMessage}</p>
+                <p className={loginMessage.length != 0 && isLoginMsgError ? 'error-info' : 'hide' }>{loginMessage}</p>
                 <h1>Login</h1>
                 <InputForm
                     label='Login'
                     name='login'
                     type='text'
                     value={login}
+                    autoComplete='off'
                     errorMessage={loginErrorMsg}
                     isValid={isLoginValid}
                     isFocused={loginFocus}

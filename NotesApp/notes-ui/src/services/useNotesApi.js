@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useContext } from "react";
+import LoginMessageContext from '../services/loginMessageContext';
 
 function useNotesApi() {
     const baseUri = 'https://localhost:7164';
@@ -8,7 +9,6 @@ function useNotesApi() {
     const forgotPasswordPath = '/notes-api/accounts/forgot-password';
     const resetPasswordPath = '/notes-api/accounts/reset-password';
     const getAllNotesPath = '/notes-api/notes';
-    const notFoundPath = '/not-found';
 
     const clientPaths = {
         'login': '/accounts/login',
@@ -28,6 +28,7 @@ function useNotesApi() {
 
     const navigate = useNavigate();
     const user = useRef(null);
+    const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
     const register = async (data) => {
         return await fetchData(registerPath, data, 'POST');
@@ -71,6 +72,8 @@ function useNotesApi() {
     const logout = () => {
         user.current = null;
         localStorage.removeItem('user');
+        setLoginMessage('');
+        setIsLoginMsgError(false);
         navigate(clientPaths['login']);
     }
 
@@ -110,7 +113,9 @@ function useNotesApi() {
                 }
                 catch(e) {
                     if(response.status === StatusCodes.Status400) {
-                        navigate(clientPaths['login'], { state: { msg:'Invalid request', isError: true } });
+                        setLoginMessage('Invalid request');
+                        setIsLoginMsgError(true);
+                        navigate(clientPaths['login']);
                     }
                     else if(response.status === StatusCodes.Status401 || response.status == StatusCodes.Status403){
                         logout();
@@ -119,7 +124,9 @@ function useNotesApi() {
                         navigate(clientPaths['not-found']); 
                     }
                     else if(response.status === StatusCodes.Status500) {
-                        navigate(clientPaths['login'], { state: { msg:'Internal server error', isError: true } });
+                        setLoginMessage('Internal server error');
+                        setIsLoginMsgError(true);
+                        navigate(clientPaths['login']);
                     }
 
                     return {success: false, errors: {}};
@@ -133,7 +140,9 @@ function useNotesApi() {
                 return {success: false, errors: {'serverError': 'Server is down'}};
             }
             else {
-                navigate(clientPaths['login'], { state: { msg:'Server is down', isError: true } });
+                setLoginMessage('Server is down');
+                setIsLoginMsgError(true);
+                navigate(clientPaths['login']);
             }
         }
     }
