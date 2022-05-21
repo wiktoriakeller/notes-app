@@ -20,7 +20,11 @@ const Navbar = () => {
     <>
     <nav className='navbar'>
         <span className='title'><Link to='/notes'>NotesHub</Link></span>
-        <Link to='/accounts/login' id='sign-in-button'><button className='navbar-button'>{buttonMsg}</button></Link>
+        {
+          notesApi.isUserLogged() ?
+          <Link to='/accounts/login' id='sign-in-button'><button className='navbar-button' onClick={() => notesApi.logout()}>Sign out</button></Link> :
+          <Link to='/accounts/login' id='sign-in-button'><button className='navbar-button'>Sign in</button></Link>
+        }
         <Link to='/accounts/register' id='sign-up-button'><button className='navbar-button'>Sign Up</button></Link>
     </nav>
     <Outlet />

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useRef, useContext } from "react";
+import { useContext } from "react";
 import LoginMessageContext from '../services/loginMessageContext';
 
 function useNotesApi() {
@@ -27,7 +27,6 @@ function useNotesApi() {
     };
 
     const navigate = useNavigate();
-    const user = useRef(null);
     const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
     const register = async (data) => {
@@ -35,14 +34,12 @@ function useNotesApi() {
     };
 
     const login = async(data) => {
-        user.current = null;
         localStorage.removeItem('user');
         let result = await fetchData(loginPath, data, 'POST');
 
         if(result.success === true) {
             let jwt = await result.response.text();
             localStorage.setItem('user', jwt);
-            user.current = jwt;
         }
     
         return result;
@@ -57,8 +54,10 @@ function useNotesApi() {
     }
     
     const getAllNotes = async () => {
-        if(user.current === null)
+        let user = getUser();
+        if(user === '') {
             logout();
+        }
 
         let result = await fetchData(getAllNotesPath, {}, 'GET');
         if(result.success === true) {
@@ -70,7 +69,6 @@ function useNotesApi() {
     }
 
     const logout = () => {
-        user.current = null;
         localStorage.removeItem('user');
         setLoginMessage('');
         setIsLoginMsgError(false);
@@ -78,22 +76,28 @@ function useNotesApi() {
     }
 
     const isUserLogged = () => {
-        if(user.current !== null)
+        let user = getUser();
+        if(user !== '')
             return true;
 
         return false;
     };
 
+    const getUser = () => {
+        let user = localStorage.getItem('user');
+        let jwtToken = user === null ? '' : user; 
+        return jwtToken;
+    }
+
     const fetchData = async (path, data, method) => {
         try {
-            let user = localStorage.getItem('user');
-            let jwtToken = user === null ? '' : user; 
+            let user = getUser();
 
             const fetchData = {
                 method: method,
                 headers: {
                     'Content-type' : 'application/json',
-                    'Authorization': `Bearer ${jwtToken}`
+                    'Authorization': `Bearer ${user}`
                 }
             };
 
