@@ -2,8 +2,9 @@
 
 :root {
     --navbar-color: white;
-    --navbar-text: white;
+    --navbar-text: rgb(37, 179, 37);
     --button: rgb(37, 179, 37);
+    --lighter-green: rgb(68, 186, 68);
     --faded-button: rgb(101, 185, 101);
     --button-disabled: rgb(149, 149, 149);
     --error-block: rgba(239, 20, 20, 0.702);

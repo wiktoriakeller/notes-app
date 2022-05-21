@@ -17,6 +17,7 @@ const InputForm = (props) => {
     <div className='input-form'>
         <label htmlFor={name}>{label}</label>
         <input 
+          id={name}
           name={name} 
           {...inputProps} 
           onChange={onChange} 
