@@ -17,12 +17,12 @@ const LoginForm = () => {
     const passwordErrorMsg = 'Password cannot be empty.';
   
     const [errorMsg, setErrorMsg] = useState([])
-    const [success, setSuccess] = useState(true)
     const [disableButton, setDisableButton] = useState(false);  
+    const [showInternalErrors, setShowInternalErrors] = useState(false);
 
-    const [showMessage, setShowMessage] = useState(false);
-    const [isMsgError, setIsMsgError] = useState(false);
-    const [message, setMessage] = useState('');
+    const [showLocationMsg, setShowLocationMsg] = useState(false);
+    const [isLocationMsgError, setIsLocationMsgError] = useState(false);
+    const [locationMsg, setLocationMessage] = useState('');
     const {state} = useLocation();
 
     const navigate = useNavigate();
@@ -30,26 +30,28 @@ const LoginForm = () => {
 
     useEffect(() => {
         if (state !== undefined && state !== null) {
-            setShowMessage(true);     
             const {msg, isError} = state;
-            setMessage(msg);
-            setIsMsgError(isError);
+            setShowLocationMsg(true);     
+            setLocationMessage(msg);
+            setIsLocationMsgError(isError);
         }
-    }, []);
+    });
 
     useEffect(() => {
         setIsLoginValid(login !== '');
         if (login != '') {
-            setShowMessage(false);
-            setMessage('');
+            setLocationMessage('');
+            setShowLocationMsg(false);
+            setShowInternalErrors(false);
         }
     }, [login]);
 
     useEffect(() => {
         setIsPasswordValid(password != '');
         if(password != '') {
-            setShowMessage(false);
-            setMessage('');
+            setLocationMessage('');
+            setShowLocationMsg(false);
+            setShowInternalErrors(false);
         }
     }, [password]);
 
@@ -57,6 +59,7 @@ const LoginForm = () => {
         e.preventDefault();
         setErrorMsg([]);
         setDisableButton(true);
+        setShowInternalErrors(false);
 
         let data = {
           'login': login,
@@ -73,7 +76,7 @@ const LoginForm = () => {
           for(const [_, value] of Object.entries(response.errors)) {
             errorMessages.push(value);
           }
-          setSuccess(false);
+          setShowInternalErrors(true);
           setErrorMsg(errorMessages);
         }
 
@@ -84,10 +87,10 @@ const LoginForm = () => {
         <div className='register-form'>
             <form className='inner-form' onSubmit={handleSubmit}>
                 {errorMsg.map((msg) => {
-                    return <p className={success ? 'hide' : 'error'}>{msg}</p>;
+                    return <p className={showInternalErrors ? 'error' : 'hide'}>{msg}</p>;
                 })}
-                <p className={showMessage && !isMsgError ? 'message-info' : 'hide' }>{message}</p>
-                <p className={showMessage && isMsgError ? 'error-info' : 'hide' }>{message}</p>
+                <p className={showLocationMsg && !isLocationMsgError ? 'message-info' : 'hide' }>{locationMsg}</p>
+                <p className={showLocationMsg && isLocationMsgError ? 'error-info' : 'hide' }>{locationMsg}</p>
                 <h1>Login</h1>
                 <InputForm
                     label='Login'

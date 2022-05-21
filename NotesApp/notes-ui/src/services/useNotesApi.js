@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 function useNotesApi() {
     const baseUri = 'https://localhost:7164';
@@ -6,7 +7,16 @@ function useNotesApi() {
     const loginPath = '/notes-api/accounts/login';
     const forgotPasswordPath = '/notes-api/accounts/forgot-password';
     const resetPasswordPath = '/notes-api/accounts/reset-password';
-    const getAllNotesPath = '/notes-api/notes/';
+    const getAllNotesPath = '/notes-api/notes';
+    const notFoundPath = '/not-found';
+
+    const clientPaths = {
+        'login': '/accounts/login',
+        'register': '/accounts/register',
+        'forgot-password': '/accounts/forgot-password',
+        'reset-password': '/accounts/reset-password',
+        'not-found': '/not-found'
+    };
     
     const StatusCodes = {
         Status400: 400,
@@ -17,18 +27,21 @@ function useNotesApi() {
     };
 
     const navigate = useNavigate();
+    const user = useRef(null);
 
     const register = async (data) => {
         return await fetchData(registerPath, data, 'POST');
     };
 
     const login = async(data) => {
+        user.current = null;
         localStorage.removeItem('user');
         let result = await fetchData(loginPath, data, 'POST');
-    
+
         if(result.success === true) {
             let jwt = await result.response.text();
             localStorage.setItem('user', jwt);
+            user.current = jwt;
         }
     
         return result;
@@ -43,8 +56,10 @@ function useNotesApi() {
     }
     
     const getAllNotes = async () => {
+        if(user.current === null)
+            logout();
+
         let result = await fetchData(getAllNotesPath, {}, 'GET');
-        
         if(result.success === true) {
             let data = await result.response.json();
             result.data = data;
@@ -54,13 +69,13 @@ function useNotesApi() {
     }
 
     const logout = () => {
+        user.current = null;
         localStorage.removeItem('user');
-        navigate('/accounts/login');
+        navigate(clientPaths['login']);
     }
 
     const isUserLogged = () => {
-        let user = localStorage.getItem('user');
-        if(user !== null)
+        if(user.current !== null)
             return true;
 
         return false;
@@ -95,16 +110,16 @@ function useNotesApi() {
                 }
                 catch(e) {
                     if(response.status === StatusCodes.Status400) {
-                        navigate('/accounts/login', { state: { msg:'Invalid request', isError: true } });
+                        navigate(clientPaths['login'], { state: { msg:'Invalid request', isError: true } });
                     }
                     else if(response.status === StatusCodes.Status401 || response.status == StatusCodes.Status403){
                         logout();
                     }
                     else if(response.status === StatusCodes.Status404) {
-                        navigate('/not-found'); 
+                        navigate(clientPaths['not-found']); 
                     }
                     else if(response.status === StatusCodes.Status500) {
-                        navigate('/accounts/login', { state: { msg:'Internal server error', isError: true } });
+                        navigate(clientPaths['login'], { state: { msg:'Internal server error', isError: true } });
                     }
 
                     return {success: false, errors: {}};
@@ -112,7 +127,14 @@ function useNotesApi() {
             }
         }
         catch(e) {
-            return {success: false, errors: {'serverError': 'Server is down'}};
+            const location = window.location.pathname;
+            if(location === clientPaths['login'] || location === clientPaths['register'] 
+                || location === clientPaths['forgot-password']) {
+                return {success: false, errors: {'serverError': 'Server is down'}};
+            }
+            else {
+                navigate(clientPaths['login'], { state: { msg:'Server is down', isError: true } });
+            }
         }
     }
 
