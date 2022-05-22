@@ -73,12 +73,6 @@ option {
     background-color: white;
 }
 
-.notes {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .empty-notes-msg {
     padding: 0;
     margin-top: 20px;
@@ -113,4 +107,15 @@ option {
     .add-button {
         margin-left: 5%;
     }
+}
+
+.notes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    margin-left: 2%;
+    margin-right: 2%;
+    flex-wrap: wrap;
+    gap: 2%;
 }
