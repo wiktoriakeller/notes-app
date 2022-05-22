@@ -31,8 +31,9 @@ namespace NotesApp.Services.Services
             _hashids = hashids;
         }
 
-        public async Task<NoteDto?> GetNoteById(int id)
+        public async Task<NoteDto?> GetNoteById(string hashId)
         {
+            var id = GetRawId(hashId);
             var note = await _notesRepository.GetByIdAsync(id, "Tags");
             await CheckAuthorization(note);
 
@@ -88,63 +89,67 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<string> UpdateHashId(UpdateNoteHashIdDto dto, int id)
+        public async Task<PublicLinkDto> GeneratePublicLink(CreatePublicLinkDto dto, string hashId)
         {
+            var id = GetRawId(hashId);
             var note = await _notesRepository.GetByIdAsync(id);
             await CheckAuthorization(note);
-            string hashId = string.Empty;
+            string publicHashId = string.Empty;
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
 
-            if(!dto.ResetHashId)
+            if(!dto.ResetPublicHashId)
             {
                 var rng = new Random();
                 var salt = rng.Next();
-                hashId = _hashids.EncodeLong(id + salt);
+                publicHashId = _hashids.EncodeLong(id + salt);
 
-                note.HashId = hashId;
-                note.HashIdSalt = salt;
+                note.PublicHashId = publicHashId;
+                note.PublicHashIdSalt = salt;
                 note.PublicLinkValidTill = DateTimeOffset.Now.AddDays(1);
             }
             else
             {
-                note.HashId = string.Empty;
+                note.PublicHashId = string.Empty;
             }
 
             await _notesRepository.UpdateAsync(note);
-            return hashId;
+            return _mapper.Map<PublicLinkDto>(note);
         }
 
-        public async Task<PublicNoteDto> GetNoteByHashId(string hashId)
+        public async Task<PublicNoteDto> GetPublicNote(string publicHashId)
         {
-            var notes = await _notesRepository.GetAllNotesWithUsersAndTagsAsync(n => n.HashId != string.Empty && n.HashId == hashId);
+            var notes = await _notesRepository.GetAllNotesWithUsersAndTagsAsync(n => n.PublicHashId != string.Empty && n.PublicHashId == publicHashId);
             
             if (notes.Count == 1)
             {
                 var note = notes.First();
 
                 if(note.PublicLinkValidTill < DateTimeOffset.Now)
-                    throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
+                    throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
 
                 return _mapper.Map<PublicNoteDto>(note);
             }
 
-            throw new NotFoundException($"Resource with hashid: {hashId} couldn't be found");
+            throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
         }
 
-        public async Task<int> AddNote(CreateNoteDto noteDto)
+        public async Task<string> AddNote(CreateNoteDto noteDto)
         {
             var note = _mapper.Map<Note>(noteDto);
             var userId = GetUserId();
             note.UserId = userId;
             await _notesRepository.AddAsync(note);
-            return note.Id;
+            note.HashId = EncodeId(note.Id);
+            await _notesRepository.UpdateAsync(note);
+            return note.HashId;
         }
 
         public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto)
         {
-            var id = noteDto.Id;
+            var hashId = noteDto.HashId;
+            var id = GetRawId(hashId);
             var note = await _notesRepository.GetByIdAsync(id, "Tags");
             await CheckAuthorization(note, Operation.Update);
 
@@ -159,8 +164,9 @@ namespace NotesApp.Services.Services
             return _mapper.Map<NoteDto>(note);
         }
 
-        public async Task DeleteNote(int id)
+        public async Task DeleteNote(string hashid)
         {
+            int id = GetRawId(hashid);
             var note = await _notesRepository.GetByIdAsync(id);
             await CheckAuthorization(note, Operation.Delete);
 
@@ -193,11 +199,24 @@ namespace NotesApp.Services.Services
             var userId = _userContextService.GetUserId;
 
             if (userId.HasValue)
-            {
                 return userId.Value;
-            }
 
             throw new UnauthenticatedException("You are unauthenticated");
+        }
+
+        private int GetRawId(string hashId)
+        {
+            var rawId = _hashids.Decode(hashId);
+
+            if (rawId.Length == 0)
+                throw new NotFoundException("Invalid identifier");
+
+            return rawId[0];
+        }
+
+        private string EncodeId(int id)
+        {
+            return _hashids.Encode(id);
         }
     }
 }

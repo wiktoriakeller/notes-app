@@ -1,12 +1,12 @@
 import React from 'react';
-import { useState, useEffect, useContext } from 'react';
-import { signIn } from '../notes-api';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext, useRef } from 'react';
+import useNotesApi from '../services/useNotesApi';
+import LoginMessageContext from '../services/loginMessageContext';
+import { Link, useNavigate } from 'react-router-dom';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
-import UserContext from './userContext';
 
-const LoginForm = (props) => {
+const LoginForm = () => {
     const [login, setLogin] = useState('');
     const [isLoginValid, setIsLoginValid] = useState(false);
     const [loginFocus, setLoginFocus] = useState(false);
@@ -18,64 +18,64 @@ const LoginForm = (props) => {
     const passwordErrorMsg = 'Password cannot be empty.';
   
     const [errorMsg, setErrorMsg] = useState([])
-    const [success, setSuccess] = useState(true)
     const [disableButton, setDisableButton] = useState(false);  
+    const [showErrors, setShowErrors] = useState(false);
 
-    const [showMessage, setShowMessage] = useState(false);
-    const [isMsgError, setIsMsgError] = useState(false);
-    const [message, setMessage] = useState('');
-    const {state} = useLocation();
+    const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
     const navigate = useNavigate();
-    const {jwtToken, setJwtToken} = useContext(UserContext);
-
-    useEffect(() => {
-        if (state !== undefined && state !== null) {
-            setShowMessage(true);     
-            const {msg, isError} = state;
-            setMessage(msg);
-            setIsMsgError(isError);
-        }
-    }, []);
+    const notesApi = useNotesApi();
+    const initialLoginCount = useRef(0);
+    const initialPasswordCount = useRef(0);
+    const previousLogin = useRef(login);
+    const previousPassword = useRef(password);
 
     useEffect(() => {
         setIsLoginValid(login !== '');
-        if (login != '') {
-            setShowMessage(false);
-            setMessage('');
+        setShowErrors(false);
+        if((previousLogin.current === '' && login.length === 1 && initialLoginCount.current > 1) 
+            || (login !== '' && initialLoginCount.current > 2)) {
+            setLoginMessage('');
         }
+        initialLoginCount.current++;
+        previousLogin.current = login;
     }, [login]);
 
     useEffect(() => {
         setIsPasswordValid(password != '');
-        if(password != '') {
-            setShowMessage(false);
-            setMessage('');
+        setShowErrors(false);
+        if((previousPassword.current === '' && password.length === 1 && initialPasswordCount.current > 1) 
+            || (password !== '' && initialPasswordCount.current > 2)) {
+            setLoginMessage('');
         }
+        initialPasswordCount.current++;
+        previousPassword.current = password;
     }, [password]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMsg([]);
         setDisableButton(true);
+        setShowErrors(false);
+        setLoginMessage('');
+        setIsLoginMsgError(false);
 
         let data = {
           'login': login,
           'password': password
         };
     
-        let response = await signIn(data, navigate);
+        let response = await notesApi.login(data);
+
         if(response.success === true) {
-          setSuccess(true);
-          setJwtToken(response.jwt);
           navigate('/notes');
         }
         else {
-          setSuccess(false);
           let errorMessages = [];
           for(const [_, value] of Object.entries(response.errors)) {
             errorMessages.push(value);
           }
+          setShowErrors(true);
           setErrorMsg(errorMessages);
         }
 
@@ -86,16 +86,17 @@ const LoginForm = (props) => {
         <div className='register-form'>
             <form className='inner-form' onSubmit={handleSubmit}>
                 {errorMsg.map((msg) => {
-                    return <p className={success ? 'hide' : 'error'}>{msg}</p>;
+                    return <p className={showErrors ? 'error' : 'hide'}>{msg}</p>;
                 })}
-                <p className={showMessage && !isMsgError ? 'message-info' : 'hide' }>{message}</p>
-                <p className={showMessage && isMsgError ? 'error-info' : 'hide' }>{message}</p>
+                <p className={loginMessage.length != 0 && !isLoginMsgError ? 'message-info' : 'hide' }>{loginMessage}</p>
+                <p className={loginMessage.length != 0 && isLoginMsgError ? 'error-info' : 'hide' }>{loginMessage}</p>
                 <h1>Login</h1>
                 <InputForm
                     label='Login'
                     name='login'
                     type='text'
                     value={login}
+                    autoComplete='off'
                     errorMessage={loginErrorMsg}
                     isValid={isLoginValid}
                     isFocused={loginFocus}
@@ -117,7 +118,7 @@ const LoginForm = (props) => {
                 </button>
                 <p className='account-info'>
                     Forgot your password?<br />
-                    <Link to='/forgot-password'>Go here!</Link>
+                    <Link to='/accounts/forgot-password'>Go here!</Link>
                 </p>
             </form>
         </div>

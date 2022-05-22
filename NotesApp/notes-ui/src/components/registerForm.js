@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import InputForm from './inputForm.js';
-import {register} from '../notes-api.js';
+import useNotesApi from '../services/useNotesApi';
 import { Link, useNavigate } from 'react-router-dom';
+import LoginMessageContext from '../services/loginMessageContext';
 import './styles/registerForm.css';
 
 const loginRegex = /^[A-Za-z][A-Za-z0-9-_]{2,19}$/;
@@ -42,36 +43,44 @@ const RegisterForm = () => {
   const confirmErrorMsg = 'Passwords should match';
 
   const [errorMsg, setErrorMsg] = useState([])
-  const [success, setSuccess] = useState(true)
+  const [showErrors, setShowErrors] = useState(false)
   const [disableButton, setDisableButton] = useState(false);
 
   const navigate = useNavigate();
+  const notesApi = useNotesApi();
+  const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
   useEffect(() => {
     setIsLoginValid(loginRegex.test(login));
+    setShowErrors(false);    
   }, [login]);
 
   useEffect(() => {
     setIsEmailValid(emailRegex.test(email));
+    setShowErrors(false);
   }, [email]);
 
   useEffect(() => {
     setIsNameValid(nameRegex.test(name));
+    setShowErrors(false);
   }, [name]);
 
   useEffect(() => {
     setIsSurnameValid(surnameRegex.test(surname));
+    setShowErrors(false);
   }, [surname]);
 
   useEffect(() => {
     setIsPasswordValid(passwordRegex.test([password]));
     setIsConfirmValid(password === confirm);
+    setShowErrors(false);
   }, [password, confirm]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg([]);
     setDisableButton(true);
+    setShowErrors(false);
 
     let data = {
       'login': login,
@@ -82,16 +91,18 @@ const RegisterForm = () => {
       'confirmPassword': confirm
     };
 
-    let response = await register(data, navigate);
+    let response = await notesApi.register(data);
     if(response.success === true) {
-      navigate("/login", { state: { msg:'Account registered!', isError: false } });      
+      setLoginMessage('Account registered!');
+      setIsLoginMsgError(false);
+      navigate("/accounts/login");      
     }
     else {
-      setSuccess(false);
       let errorMessages = [];
       for(const [_, value] of Object.entries(response.errors)) {
         errorMessages.push(value);
       }
+      setShowErrors(true);
       setErrorMsg(errorMessages);
     }
 
@@ -102,7 +113,7 @@ const RegisterForm = () => {
     <div className='register-form'>
       <form className='inner-form' onSubmit={handleSubmit}>
         {errorMsg.map((msg) => {
-          return <p className={success ? 'hide' : 'error'}>{msg}</p>;
+          return <p className={showErrors ? 'error' : 'hide'}>{msg}</p>;
         })}
         <h1>Register</h1>
         <InputForm
@@ -172,7 +183,7 @@ const RegisterForm = () => {
         </button>
         <p className='account-info'>
           Already registered?<br />
-          <Link to='/login'>Sign In</Link>
+          <Link to='/accounts/login'>Sign In</Link>
         </p>
       </form>
     </div>

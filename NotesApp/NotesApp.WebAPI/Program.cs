@@ -87,7 +87,7 @@ builder.Services.AddHttpContextAccessor();
 
 //HashId
 builder.Services.AddScoped<IHashids>(_ => 
-    new Hashids(builder.Configuration.GetSection("HashIdSalt").ToString()));
+    new Hashids(builder.Configuration.GetSection("HashIdSalt").ToString(), 11));
 
 //Add middleware
 builder.Services.AddScoped<ErrorHandlingMiddleware>();

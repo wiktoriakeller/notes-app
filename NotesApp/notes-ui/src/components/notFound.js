@@ -5,7 +5,7 @@ import './styles/notFound.css';
 const NotFound = () => (
   <div className='error-page'>
     <h1 className='error-code'>404 - Not Found!</h1>
-    <p className='back'><Link to='/'>Go Home</Link></p>
+    <p className='back'><Link to='/notes'>Go Home</Link></p>
   </div>
 );
 

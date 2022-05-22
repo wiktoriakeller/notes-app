@@ -1,7 +1,8 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { forgotPassword } from '../notes-api';
+import { useState, useEffect, useContext } from 'react';
+import useNotesApi from '../services/useNotesApi';
 import { Link, useNavigate } from 'react-router-dom';
+import LoginMessageContext from '../services/loginMessageContext';
 import InputForm from './inputForm';
 import './styles/registerForm.css';
 import './styles/forgotPassword.css';
@@ -15,35 +16,41 @@ const ForgotPassword = () => {
   const emailErrorMsg = 'Email should be valid.';
 
   const [errorMsg, setErrorMsg] = useState([]);
-  const [showError, setShowError] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
   const [disableButton, setDisableButton] = useState(false);  
 
   const navigate = useNavigate();
+  const notesApi = useNotesApi();
+  const {loginMessage, setLoginMessage, isLoginMsgError, setIsLoginMsgError} = useContext(LoginMessageContext);
 
   useEffect(() => {
       setIsEmailValid(emailRegex.test(email));
+      setShowErrors(false);
   }, [email]);
 
   const handleSubmit = async (e) => {
       e.preventDefault();
       setErrorMsg([]);
-      setShowError(false);
+      setShowErrors(false);
       setDisableButton(true);
 
       let data = {
         'email': email
       };
   
-      let response = await forgotPassword(data, navigate);
+      let response = await notesApi.forgotPassword(data);
+
       if(response.success === true) {
-        navigate("/login", { state: { msg: 'An email has been sent!', isError: false } });
+        setLoginMessage('Email has been sent!');
+        setIsLoginMsgError(false);
+        navigate("/accounts/login");
       }
       else {
-        setShowError(true);
         let errorMessages = [];
         for(const [_, value] of Object.entries(response.errors)) {
           errorMessages.push(value);
         }
+        setShowErrors(true);
         setErrorMsg(errorMessages);
       }
 
@@ -55,7 +62,7 @@ const ForgotPassword = () => {
       <form className='inner-form' id='forgot-password-form' onSubmit={handleSubmit}>
         <>
         {errorMsg.map((msg) => {
-          return <p className={showError ? 'error' : 'hide'}>{msg}</p>;
+          return <p className={showErrors ? 'error' : 'hide'}>{msg}</p>;
         })}
         <div className='info-title'>Trouble with logging in?</div><br /><div className='info'>Enter your email address and we'll send you a link to get back into your account.</div>
           <InputForm
@@ -71,7 +78,7 @@ const ForgotPassword = () => {
           <button type='submit' disabled={!isEmailValid || disableButton}>Send Link</button>
         </>
         <p className='account-info'>
-          <Link to='/login'>Back</Link>
+          <Link to='/accounts/login'>Back</Link>
         </p>
       </form>
     </div>)
