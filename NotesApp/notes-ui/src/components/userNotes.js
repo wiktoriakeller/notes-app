@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import useNotesApi from '../services/useNotesApi';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faPlus } from '@fortawesome/fontawesome-free-solid';
 import './styles/userNotes.css';
 
 const UserNotes = () => {
@@ -25,14 +27,18 @@ const UserNotes = () => {
             {
                 notesLoaded.current ? 
                 <>
-                <div className='search' defaultValue={'All'}>
-                <select className='search-options'>
-                    <option value='all'>All</option>
-                    <option value='name'>Name</option>
-                    <option value='content'>Content</option>
-                    <option value='tags'>Tags</option>
-                </select>
-                <input className='search-bar' placeholder='Search...'/>
+                <div className='search' >
+                    <select className='search-options' defaultValue={'All'}>
+                        <option value='all'>All</option>
+                        <option value='name'>Name</option>
+                        <option value='content'>Content</option>
+                        <option value='tags'>Tags</option>
+                    </select>
+                    <div className='search-input'>
+                        <input className='search-field' placeholder='Search...'/>
+                        <button type='submit' className='search-button'><FontAwesomeIcon icon={faSearch}/></button>
+                    </div>
+                    <button className='add-button'><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
                 <div className='notes'>
                     <p className='empty-notes-msg'>{emptyNotesMsg}</p>
