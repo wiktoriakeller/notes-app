@@ -1,0 +1,48 @@
+.home-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.search {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 15px;
+    width: auto;
+    height: auto;
+}
+
+.search-options {
+    padding: 0;
+    margin-top: 5px;
+    height: 37px;
+    min-width: 5rem;
+    text-align: center;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+    color: gray;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.search-bar {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border: 1px solid gray;
+    background-color: white;
+}
+
+.notes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-notes-msg {
+    padding: 0;
+    margin-top: 20px;
+    font-size: 1.4rem;    
+}

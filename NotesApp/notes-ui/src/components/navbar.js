@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import './styles/navbar.css'
 import useNotesApi from '../services/useNotesApi';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilePen } from '@fortawesome/free-solid-svg-icons';
+import './styles/navbar.css'
 
 const Navbar = () => {
   const notesApi = useNotesApi();
@@ -9,6 +11,7 @@ const Navbar = () => {
   return (
     <>
     <nav className='navbar'>
+        <Link to='/notes'><FontAwesomeIcon className='main-icon' icon={faFilePen}/></Link>
         <span className='title'><Link to='/notes'>NotesHub</Link></span>
         {
           notesApi.isUserLogged() ?
