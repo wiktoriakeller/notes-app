@@ -99,16 +99,6 @@ option {
     color: white;
 }
 
-@media screen and (max-width: 800px) {
-    .search-field {
-        min-width: 10rem
-    }
-
-    .add-button {
-        margin-left: 5%;
-    }
-}
-
 .notes {
     display: flex;
     align-items: center;
@@ -118,4 +108,14 @@ option {
     margin-right: 2%;
     flex-wrap: wrap;
     gap: 2%;
+}
+
+@media screen and (max-width: 800px) {
+    .search-field {
+        min-width: 10rem
+    }
+
+    .add-button {
+        margin-left: 5%;
+    }
 }

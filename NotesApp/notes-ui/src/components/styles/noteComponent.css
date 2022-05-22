@@ -3,8 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 25%;
-    max-height: 25%;
+    max-width: 20%;
+    max-height: 20%;
     margin-top: 10px;
     margin-bottom: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -42,6 +42,18 @@
     justify-content: flex-start;
     align-items: center;
     gap: 3%;
+}
+
+@media screen and (max-width: 1200px) {
+    .note-container {
+        max-width: 25%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .note-container {
+        max-width: 33%;
+    }
 }
 
 @media screen and (max-width: 900px) {
