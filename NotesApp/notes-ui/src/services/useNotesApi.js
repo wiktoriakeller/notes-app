@@ -128,6 +128,7 @@ function useNotesApi() {
                         navigate(clientPaths['not-found']); 
                     }
                     else if(response.status === StatusCodes.Status500) {
+                        localStorage.removeItem('user');
                         setLoginMessage('Internal server error');
                         setIsLoginMsgError(true);
                         navigate(clientPaths['login']);
@@ -144,6 +145,7 @@ function useNotesApi() {
                 return {success: false, errors: {'serverError': 'Server is down'}};
             }
             else {
+                localStorage.removeItem('user');
                 setLoginMessage('Server is down');
                 setIsLoginMsgError(true);
                 navigate(clientPaths['login']);
