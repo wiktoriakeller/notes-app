@@ -7,15 +7,14 @@
     max-height: 20%;
     margin-top: 10px;
     margin-bottom: 10px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     padding: 12px;
     border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.24);
 }
 
 .note-container:hover {
-    background-color: rgb(102, 102, 102);
-    transition: background-color 0.5s ease;
-    color: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transition: box-shadow 0.3s ease;
     cursor: pointer;
 }
 
