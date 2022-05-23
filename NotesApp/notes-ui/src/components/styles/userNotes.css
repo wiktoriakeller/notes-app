@@ -26,6 +26,25 @@
     justify-content: center;
 }
 
+.search-field {
+    min-height: 25px;
+    font-size: 1.25rem;
+    min-width: 30rem;
+}
+
+.search-input input {
+    padding: 10px 0;
+    padding-left: 10px;
+    margin: 8px 0px 3px 0px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 1px solid gray;
+}
+
+.search-input input:focus {
+    outline: none;
+}
+
 .search-button {
     background-color: transparent;
     color: var(--button, green);
@@ -38,12 +57,6 @@
     margin-left: -38px;
     padding: 0;
     padding-top: 3px;
-}
-
-.search-field {
-    min-height: 25px;
-    font-size: 1.25rem;
-    min-width: 30rem;
 }
 
 .search-button:hover {
@@ -87,10 +100,10 @@ option {
     width: auto;
     font-size: 1.4rem;
     margin: 0;
+    min-width: 3rem;
     margin-left: 3%;
     margin-right: 2%;
     margin-top: 4px;
-    min-width: 3rem;
 }
 
 .add-button:hover {
