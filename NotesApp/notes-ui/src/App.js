@@ -8,6 +8,7 @@ import ResetPassword from './components/resetPassword.js';
 import MainLayout from './components/layouts/mainLayout.js';
 import UserNotes from './components/userNotes.js';
 import LoginMessageContext from './services/loginMessageContext';
+import AddNote from './components/addNote.js';
 import './app.css';
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
               <Route path='forgot-password' element={<ForgotPassword/>}/>
               <Route path='reset-password/:id' element={<ResetPassword/>}/>
             </Route>
-            <Route path='/notes' element={<MainLayout/>}>
+            <Route path='/notes/' element={<MainLayout/>}>
               <Route path='' element={<UserNotes/>}/>
             </Route>
             <Route path='/not-found' element={<NotFound/>} />            

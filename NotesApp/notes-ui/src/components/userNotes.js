@@ -3,6 +3,11 @@ import useNotesApi from '../services/useNotesApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus } from '@fortawesome/fontawesome-free-solid';
 import NoteComponent from './noteComponent';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import AddNote from './addNote';
 import './styles/userNotes.css';
 
 const UserNotes = () => {
@@ -10,6 +15,17 @@ const UserNotes = () => {
     const [emptyNotesMsg, setEmptyNotesMsg] = useState('');
     const notesApi = useNotesApi();
     const notesLoaded = useRef(false);
+
+    const [open, setOpen] = React.useState(false);
+    const [validPostForm, setIsValidPostForm] = useState(false);
+
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
 
     useEffect(() => {(
         async() => {
@@ -39,7 +55,17 @@ const UserNotes = () => {
                         <input className='search-field' placeholder='Search...'/>
                         <button type='submit' className='search-button'><FontAwesomeIcon icon={faSearch}/></button>
                     </div>
-                    <button className='add-button'><FontAwesomeIcon icon={faPlus} /></button>
+                    <button className='add-button' onClick={handleClickOpen}><FontAwesomeIcon icon={faPlus}/></button>
+                    <Dialog open={open} onClose={handleClose}>
+                        <DialogTitle>Add new note</DialogTitle>
+                        <DialogContent>
+                            <AddNote setIsValidForm={setIsValidPostForm} notes={userNotes}/>
+                        </DialogContent>
+                        <DialogActions>
+                            <button className='form-button' onClick={handleClose} disabled={!validPostForm}>Add</button>
+                            <button className='form-button cancel' onClick={handleClose}>Cancel</button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             </div> : <></>
         }
@@ -57,7 +83,6 @@ const UserNotes = () => {
                     let contentSubstrig = note.content.substring(0, cutOff);
                     if(note.content.length > cutOff)
                         contentSubstrig += '...';
-
                     return <NoteComponent title={note.noteName} content={contentSubstrig} key={note.id} />
                 })}  
             </div>
