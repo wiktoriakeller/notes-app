@@ -1,0 +1,107 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    min-width: 26rem;
+}
+
+.tags-block {
+    display: flex;
+    gap: 4px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+}
+
+.tag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    border-radius: 3px;
+    margin-top: 1px;
+    background-color: var(--button, green);
+    white-space: nowrap;
+    color: white;
+}
+  
+.tag button {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px;
+    padding-right: 1px;
+    margin: 0px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-weight: normal;
+    font-size: 0.85rem;
+    background-color: transparent;
+}
+
+.content-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.textarea-valid {
+    border: 1px solid rgb(37, 179, 37);
+}
+
+.textarea-invalid {
+    border: 1px solid red;
+}
+
+.textarea-normal {
+    border: 1px solid gray;
+}
+
+.content-field textarea {
+    padding: 8px;
+    max-width: 25rem;
+    max-height: 25rem;
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+.content-field textarea:focus {
+    outline: none;
+}
+
+.input-form-label {
+    margin-bottom: 8px;
+}
+
+.file-field {
+    margin-top: 3%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.reset-button {
+    margin: 0;
+    max-width: 30%;
+    border: 1px solid rgb(33, 83, 184);
+    color: rgb(33, 83, 184);
+}
+
+.form-button.reset-button:hover {
+    background-color: rgb(33, 83, 184);
+    transition: background-color 0.5s ease;
+}
+
+.upload-file-button {
+    margin-right: -14%;
+}
+
+@media screen and (max-width: 600px) {
+    .form-container {
+        min-width: 12rem;
+    }
+}    

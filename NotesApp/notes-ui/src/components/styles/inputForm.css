@@ -33,7 +33,7 @@ label {
 }
 
 .hide-error-msg {
-    color: white;
+    color: transparent;
     height: 0;
 }
 
