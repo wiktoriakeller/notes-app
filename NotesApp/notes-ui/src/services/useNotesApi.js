@@ -10,6 +10,7 @@ function useNotesApi() {
     const resetPasswordPath = '/notes-api/accounts/reset-password';
     const getAllNotesPath = '/notes-api/notes';
     const postNotePath = '/notes-api/notes';
+    const getPublicLink = '/notes-api/notes/'
 
     const clientPaths = {
         'login': '/accounts/login',
@@ -79,6 +80,21 @@ function useNotesApi() {
         return result;
     }
 
+    const generatePublicLink = async (data, hashid) => {
+        const user = getUser();
+        if(user === '') {
+            logout();
+        }
+
+        const result = await fetchData(getPublicLink + hashid, data, 'PATCH');
+        if(result.success === true && !data.resetPublicHashId) {
+            let data = await result.response.json();
+            result.data = data;
+        }
+
+        return result;
+    }
+
     const logout = () => {
         localStorage.removeItem('user');
         setLoginMessage('');
@@ -92,7 +108,7 @@ function useNotesApi() {
             return true;
 
         return false;
-    };
+    }
 
     const getUser = () => {
         let user = localStorage.getItem('user');
@@ -173,6 +189,7 @@ function useNotesApi() {
             forgotPassword,
             resetPassword,
             getAllNotes,
+            generatePublicLink,
             postNote
         }
     )

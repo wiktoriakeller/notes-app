@@ -22,12 +22,16 @@
     width: 100%;
 }
 
+.link-container input {
+    padding-left: 10px;
+}
+
 .link-field {
     padding: 6px 0px;
     border-radius: 5px;
     border: 1px solid gray;
     width: 100%;
-
+    min-width: 19rem
 }
 
 .link-container button {
@@ -44,10 +48,4 @@
 
 .link-label {
     margin-top: 4%;
-}
-
-@media screen and (max-width: 800px) {
-    
-    .link-field {
-    }
 }
