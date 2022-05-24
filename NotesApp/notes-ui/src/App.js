@@ -8,7 +8,7 @@ import ResetPassword from './components/resetPassword.js';
 import MainLayout from './components/layouts/mainLayout.js';
 import UserNotes from './components/userNotes.js';
 import LoginMessageContext from './services/loginMessageContext';
-import AddNote from './components/addNote.js';
+import PublicNote from './components/publicNote.js';
 import './app.css';
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
             </Route>
             <Route path='/notes/' element={<MainLayout/>}>
               <Route path='' element={<UserNotes/>}/>
+              <Route path='public/:id' element={<PublicNote/>}/>
             </Route>
             <Route path='/not-found' element={<NotFound/>} />            
             <Route path='*' element={<Navigate to='/notes' replace/>}/>

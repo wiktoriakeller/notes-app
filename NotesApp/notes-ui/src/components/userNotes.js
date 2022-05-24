@@ -17,7 +17,7 @@ const UserNotes = () => {
     const notesApi = useNotesApi();
     const notesLoaded = useRef(false);
 
-    const [openPostForm, setPostFormOpen] = React.useState(false);
+    const [openPostForm, setPostFormOpen] = useState(false);
 
     const [postFormData, setPostFormData] = useState({});
     const [isPostFormValid, setIsValidPostForm] = useState(false);
@@ -42,12 +42,14 @@ const UserNotes = () => {
         }
     }
 
-    const hancleCloseNoveView = () => {
-        setNoteViewOpen(false);
-        openedNote.current = '';
+    const handleCloseNoteView = () => {
+        if(openedNote.current !== '') {
+            setNoteViewOpen(false);
+            openedNote.current = '';
+        }
     }
 
-    const handlePostFormSubmit = async (e) => {
+    const handlePostFormSubmit = async(e) => {
         e.preventDefault();
         setPostFormErrorMsg([]);
         setShowPostFormErrorMsg(false);
@@ -55,17 +57,17 @@ const UserNotes = () => {
         let response = await notesApi.postNote(postFormData);
 
         if(response.success === true) {
-          handleClosePostForm();
-          window.location.reload(false);
+            handleClosePostForm();
+            window.location.reload(false);
         }
         else {
-          let errorMessages = [];
-          for(const [_, value] of Object.entries(response.errors)) {
-            errorMessages.push(value);
-          }
-          setPostFormErrorMsg(errorMessages);
-          setShowPostFormErrorMsg(true);
-          setIsValidPostForm(false);
+            let errorMessages = [];
+            for(const [_, value] of Object.entries(response.errors)) {
+                errorMessages.push(value);
+            }
+            setPostFormErrorMsg(errorMessages);
+            setShowPostFormErrorMsg(true);
+            setIsValidPostForm(false);
         }
     }
 
@@ -119,14 +121,14 @@ const UserNotes = () => {
                         </DialogActions>
                     </Dialog>
 
-                    <Dialog open={openNoteView} onClose={hancleCloseNoveView}>
+                    <Dialog open={openNoteView} onClose={handleCloseNoteView}>
                         <DialogTitle>{openedNote.current.noteName}</DialogTitle>
                         <DialogContent>
                             <ShowNote note={openedNote.current} />
                         </DialogContent>
                         <DialogActions>
-                            <button className='form-button' onClick={hancleCloseNoveView}>Edit</button>
-                            <button className='form-button cancel' onClick={hancleCloseNoveView}>Cancel</button>
+                            <button className='form-button' onClick={handleCloseNoteView}>Edit</button>
+                            <button className='form-button cancel' onClick={handleCloseNoteView}>Cancel</button>
                         </DialogActions>
                     </Dialog>
                 </div>

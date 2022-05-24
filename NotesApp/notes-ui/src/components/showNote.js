@@ -39,6 +39,16 @@ const ShowNote = (props) => {
     return (
         <div className='note-display'>
             <div className='note-content'>{note.content}</div>
+            {
+                note.tags !== undefined ?
+                <div className='tags-block' id='user-tags'>
+                    {note.tags.map((tag) => (
+                        <div className='tag'>
+                            {tag.tagName}
+                        </div>
+                    ))}
+                </div> : <></>
+            }
             <div className='link-label'>Generate public link</div>
             <div className='link-container'>
                 <input className='link-field' value={publicLink} disabled={true}/>

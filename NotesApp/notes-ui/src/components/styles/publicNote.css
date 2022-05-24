@@ -1,0 +1,18 @@
+.public-note-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 30px 30px;
+    gap: 15px;
+}
+
+.public-note-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.note-author {
+    color: gray;
+    font-size: 1.1rem;
+}
