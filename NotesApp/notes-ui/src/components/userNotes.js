@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddNote from './addNote';
 import ShowNote from './showNote';
+import EditNote from './editNote';
 import './styles/userNotes.css';
 
 const UserNotes = () => {
@@ -27,6 +28,14 @@ const UserNotes = () => {
     const [openNoteView, setNoteViewOpen] = useState(false);
     const openedNote = useRef('');
 
+    const [openEditForm, setEditFormOpen] = useState(false);
+    const editedNote = useRef('');
+
+    const [editFormData, setEditFormData] = useState({});
+    const [isEditFormValid, setIsEditFormValid] = useState(false);
+    const [editFormErrorMsg, setEditFormErrorMsg] = useState([]);
+    const [showEditFormErrorMsg, setShowEditFormErrorMsg] = useState(false);
+
     const handleClickOpenPostForm = () => {
         setPostFormOpen(true);
     };
@@ -35,18 +44,28 @@ const UserNotes = () => {
         setPostFormOpen(false);
     };
 
-    const handleClickOpenNoteView = (e, note) => {
-        if(openedNote.current === '') {
-            setNoteViewOpen(true);
-            openedNote.current = note;
-        }
+    const handleClickOpenNoteView = () => {
+        setNoteViewOpen(true);
     }
 
     const handleCloseNoteView = () => {
-        if(openedNote.current !== '') {
-            setNoteViewOpen(false);
-            openedNote.current = '';
-        }
+        setNoteViewOpen(false);
+        openedNote.current = '';
+    }
+
+    const handleClickOpenEditForm = () => {
+        setEditFormOpen(true);
+    }
+
+    const handleCloseEditForm = () => {
+        setEditFormOpen(false);
+        editedNote.current = '';
+    }
+
+    const showEditForm = () => {
+        editedNote.current = openedNote.current;
+        handleCloseNoteView();
+        handleClickOpenEditForm();
     }
 
     const handlePostFormSubmit = async(e) => {
@@ -71,6 +90,28 @@ const UserNotes = () => {
         }
     }
 
+    const handleEditFormSubmit = async(e) => {
+        e.preventDefault();
+        setEditFormErrorMsg([]);
+        setShowEditFormErrorMsg(false);
+    
+        let response = await notesApi.editNote(editFormData);
+
+        if(response.success === true) {
+            handleCloseEditForm();
+            window.location.reload(false);
+        }
+        else {
+            let errorMessages = [];
+            for(const [_, value] of Object.entries(response.errors)) {
+                errorMessages.push(value);
+            }
+            setEditFormErrorMsg(errorMessages);
+            setShowEditFormErrorMsg(true);
+            setIsEditFormValid(false);
+        }
+    }
+
     useEffect(() => {(
         async() => {
             let response = await notesApi.getAllNotes();
@@ -82,6 +123,15 @@ const UserNotes = () => {
             }
         })();
     }, []);
+
+    const getTags = () => {
+        let tagsArr = [];
+        for(const tag of editedNote.current.tags) {
+            tagsArr.push(tag.tagName);
+        }
+
+        return tagsArr;
+    }
     
     return (
         <>
@@ -127,8 +177,30 @@ const UserNotes = () => {
                             <ShowNote note={openedNote.current} />
                         </DialogContent>
                         <DialogActions>
-                            <button className='form-button' onClick={handleCloseNoteView}>Edit</button>
+                            <button className='form-button' onClick={showEditForm}>Edit</button>
                             <button className='form-button cancel' onClick={handleCloseNoteView}>Cancel</button>
+                        </DialogActions>
+                    </Dialog>
+
+                    <Dialog open={openEditForm} onClose={handleCloseEditForm}>
+                        <DialogTitle>Edit note</DialogTitle>
+                        <DialogContent>
+                            <EditNote 
+                                isFormValid={isEditFormValid}
+                                setIsValidForm={setIsEditFormValid} 
+                                setEditFormData={setEditFormData}
+                                note={editedNote.current}
+                                allNotes={userNotes}
+                                errorMsg={editFormErrorMsg}
+                                setErrorMsg={setEditFormErrorMsg}
+                                showErrorMsg={showEditFormErrorMsg}
+                                setShowErrorMsg={setShowEditFormErrorMsg}
+                                tagsCopy={() => getTags()}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <button className='form-button' onClick={handleEditFormSubmit} disabled={!isEditFormValid}>Save</button>
+                            <button className='form-button cancel' onClick={handleCloseEditForm}>Cancel</button>
                         </DialogActions>
                     </Dialog>
                 </div>
@@ -144,7 +216,11 @@ const UserNotes = () => {
                     let contentSubstrig = note.content.substring(0, cutOff);
                     if(note.content.length > cutOff)
                         contentSubstrig += '...';
-                    return <NoteComponent onClick={(e) => handleClickOpenNoteView(e, note)} title={note.noteName} content={contentSubstrig} key={note.id} />
+                    return <NoteComponent onClick={() => {
+                        openedNote.current = note;
+                        handleClickOpenNoteView();
+                    }} 
+                    title={note.noteName} content={contentSubstrig} key={note.id} />
                 })}  
             </div>
             </> : <></>

@@ -12,6 +12,7 @@ function useNotesApi() {
     const postNotePath = '/notes-api/notes';
     const getPublicLinkPath = '/notes-api/notes/';
     const getPublicNotePath = '/notes-api/notes/public/';
+    const editNotePath = '/notes-api/notes';
 
     const clientPaths = {
         'login': '/accounts/login',
@@ -78,6 +79,16 @@ function useNotesApi() {
         }
 
         const result = await fetchData(postNotePath, data, 'POST');
+        return result;
+    }
+
+    const editNote = async (data) => {
+        const user = getUser();
+        if(user === '') {
+            logout();
+        }
+
+        const result = await fetchData(editNotePath, data, 'PUT');
         return result;
     }
 
@@ -202,6 +213,7 @@ function useNotesApi() {
             getAllNotes,
             generatePublicLink,
             getPublicNote,
+            editNote,
             postNote
         }
     )

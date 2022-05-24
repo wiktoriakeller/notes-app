@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import InputForm from './inputForm';
 import './styles/addNote.css';
 
-const AddNote = (props) => {
-    const {isFormValid, setIsValidForm, setPostFormData, notes, 
-        errorMsg, setErrorMsg, showErrors, setShowErrors} = props;
+const EditNote = (props) => {
+    const {isFormValid, setIsValidForm, setEditFormData, note, allNotes, 
+        errorMsg, setErrorMsg, showErrors, setShowErrors, tagsCopy} = props;
 
-    const [name, setName] = useState('');
-    const [isNameValid, setIsNameValid] = useState(false);
+    const [name, setName] = useState(note.noteName);
+    const [isNameValid, setIsNameValid] = useState(true);
     const [nameFocus, setNameFocus] = useState(false);
     const nameErrorMsg = "Name should be unique and should contain minimum 3 characters.";
 
@@ -16,17 +16,17 @@ const AddNote = (props) => {
     const [imageLinkFocus, setImageLinkFocus] = useState(false);
     const imageLinkErrorMsg = "Link should lead to an image.";
 
-    const [content, setContent] = useState('');
-    const [isContentValid, setIsContentValid] = useState(false);
+    const [content, setContent] = useState(note.content);
+    const [isContentValid, setIsContentValid] = useState(true);
     const [contentFocus, setContentFocus] = useState(false);
     const contentErrorMsg = "Content is required.";
 
     const [tagInput, setTagInput] = useState('');
     const [tagFocus, setTagFocus] = useState(false);
     const [isTagValid, setIsTagValid] = useState(true);
-    const [tags, setTags] = useState([]);
+    const [tags, setTags] = useState(tagsCopy);
     const tagErrorMsg = 'Tags should be unique with maximum length of 10 characters.';
-
+    
     useEffect(() => {
         (async() => {
             let validName = validateName();
@@ -38,6 +38,7 @@ const AddNote = (props) => {
 
             if(validForm) {
                 let data = {
+                    'hashId': note.hashId,
                     'noteName': name,
                     'content': content,
                     'tags': []
@@ -46,8 +47,8 @@ const AddNote = (props) => {
                 for(const tag of tags) {
                     data.tags.push({'tagName': tag});
                 }
-    
-                setPostFormData(data);
+
+                setEditFormData(data);
             }
         })();
     }, [name, content, tagInput, imageLink]);
@@ -55,8 +56,8 @@ const AddNote = (props) => {
     const validateName = () => {
         let trimmedName = name.trim();
         let isUnique = true;
-        for(const note of notes) {
-            if(note.noteName === trimmedName) {
+        for(const otherNote of allNotes) {
+            if(otherNote.noteName === trimmedName && otherNote.hashId !== note.hashId) {
                 isUnique = false;
                 break;
             }
@@ -192,6 +193,7 @@ const AddNote = (props) => {
                 onFocus={() => setTagFocus(true)}
                 maxLength={10}
             />
+
             <div className='tags-block'>
                 {tags.map((tag, index) => (
                     <div className='tag'>
@@ -208,4 +210,4 @@ const AddNote = (props) => {
     )
 }
 
-export default AddNote
+export default EditNote
