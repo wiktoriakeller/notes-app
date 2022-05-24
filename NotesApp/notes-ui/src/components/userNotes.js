@@ -7,6 +7,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { DialogContentText } from '@mui/material';
 import AddNote from './addNote';
 import ShowNote from './showNote';
 import EditNote from './editNote';
@@ -39,6 +40,8 @@ const UserNotes = () => {
     const [selectedSearch, setSelectedSearch] = useState('Name');
     const [selectedValue, setSelectedValue] = useState('');
 
+    const [openQuestionPopup, setOpenQuestionPopup] = useState(false);
+
     const handleClickOpenPostForm = () => {
         setPostFormOpen(true);
     };
@@ -63,6 +66,18 @@ const UserNotes = () => {
     const handleCloseEditForm = () => {
         setEditFormOpen(false);
         editedNote.current = '';
+    }
+
+    const handleOpenQuestionPopup = () => {
+        setOpenQuestionPopup(true);
+    }
+
+    const handleCloseQuestionPopup = () => {
+        setOpenQuestionPopup(false);
+    }
+
+    const handleAgreeQuestionPopup = async(e) => {
+        await handleDelete(e)
     }
 
     const showEditForm = () => {
@@ -137,7 +152,7 @@ const UserNotes = () => {
         return tagsArr;
     }
 
-    const handleDelete = async(e, hashid) => {
+    const handleDelete = async(e) => {
         e.preventDefault();
         let response = await notesApi.deleteNote(editedNote.current.hashId);
 
@@ -217,7 +232,7 @@ const UserNotes = () => {
                         <DialogTitle>
                             <div className='form-title'>
                                 <span className='form-title-text'>Edit note</span>
-                                <button className='delete-button' onClick={handleDelete}><FontAwesomeIcon icon={faTrash}/></button>
+                                <button className='delete-button' onClick={handleOpenQuestionPopup}><FontAwesomeIcon icon={faTrash}/></button>
                             </div>
                         </DialogTitle>
                         <DialogContent>
@@ -239,6 +254,28 @@ const UserNotes = () => {
                             <button className='form-button cancel' onClick={handleCloseEditForm}>Cancel</button>
                         </DialogActions>
                     </Dialog>
+
+                    <Dialog
+                        open={openQuestionPopup}
+                        onClose={handleCloseQuestionPopup}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Delete note"}
+                    </DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Are you sure tha you want to delete this note?
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <button className='form-button cancel' onClick={handleAgreeQuestionPopup} autoFocus>
+                        Yes
+                    </button>
+                    <button className='form-button' onClick={handleCloseQuestionPopup}>No</button>
+                    </DialogActions>
+                </Dialog>
                 </div>
             </div> 
             <div className='notes'>
