@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 3px;
-    min-width: 26rem;
+    min-width: 30rem;
 }
 
 .tags-block {
@@ -61,7 +61,7 @@
 
 .content-field textarea {
     padding: 8px;
-    max-width: 25rem;
+    max-width: 28.8rem;
     max-height: 25rem;
     border-radius: 8px;
     background-color: transparent;
@@ -73,31 +73,6 @@
 
 .input-form-label {
     margin-bottom: 8px;
-}
-
-.file-field {
-    margin-top: 3%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-.reset-button {
-    margin: 0;
-    max-width: 30%;
-    border: 1px solid rgb(33, 83, 184);
-    color: rgb(33, 83, 184);
-}
-
-.form-button.reset-button:hover {
-    background-color: rgb(33, 83, 184);
-    transition: background-color 0.5s ease;
-}
-
-.upload-file-button {
-    margin-right: -14%;
 }
 
 @media screen and (max-width: 600px) {
