@@ -9,6 +9,7 @@ function useNotesApi() {
     const forgotPasswordPath = '/notes-api/accounts/forgot-password';
     const resetPasswordPath = '/notes-api/accounts/reset-password';
     const getAllNotesPath = '/notes-api/notes';
+    const postNotePath = '/notes-api/notes';
 
     const clientPaths = {
         'login': '/accounts/login',
@@ -35,10 +36,10 @@ function useNotesApi() {
 
     const login = async(data) => {
         localStorage.removeItem('user');
-        let result = await fetchData(loginPath, data, 'POST');
+        const result = await fetchData(loginPath, data, 'POST');
 
         if(result.success === true) {
-            let jwt = await result.response.text();
+            const jwt = await result.response.text();
             localStorage.setItem('user', jwt);
         }
     
@@ -54,17 +55,27 @@ function useNotesApi() {
     }
     
     const getAllNotes = async () => {
-        let user = getUser();
+        const user = getUser();
         if(user === '') {
             logout();
         }
 
-        let result = await fetchData(getAllNotesPath, {}, 'GET');
+        const result = await fetchData(getAllNotesPath, {}, 'GET');
         if(result.success === true) {
             let data = await result.response.json();
             result.data = data;
         }
     
+        return result;
+    }
+
+    const postNote = async (data) => {
+        const user = getUser();
+        if(user === '') {
+            logout();
+        }
+
+        const result = await fetchData(postNotePath, data, 'POST');
         return result;
     }
 
@@ -91,7 +102,7 @@ function useNotesApi() {
 
     const fetchData = async (path, data, method) => {
         try {
-            let user = getUser();
+            const user = getUser();
 
             const fetchData = {
                 method: method,
@@ -161,7 +172,8 @@ function useNotesApi() {
             isUserLogged,
             forgotPassword,
             resetPassword,
-            getAllNotes
+            getAllNotes,
+            postNote
         }
     )
 }

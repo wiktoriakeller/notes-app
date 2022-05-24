@@ -3,7 +3,7 @@ import InputForm from './inputForm';
 import './styles/addNote.css';
 
 const AddNote = (props) => {
-    const {setIsValidForm, notes} = props;
+    const {setIsValidForm, setPostFormData, notes} = props;
 
     const [name, setName] = useState('');
     const [isNameValid, setIsNameValid] = useState(false);
@@ -17,7 +17,9 @@ const AddNote = (props) => {
 
     const [tagInput, setTagInput] = useState('');
     const [tagFocus, setTagFocus] = useState(false);
+    const [isTagValid, setIsTagValid] = useState(false);
     const [tags, setTags] = useState([]);
+    const tagErrorMsg = 'Tags should be unique';
 
     const selectedImage = useRef('');
 
@@ -39,18 +41,29 @@ const AddNote = (props) => {
             }
         }
         setIsNameValid(trimmedName != '' && trimmedName.length > 2 && isUnique);
-        setIsValidForm(isNameValid && isContentValid);
-    }, [name]);
-
-    useEffect(() => {
         setIsContentValid(content.length > 0);
+        setIsTagValid(!tags.includes(tagInput));
+
+        if(isNameValid && isContentValid && isTagValid) {
+            let data = {
+                'noteName': name,
+                'content': content,
+                'tags': []
+            }
+
+            for(const tag of tags) {
+                data.tags.push({'tagName': tag});
+            }
+
+            setPostFormData(data);
+        }
         setIsValidForm(isNameValid && isContentValid);
-    }, [content]);
+    }, [name, content, tagInput]);
 
     const onKeyDown = (e) => {
         const trimmed = tagInput.trim();
 
-        if(e.key === "Enter" && trimmed.length > 0) {
+        if(e.key === "Enter" && trimmed.length > 0 && !tags.includes(trimmed)) {
             e.preventDefault();
             setTags(prev => [...prev, trimmed]);
             setTagInput('');
@@ -111,8 +124,8 @@ const AddNote = (props) => {
                 type='text'
                 value={tagInput}
                 autocomplete='off'
-                errorMessage={''}
-                isValid={true}
+                errorMessage={tagErrorMsg}
+                isValid={isTagValid}
                 isFocused={tagFocus}
                 onChange={onTagsChange}
                 onKeyDown={onKeyDown}

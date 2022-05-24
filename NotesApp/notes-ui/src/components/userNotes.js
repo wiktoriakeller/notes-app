@@ -17,7 +17,10 @@ const UserNotes = () => {
     const notesLoaded = useRef(false);
 
     const [open, setOpen] = React.useState(false);
-    const [validPostForm, setIsValidPostForm] = useState(false);
+
+    const [postFormData, setPostFormData] = useState({});
+    const [isValidPostForm, setIsValidPostForm] = useState(false);
+    const [postFormErrorMsg, setPostFormErrorMsg] = useState([]);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -26,6 +29,26 @@ const UserNotes = () => {
     const handleClose = () => {
       setOpen(false);
     };
+
+    const handlePostFormSubmit = async (e) => {
+        e.preventDefault();
+        setPostFormErrorMsg([]);
+        setIsValidPostForm(false);
+    
+        let response = await notesApi.postNote(postFormData);
+
+        if(response.success === true) {
+          handleClose();
+          window.location.reload(false);
+        }
+        else {
+          let errorMessages = [];
+          for(const [_, value] of Object.entries(response.errors)) {
+            errorMessages.push(value);
+          }
+          setPostFormErrorMsg(errorMessages);
+        }
+    }
 
     useEffect(() => {(
         async() => {
@@ -59,10 +82,14 @@ const UserNotes = () => {
                     <Dialog open={open} onClose={handleClose}>
                         <DialogTitle>Add new note</DialogTitle>
                         <DialogContent>
-                            <AddNote setIsValidForm={setIsValidPostForm} notes={userNotes}/>
+                            <AddNote 
+                            setIsValidForm={setIsValidPostForm} 
+                            setPostFormData={setPostFormData}
+                            notes={userNotes}
+                            />
                         </DialogContent>
                         <DialogActions>
-                            <button className='form-button' onClick={handleClose} disabled={!validPostForm}>Add</button>
+                            <button className='form-button' onClick={handlePostFormSubmit} disabled={!isValidPostForm}>Add</button>
                             <button className='form-button cancel' onClick={handleClose}>Cancel</button>
                         </DialogActions>
                     </Dialog>
