@@ -1,0 +1,53 @@
+.note-content {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.button-placeholder {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2%;
+    width: 100%
+}
+
+.link-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 2%;
+    margin-right: 5%;
+    width: 100%;
+}
+
+.link-field {
+    padding: 6px 0px;
+    border-radius: 5px;
+    border: 1px solid gray;
+    width: 100%;
+
+}
+
+.link-container button {
+    width: auto;
+    background-color: var(--blue-button, blue);
+    font-weight: normal;
+    margin: 0;
+    padding: 10px 14px;
+}
+
+.link-container button:hover {
+    background-color: var(--fadded-blue, blue);
+}
+
+.link-label {
+    margin-top: 4%;
+}
+
+@media screen and (max-width: 800px) {
+    
+    .link-field {
+    }
+}

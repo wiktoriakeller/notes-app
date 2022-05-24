@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 3px;
-    min-width: 30rem;
+    width: 100%;
 }
 
 .tags-block {
@@ -13,6 +13,7 @@
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 .tag {
@@ -45,6 +46,8 @@
 .content-field {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 100%;
 }
 
 .textarea-valid {
@@ -60,11 +63,13 @@
 }
 
 .content-field textarea {
-    padding: 8px;
-    max-width: 28.8rem;
+    max-width: 95.5%;
+    min-width: 95.5%;
     max-height: 25rem;
     border-radius: 8px;
     background-color: transparent;
+    padding: 10px;
+    
 }
 
 .content-field textarea:focus {
@@ -75,8 +80,3 @@
     margin-bottom: 8px;
 }
 
-@media screen and (max-width: 600px) {
-    .form-container {
-        min-width: 12rem;
-    }
-}    

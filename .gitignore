@@ -16,6 +16,8 @@
 #environment react file
 *.env
 
+*.vscode/
+
 # Mono auto generated files
 mono_crash.*
 

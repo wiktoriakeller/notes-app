@@ -46,6 +46,7 @@
 @media screen and (max-width: 1200px) {
     .note-container {
         max-width: 25%;
+        min-width: 25%;
     }
 }
 

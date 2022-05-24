@@ -8,6 +8,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddNote from './addNote';
+import ShowNote from './showNote';
 import './styles/userNotes.css';
 
 const UserNotes = () => {
@@ -16,20 +17,35 @@ const UserNotes = () => {
     const notesApi = useNotesApi();
     const notesLoaded = useRef(false);
 
-    const [open, setOpen] = React.useState(false);
+    const [openPostForm, setPostFormOpen] = React.useState(false);
 
     const [postFormData, setPostFormData] = useState({});
     const [isPostFormValid, setIsValidPostForm] = useState(false);
     const [postFormErrorMsg, setPostFormErrorMsg] = useState([]);
     const [showPostFormErrorMsg, setShowPostFormErrorMsg] = useState(false);
 
-    const handleClickOpen = () => {
-      setOpen(true);
+    const [openNoteView, setNoteViewOpen] = useState(false);
+    const openedNote = useRef('');
+
+    const handleClickOpenPostForm = () => {
+        setPostFormOpen(true);
     };
   
-    const handleClose = () => {
-      setOpen(false);
+    const handleClosePostForm = () => {
+        setPostFormOpen(false);
     };
+
+    const handleClickOpenNoteView = (e, note) => {
+        if(openedNote.current === '') {
+            setNoteViewOpen(true);
+            openedNote.current = note;
+        }
+    }
+
+    const hancleCloseNoveView = () => {
+        setNoteViewOpen(false);
+        openedNote.current = '';
+    }
 
     const handlePostFormSubmit = async (e) => {
         e.preventDefault();
@@ -39,7 +55,7 @@ const UserNotes = () => {
         let response = await notesApi.postNote(postFormData);
 
         if(response.success === true) {
-          handleClose();
+          handleClosePostForm();
           window.location.reload(false);
         }
         else {
@@ -69,6 +85,7 @@ const UserNotes = () => {
         <>
         {
             notesLoaded.current ? 
+            <>
             <div className='home-container'>
                 <div className='search' >
                     <select className='search-options' defaultValue={'All'}>
@@ -81,32 +98,39 @@ const UserNotes = () => {
                         <input className='search-field' placeholder='Search...'/>
                         <button type='submit' className='search-button'><FontAwesomeIcon icon={faSearch}/></button>
                     </div>
-                    <button className='add-button' onClick={handleClickOpen}><FontAwesomeIcon icon={faPlus}/></button>
-                    <Dialog open={open} onClose={handleClose}>
+                    <button className='add-button' onClick={handleClickOpenPostForm}><FontAwesomeIcon icon={faPlus}/></button>
+                    <Dialog open={openPostForm} onClose={handleClosePostForm}>
                         <DialogTitle>Add new note</DialogTitle>
                         <DialogContent>
                             <AddNote 
-                            isFormValid={isPostFormValid}
-                            setIsValidForm={setIsValidPostForm} 
-                            setPostFormData={setPostFormData}
-                            notes={userNotes}
-                            errorMsg={postFormErrorMsg}
-                            setErrorMsg={setPostFormErrorMsg}
-                            showErrorMsg={showPostFormErrorMsg}
-                            setShowErrorMsg={setShowPostFormErrorMsg}
+                                isFormValid={isPostFormValid}
+                                setIsValidForm={setIsValidPostForm} 
+                                setPostFormData={setPostFormData}
+                                notes={userNotes}
+                                errorMsg={postFormErrorMsg}
+                                setErrorMsg={setPostFormErrorMsg}
+                                showErrorMsg={showPostFormErrorMsg}
+                                setShowErrorMsg={setShowPostFormErrorMsg}
                             />
                         </DialogContent>
                         <DialogActions>
                             <button className='form-button' onClick={handlePostFormSubmit} disabled={!isPostFormValid}>Add</button>
-                            <button className='form-button cancel' onClick={handleClose}>Cancel</button>
+                            <button className='form-button cancel' onClick={handleClosePostForm}>Cancel</button>
+                        </DialogActions>
+                    </Dialog>
+
+                    <Dialog open={openNoteView} onClose={hancleCloseNoveView}>
+                        <DialogTitle>{openedNote.current.noteName}</DialogTitle>
+                        <DialogContent>
+                            <ShowNote note={openedNote.current} />
+                        </DialogContent>
+                        <DialogActions>
+                            <button className='form-button' onClick={hancleCloseNoveView}>Edit</button>
+                            <button className='form-button cancel' onClick={hancleCloseNoveView}>Cancel</button>
                         </DialogActions>
                     </Dialog>
                 </div>
-            </div> : <></>
-        }
-        {
-            notesLoaded.current ?
-            <>
+            </div> 
             <div className='notes'>
                 {
                     emptyNotesMsg.length > 0 ?
@@ -118,7 +142,7 @@ const UserNotes = () => {
                     let contentSubstrig = note.content.substring(0, cutOff);
                     if(note.content.length > cutOff)
                         contentSubstrig += '...';
-                    return <NoteComponent title={note.noteName} content={contentSubstrig} key={note.id} />
+                    return <NoteComponent onClick={(e) => handleClickOpenNoteView(e, note)} title={note.noteName} content={contentSubstrig} key={note.id} />
                 })}  
             </div>
             </> : <></>
