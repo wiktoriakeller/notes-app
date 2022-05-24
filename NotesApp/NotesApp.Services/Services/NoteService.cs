@@ -158,6 +158,7 @@ namespace NotesApp.Services.Services
 
             note.NoteName = noteDto.NoteName;
             note.Content = noteDto.Content;
+            note.ImageLink = noteDto.ImageLink;
             note.Tags = _mapper.Map<ICollection<Tag>>(noteDto.Tags);
             await _notesRepository.UpdateAsync(note);
 

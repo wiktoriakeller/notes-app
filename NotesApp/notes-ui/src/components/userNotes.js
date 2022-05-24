@@ -235,7 +235,7 @@ const UserNotes = () => {
                         openedNote.current = note;
                         handleClickOpenNoteView();
                     }} 
-                    title={note.noteName} content={contentSubstrig} key={note.id} />
+                    title={note.noteName} content={contentSubstrig} imageLink={note.imageLink} key={note.id} />
                 })}  
             </div>
             </> : <></>

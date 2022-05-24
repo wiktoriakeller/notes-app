@@ -40,6 +40,7 @@ const AddNote = (props) => {
                 let data = {
                     'noteName': name,
                     'content': content,
+                    'imageLink': imageLink,
                     'tags': []
                 }
     
@@ -84,29 +85,12 @@ const AddNote = (props) => {
         if(imageLink === '') {
             isValid = true;
         }
-        else if((imageLink.endsWith('.jpg') || imageLink.endsWith('.png') || imageLink.endsWith('.jpeg')) && await isLinkValid(imageLink)) {
+        else if((imageLink.endsWith('.jpg') || imageLink.endsWith('.png') || imageLink.endsWith('.jpeg'))
+            && (imageLink.startsWith('https://www') || imageLink.startsWith('http://www'))) {
             isValid = true;
         }
         setIsImageLinkValid(isValid);
         return isValid;
-    }
-
-    const isLinkValid = (url) => {
-        return new Promise((resolve, reject) => {
-            var request = new XMLHttpRequest();
-            request.open("GET", url, true);
-            request.send();
-            request.onload = () => {
-              if (request.status == 200) {
-                resolve(true);
-              } else {
-                resolve(false);
-              }
-            }
-            request.onerror = () => {
-                resolve(false);
-            };
-        });
     }
 
     const onKeyDown = (e) => {

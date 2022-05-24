@@ -11,7 +11,7 @@ const EditNote = (props) => {
     const [nameFocus, setNameFocus] = useState(false);
     const nameErrorMsg = "Name should be unique and should contain minimum 3 characters.";
 
-    const [imageLink, setImageLink] = useState('');
+    const [imageLink, setImageLink] = useState(note.imageLink);
     const [isImageLinkValid, setIsImageLinkValid] = useState(true);
     const [imageLinkFocus, setImageLinkFocus] = useState(false);
     const imageLinkErrorMsg = "Link should lead to an image.";
@@ -41,6 +41,7 @@ const EditNote = (props) => {
                     'hashId': note.hashId,
                     'noteName': name,
                     'content': content,
+                    'imageLink': imageLink,
                     'tags': []
                 }
     
@@ -82,32 +83,15 @@ const EditNote = (props) => {
     
     const validateImageLink = async () => {
         let isValid = false;
-        if(imageLink === '') {
+        if(imageLink === '' || imageLink === null) {
             isValid = true;
         }
-        else if((imageLink.endsWith('.jpg') || imageLink.endsWith('.png') || imageLink.endsWith('.jpeg')) && await isLinkValid(imageLink)) {
+        else if((imageLink.endsWith('.jpg') || imageLink.endsWith('.png') || imageLink.endsWith('.jpeg'))
+            && (imageLink.startsWith('https://www') || imageLink.startsWith('http://www'))) {
             isValid = true;
         }
         setIsImageLinkValid(isValid);
         return isValid;
-    }
-
-    const isLinkValid = (url) => {
-        return new Promise((resolve, reject) => {
-            var request = new XMLHttpRequest();
-            request.open("GET", url, true);
-            request.send();
-            request.onload = () => {
-              if (request.status == 200) {
-                resolve(true);
-              } else {
-                resolve(false);
-              }
-            }
-            request.onerror = () => {
-                resolve(false);
-            };
-        });
     }
 
     const onKeyDown = (e) => {

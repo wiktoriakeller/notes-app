@@ -4,6 +4,7 @@
     {
         public string NoteName { get; set; }
         public string Content { get; set; }
+        public string? ImageLink { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }
         public string? HashId { get; set; }
