@@ -50,6 +50,7 @@ const AddNote = (props) => {
     
                 setPostFormData(data);
             }
+            setShowErrors(false);
         })();
     }, [name, content, tagInput, imageLink]);
 

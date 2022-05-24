@@ -51,6 +51,7 @@ const EditNote = (props) => {
 
                 setEditFormData(data);
             }
+            setShowErrors(false);
         })();
     }, [name, content, tagInput, imageLink]);
 

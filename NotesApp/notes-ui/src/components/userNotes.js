@@ -150,8 +150,7 @@ const UserNotes = () => {
             <>
             <div className='home-container'>
                 <div className='search' >
-                    <select className='search-options' defaultValue={'All'}>
-                        <option value='all'>All</option>
+                    <select className='search-options' defaultValue={'name'}>
                         <option value='name'>Name</option>
                         <option value='content'>Content</option>
                         <option value='tags'>Tags</option>
