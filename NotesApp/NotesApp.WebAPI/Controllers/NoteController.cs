@@ -31,6 +31,13 @@ namespace NotesApp.WebAPI.Controllers
             return Ok(notes);
         }
 
+        [HttpGet("filter/")]
+        public async Task<IActionResult> GetNotes([FromQuery] string type, [FromQuery] string value)
+        {
+            var notes = await _notesService.FilterNotes(type, value);
+            return Ok(notes);
+        }
+
         [HttpGet("public/{hashId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetPublicNote([FromRoute] string hashId)

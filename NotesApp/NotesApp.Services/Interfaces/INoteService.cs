@@ -8,7 +8,8 @@ namespace NotesApp.Services.Interfaces
         Task<IEnumerable<NoteDto>> GetAllNotes();
         Task<IEnumerable<NoteDto>> GetNotesByName(string name);
         Task<IEnumerable<NoteDto>> GetNotesByContent(string content);
-        Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags);
+        Task<IEnumerable<NoteDto>> GetNotesByTag(string tags);
+        Task<IEnumerable<NoteDto>> FilterNotes(string type, string value);
         Task<PublicNoteDto> GetPublicNote(string hashId);
         Task<PublicLinkDto> GeneratePublicLink(CreatePublicLinkDto dto, string hashId);
         Task<string> AddNote(CreateNoteDto noteDto);

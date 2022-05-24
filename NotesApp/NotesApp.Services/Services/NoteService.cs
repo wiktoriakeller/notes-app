@@ -69,23 +69,12 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByTags(IEnumerable<string> tags)
+        public async Task<IEnumerable<NoteDto>> GetNotesByTag(string tag)
         {
             var userId = GetUserId();
             var searchedNotes = new List<Note>();
-            var notes = await _notesRepository.GetAllAsync(n => n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t == tag) && n.UserId == userId, "Tags");
             await CheckAuthorization(notes);
-
-            foreach (var note in notes)
-            {
-                var tagNames = note.Tags.Select(t => t.TagName.ToLower());
-                foreach (var tagName in tagNames)
-                {
-                    if(tags.Any(t => t.ToLower() == tagName))
-                        notes.Add(note);
-                }
-            }
-
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
@@ -133,6 +122,25 @@ namespace NotesApp.Services.Services
             }
 
             throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
+        }
+
+        public Task<IEnumerable<NoteDto>> FilterNotes(string type, string value)
+        {
+            type = type.ToLower();
+            if(type == "name")
+            {
+                return GetNotesByName(value);
+            }
+            else if(type == "content")
+            {
+                return GetNotesByContent(value);
+            }
+            else if(type == "tags")
+            {
+                return GetNotesByTag(value);
+            }
+
+            return GetAllNotes();
         }
 
         public async Task<string> AddNote(CreateNoteDto noteDto)

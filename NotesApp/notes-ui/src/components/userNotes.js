@@ -36,6 +36,9 @@ const UserNotes = () => {
     const [editFormErrorMsg, setEditFormErrorMsg] = useState([]);
     const [showEditFormErrorMsg, setShowEditFormErrorMsg] = useState(false);
 
+    const [selectedSearch, setSelectedSearch] = useState('Name');
+    const [selectedValue, setSelectedValue] = useState('');
+
     const handleClickOpenPostForm = () => {
         setPostFormOpen(true);
     };
@@ -117,6 +120,7 @@ const UserNotes = () => {
             let response = await notesApi.getAllNotes();
             if(response.success === true) {
                 setUserNotes(response.data);
+                setEmptyNotesMsg('');
                 if(Object.keys(response.data).length === 0)
                     setEmptyNotesMsg("It's time to add some notes!");
                 notesLoaded.current = true;
@@ -133,13 +137,31 @@ const UserNotes = () => {
         return tagsArr;
     }
 
-    const handleDelete = async (e, hashid) => {
+    const handleDelete = async(e, hashid) => {
         e.preventDefault();
         let response = await notesApi.deleteNote(editedNote.current.hashId);
 
         if(response.success === true) {
             handleCloseEditForm();
             window.location.reload(false);
+        }
+    }
+
+    const searchNotes = async() => {
+        let response = {};
+        if(selectedValue === '') {
+            response = await notesApi.getAllNotes();
+        }
+        else {
+            response = await notesApi.filterNotes(selectedSearch, selectedValue);
+        }
+
+        if(response.success === true) {
+            setUserNotes(response.data);
+            setEmptyNotesMsg('');
+            if(Object.keys(response.data).length === 0)
+                setEmptyNotesMsg("It's empty here!"); 
+            notesLoaded.current = true;
         }
     }
     
@@ -150,14 +172,14 @@ const UserNotes = () => {
             <>
             <div className='home-container'>
                 <div className='search' >
-                    <select className='search-options' defaultValue={'name'}>
+                    <select className='search-options' defaultValue={'name'} onChange={(e) => setSelectedSearch(e.target.value)}>
                         <option value='name'>Name</option>
                         <option value='content'>Content</option>
                         <option value='tags'>Tags</option>
                     </select>
                     <div className='search-input'>
-                        <input className='search-field' placeholder='Search...'/>
-                        <button type='submit' className='search-button'><FontAwesomeIcon icon={faSearch}/></button>
+                        <input className='search-field' placeholder='Search...' onChange={(e) => setSelectedValue(e.target.value)}/>
+                        <button onClick={searchNotes} type='submit' className='search-button'><FontAwesomeIcon icon={faSearch}/></button>
                     </div>
                     <button className='add-button' onClick={handleClickOpenPostForm}><FontAwesomeIcon icon={faPlus}/></button>
                     <Dialog open={openPostForm} onClose={handleClosePostForm}>
