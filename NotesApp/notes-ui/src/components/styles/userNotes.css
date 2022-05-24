@@ -169,3 +169,23 @@ option {
         margin-left: 5%;
     }
 }
+
+.delete-button {
+    background-color: var(--error-block, red);
+    color: white;
+    width: auto;
+    margin: 0 0 0 auto;
+}
+
+.delete-button:hover {
+    background-color: var(--error-block-faded, red);
+}
+
+.form-title {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-title-text {
+    font-size: 1.3rem;
+}

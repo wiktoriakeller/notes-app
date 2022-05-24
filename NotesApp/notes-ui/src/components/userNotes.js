@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import useNotesApi from '../services/useNotesApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPlus } from '@fortawesome/fontawesome-free-solid';
+import { faSearch, faPlus, faTrash } from '@fortawesome/fontawesome-free-solid';
 import NoteComponent from './noteComponent';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -132,6 +132,16 @@ const UserNotes = () => {
 
         return tagsArr;
     }
+
+    const handleDelete = async (e, hashid) => {
+        e.preventDefault();
+        let response = await notesApi.deleteNote(editedNote.current.hashId);
+
+        if(response.success === true) {
+            handleCloseEditForm();
+            window.location.reload(false);
+        }
+    }
     
     return (
         <>
@@ -161,8 +171,8 @@ const UserNotes = () => {
                                 notes={userNotes}
                                 errorMsg={postFormErrorMsg}
                                 setErrorMsg={setPostFormErrorMsg}
-                                showErrorMsg={showPostFormErrorMsg}
-                                setShowErrorMsg={setShowPostFormErrorMsg}
+                                showErrors={showPostFormErrorMsg}
+                                setShowError={setShowPostFormErrorMsg}
                             />
                         </DialogContent>
                         <DialogActions>
@@ -183,7 +193,12 @@ const UserNotes = () => {
                     </Dialog>
 
                     <Dialog open={openEditForm} onClose={handleCloseEditForm}>
-                        <DialogTitle>Edit note</DialogTitle>
+                        <DialogTitle>
+                            <div className='form-title'>
+                                <span className='form-title-text'>Edit note</span>
+                                <button className='delete-button' onClick={handleDelete}><FontAwesomeIcon icon={faTrash}/></button>
+                            </div>
+                        </DialogTitle>
                         <DialogContent>
                             <EditNote 
                                 isFormValid={isEditFormValid}
@@ -193,8 +208,8 @@ const UserNotes = () => {
                                 allNotes={userNotes}
                                 errorMsg={editFormErrorMsg}
                                 setErrorMsg={setEditFormErrorMsg}
-                                showErrorMsg={showEditFormErrorMsg}
-                                setShowErrorMsg={setShowEditFormErrorMsg}
+                                showErrors={showEditFormErrorMsg}
+                                setShowErrors={setShowEditFormErrorMsg}
                                 tagsCopy={() => getTags()}
                             />
                         </DialogContent>

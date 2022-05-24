@@ -13,6 +13,7 @@ function useNotesApi() {
     const getPublicLinkPath = '/notes-api/notes/';
     const getPublicNotePath = '/notes-api/notes/public/';
     const editNotePath = '/notes-api/notes';
+    const deleteNotePath = '/notes-api/notes/';
 
     const clientPaths = {
         'login': '/accounts/login',
@@ -89,6 +90,16 @@ function useNotesApi() {
         }
 
         const result = await fetchData(editNotePath, data, 'PUT');
+        return result;
+    }
+
+    const deleteNote = async (hashid) => {
+        const user = getUser();
+        if(user === '') {
+            logout();
+        }
+
+        const result = await fetchData(deleteNotePath + hashid, {}, 'DELETE');
         return result;
     }
 
@@ -212,6 +223,7 @@ function useNotesApi() {
             resetPassword,
             getAllNotes,
             generatePublicLink,
+            deleteNote,
             getPublicNote,
             editNote,
             postNote
