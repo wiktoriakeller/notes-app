@@ -1,0 +1,75 @@
+@import url('base.css');
+
+.navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    min-height: 4rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 12px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    color: var(--navbar-text, white);
+    margin-bottom: 0;
+}
+
+.title {
+    color: black;
+    font-size: 2.3rem;
+    font-weight: bolder;
+    margin-right: auto;
+    font-family: 'Courgette', cursive;
+}
+
+.title > a {
+    color: black;
+}
+
+.main-icon {
+    margin-left: 18px;
+    margin-right: -8px;
+    font-size: 2.2rem;
+    color: var(--button, green);
+    padding-bottom: 2px;
+}
+
+.main-icon:hover {
+    color: var(--faded-button, green);
+    transition: background-color 0.5s ease;
+    cursor: pointer;
+}
+
+.navbar-button {
+    background-color: white;
+    color: var(--navbar-text, white);
+    border: 1px solid var(--button, green);
+    border-radius: 4px;
+    width: auto;
+    font-size: 1.4rem;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-weight: normal;
+}
+
+.navbar-button:hover {
+    background-color: var(--button, green);
+    transition: background-color 0.5s ease;
+    color: white;
+}
+
+#right-button {
+    margin-right: 18px;
+}
+
+#left-button {
+    margin-left: auto;
+}
+
+@media screen and (max-width: 500px) {
+    .title {
+        display: none;
+    }
+}

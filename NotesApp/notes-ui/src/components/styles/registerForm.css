@@ -1,0 +1,117 @@
+@import url('base.css');
+
+.register-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    min-height: 90vh;
+}
+
+.inner-form {
+    background-color: white;
+    padding: 5px 60px;
+    border-radius: 10px;
+    margin: 5% 18%;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    max-width: 500px;
+}
+
+h1 {
+    text-align: center;
+    padding: 0px;
+    margin: 10px 0px;
+    margin-bottom: 8px;
+    font-size: 2.75rem;
+    font-family: 'Courgette', cursive;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    border: none;
+    background-color: var(--button, green);
+    border-radius: 8px;
+    font-size: 1.3rem;
+    font-weight: bolder;
+    color: white;
+    cursor: pointer;
+}
+
+.submit-button {
+    padding: 8px;
+}
+
+button:hover {
+    background-color: var(--faded-button, green);
+}
+
+button:disabled {
+    background-color: var(--button-disabled, grey);
+    cursor: default;
+}
+
+@media screen and (max-width: 700px) {
+    .inner-form {
+        padding: 0 8%;
+        margin: 5% 5%;
+    }
+}
+
+.account-info {
+    margin-top: 15px;
+    padding: 0;
+    font-size: 1.1rem;
+}
+
+a {
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+.hide {
+    color: white;
+    height: 0;
+    font-size: 0;
+}
+
+.error {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: var(--error-block, red);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.error:nth-child(1) {
+    margin-top: 15px;
+}
+
+.message-info {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 15px;
+    margin-bottom: 4px;
+    background-color: var(--success-block, green);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.error-info {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 15px;
+    margin-bottom: 4px;
+    background-color: var(--error-block, red);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+}

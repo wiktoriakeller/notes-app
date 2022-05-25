@@ -16,24 +16,34 @@ namespace NotesApp.Services.Dto.Validators
                 .NotEmpty()
                 .EmailAddress();
 
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
+                .Matches(@"[A-Za-z]*");
+
+            RuleFor(x => x.Surname)
+                .NotEmpty()
+                .MinimumLength(1)
+                .MaximumLength(20)
+                .Matches(@"[A-Za-z]*");
+
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
                 {
-                    var users = usersRepository.GetAll();
-                    var emailInUse = users.Any(u => u.Email == value);
+                    var emailInUse = usersRepository.GetFirstOrDefault(u => u.Email == value) != null;
 
                     if (emailInUse)
-                        context.AddFailure("Email", $"Email {value} is already in use");
+                        context.AddFailure("Email", $"Email is already taken");
                 });
 
             RuleFor(x => x.Login)
                 .Custom((value, context) =>
                 {
-                    var users = usersRepository.GetAll();
-                    var loginInUse = users.Any(u => u.Login == value);
+                    var loginInUse = usersRepository.GetFirstOrDefault(u => u.Login == value) != null;
 
                     if (loginInUse)
-                        context.AddFailure("Login", $"Login {value} is already in use");
+                        context.AddFailure("Login", $"Login is already taken");
                 });
 
             RuleFor(x => x.Password)
@@ -41,7 +51,7 @@ namespace NotesApp.Services.Dto.Validators
                 .MinimumLength(6)
                 .MaximumLength(20);
 
-            RuleFor(x => x.ConfirmPassword).Equal(e => e.Password);
+            RuleFor(x => x.ConfirmPassword).Equal(e => e.Password).WithMessage("Passwords should match");
         }
     }
 }

@@ -17,10 +17,10 @@ namespace NotesApp.WebAPI.Controllers
             _notesService = notesService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetNote(int id)
+        [HttpGet("{hashId}")]
+        public async Task<IActionResult> GetNote([FromRoute] string hashId)
         {
-            var note = await _notesService.GetNoteById(id);
+            var note = await _notesService.GetNoteById(hashId);
             return Ok(note);
         }
 
@@ -31,24 +31,50 @@ namespace NotesApp.WebAPI.Controllers
             return Ok(notes);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto dto)
+        [HttpGet("filter/")]
+        public async Task<IActionResult> GetNotes([FromQuery] string type, [FromQuery] string value)
         {
-            var id = await _notesService.AddNote(dto);
-            return Created($"/note/{id}", null);
+            var notes = await _notesService.FilterNotes(type, value);
+            return Ok(notes);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote([FromBody] UpdateNoteDto dto, [FromRoute] int id)
+        [HttpGet("public/{hashId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPublicNote([FromRoute] string hashId)
         {
-            var note = await _notesService.UpdateNote(dto, id);
+            var note = await _notesService.GetPublicNote(hashId);
             return Ok(note);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote([FromRoute] int id)
+        [HttpPatch("{hashId}")]
+        public async Task<IActionResult> GeneratePublicLink([FromBody] CreatePublicLinkDto dto, [FromRoute] string hashId)
         {
-            await _notesService.DeleteNote(id);
+            var linkDto = await _notesService.GeneratePublicLink(dto, hashId);
+
+            if (linkDto.PublicHashId != string.Empty)
+                return Ok(linkDto);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateNote([FromBody] CreateNoteDto dto)
+        {
+            var hashId = await _notesService.AddNote(dto);
+            return Created($"notes-api/notes/{hashId}", null);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateNote([FromBody] UpdateNoteDto dto)
+        {
+            var note = await _notesService.UpdateNote(dto);
+            return Ok(note);
+        }
+
+        [HttpDelete("{hashId}")]
+        public async Task<IActionResult> DeleteNote([FromRoute] string hashId)
+        {
+            await _notesService.DeleteNote(hashId);
             return Ok();
         }
     }

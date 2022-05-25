@@ -1,0 +1,18 @@
+.error-code {
+    font-family: 'Nunito', sans-serif;
+}
+
+.back {
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 0;
+    margin: 0;
+}
+
+.error-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100vh;
+}

@@ -1,0 +1,191 @@
+.home-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.search {
+    margin-top: 30px;
+    margin-left: 5%;
+    margin-right: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 2%;
+    width: auto;
+    height: auto;
+}
+
+.search-input {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-field {
+    min-height: 25px;
+    font-size: 1.25rem;
+    min-width: 30rem;
+}
+
+.search-input input {
+    padding: 10px 0;
+    padding-left: 10px;
+    margin: 8px 0px 3px 0px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 1px solid gray;
+}
+
+.search-input input:focus {
+    outline: none;
+}
+
+.search-button {
+    background-color: transparent;
+    color: var(--button, green);
+    font-size: 1.2rem;
+    font-weight: normal;
+    cursor: pointer;
+    width: auto;
+    border-radius: 0;
+    margin: 0;
+    margin-left: -38px;
+    padding: 0;
+    padding-top: 3px;
+}
+
+.search-button:hover {
+    background-color: transparent;
+    color: var(--faded-button, green);
+}
+
+.search-options {
+    padding: 0;
+    margin-top: 5px;
+    height: 46px;
+    min-width: 7rem;
+    text-align: center;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+    color: gray;
+    font-size: 1.25rem;
+}
+
+option {
+    font-size: 1rem;
+}
+
+.search-bar {
+    border: 1px solid gray;
+    background-color: white;
+}
+
+.empty-notes-msg {
+    padding: 0;
+    margin-top: 20px;
+    font-size: 1.6rem;    
+}
+
+.add-button {
+    background-color: white;
+    color: var(--navbar-text, white);
+    border: 1px solid var(--button, green);
+    border-radius: 4px;
+    width: auto;
+    font-size: 1.4rem;
+    margin: 0;
+    min-width: 3rem;
+    margin-left: 3%;
+    margin-right: 2%;
+    margin-top: 4px;
+}
+
+.add-button:hover {
+    background-color: var(--button, green);
+    transition: background-color 0.5s ease;
+    color: white;
+}
+
+.notes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    margin-left: 2%;
+    margin-right: 2%;
+    flex-wrap: wrap;
+    gap: 2%;
+}
+
+.form-button {
+    background-color: white;
+    color: var(--navbar-text, white);
+    border: 1px solid var(--button, green);
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.form-button:hover {
+    background-color: var(--button, green);
+    transition: background-color 0.5s ease;
+    color: white;
+}
+
+.form-button.cancel {
+    border: 1px solid var(--error-block, red);
+    color: var(--error-block, red);
+}
+
+.form-button.cancel:hover {
+    background-color: var(--error-block, red);
+    transition: background-color 0.5s ease;
+    color: white;
+}
+
+.form-button:disabled {
+    background-color: var(--button-disabled, grey);
+    cursor: default;
+    border: 1px solid var(--button-disabled, gry);
+    color: white;
+}
+
+@media screen and (max-width: 800px) {
+    .search-field {
+        min-width: 10rem
+    }
+
+    .add-button {
+        margin-left: 5%;
+    }
+}
+
+.delete-button {
+    background-color: var(--error-block, red);
+    color: white;
+    width: auto;
+    margin: 0 0 0 auto;
+}
+
+.delete-button:hover {
+    background-color: var(--error-block-faded, red);
+}
+
+.form-title {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-title-text {
+    font-size: 1.3rem;
+}

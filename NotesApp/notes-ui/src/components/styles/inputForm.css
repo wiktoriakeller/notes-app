@@ -1,0 +1,43 @@
+.input-form input {
+    padding: 10px 0;
+    padding-left: 10px;
+    margin: 8px 0px 3px 0px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 1px solid gray;
+    min-width: 19rem;
+}
+
+.input-form input:focus {
+    outline: none;
+}
+
+.input-form .input-valid {
+    border: 1px solid rgb(37, 179, 37);
+}
+
+.input-form .input-invalid {
+    border: 1px solid red;
+}
+
+.input-form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 1rem;
+    color: black;
+    margin-top: 8px;
+    padding: 0px;
+}
+
+.hide-error-msg {
+    color: transparent;
+    height: 0;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.9rem;
+}

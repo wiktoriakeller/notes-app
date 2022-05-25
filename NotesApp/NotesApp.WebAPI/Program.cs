@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NotesApp.Services.Middleware;
 using Microsoft.AspNetCore.Authorization;
+using HashidsNet;
+using NotesApp.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +44,12 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 //Validators
 builder.Services.AddFluentValidation();
 builder.Services.AddTransient<IValidator<CreateUserDto>, CreateUserValidator>();
+builder.Services.AddTransient<IValidator<RegisterUserDto>, RegisterUserValidator>();
 builder.Services.AddTransient<IValidator<LoginDto>, LoginUserValidator>();
+builder.Services.AddTransient<IValidator<CreateNoteDto>, CreateNoteValidator>();
+builder.Services.AddTransient<IValidator<UpdateNoteDto>, UpdateNoteValidator>();
+builder.Services.AddTransient<IValidator<ForgotPasswordRequestDto>, ForgotPasswordRequestValidator>();
+builder.Services.AddTransient<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
 ValidatorOptions.Global.LanguageManager.Enabled = false;
 
 //Add automapper
@@ -78,10 +85,33 @@ builder.Services.AddScoped<IAuthorizationHandler, NotesAuthorizationHandler>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddHttpContextAccessor();
 
+//HashId
+builder.Services.AddScoped<IHashids>(_ => 
+    new Hashids(builder.Configuration.GetSection("HashIdSalt").ToString(), 11));
+
 //Add middleware
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
+//Add email service and configuration
+var emailConfiguration = new EmailSettings();
+builder.Configuration.GetSection("EmailConfiguration").Bind(emailConfiguration);
+builder.Services.AddSingleton(emailConfiguration);
+
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+//Add CORS
+var origins = builder.Configuration["AllowedOrigins"];
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("notes-client", builder =>
+        builder.AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithOrigins(origins)
+    );
+});
+
 var app = builder.Build();
+app.UseCors("notes-client");
 await SeedDatabase();
 
 // Configure the HTTP request pipeline.
