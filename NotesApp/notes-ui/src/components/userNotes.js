@@ -208,7 +208,7 @@ const UserNotes = () => {
                                 errorMsg={postFormErrorMsg}
                                 setErrorMsg={setPostFormErrorMsg}
                                 showErrors={showPostFormErrorMsg}
-                                setShowError={setShowPostFormErrorMsg}
+                                setShowErrors={setShowPostFormErrorMsg}
                             />
                         </DialogContent>
                         <DialogActions>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InputForm from './inputForm';
 import './styles/addNote.css';
+import {validateName, validateContent, validateTag, validateImageLink} from '../services/noteValidation.js';
 
 const EditNote = (props) => {
     const {isFormValid, setIsValidForm, setEditFormData, note, allNotes, 
@@ -28,71 +29,34 @@ const EditNote = (props) => {
     const tagErrorMsg = 'Tags should be unique with maximum length of 10 characters.';
     
     useEffect(() => {
-        (async() => {
-            let validName = validateName();
-            let validContent = validateContent();
-            let validLink = await validateImageLink();
-            let validTag = validateTag();
-            let validForm = validName && validContent && validLink && validTag;
-            setIsValidForm(validForm);
+        let validName = validateName(name, note.hashId, allNotes);
+        let validContent = validateContent(content);
+        let validLink = validateImageLink(imageLink);
+        let validTag = validateTag(tagInput, tags);
+        let validForm = validName && validContent && validLink && validTag;
 
-            if(validForm) {
-                let data = {
-                    'noteName': name,
-                    'content': content,
-                    'imageLink': imageLink,
-                    'tags': []
-                }
-    
-                for(const tag of tags) {
-                    data.tags.push({'tagName': tag});
-                }
+        setIsNameValid(validName);
+        setIsContentValid(validContent);
+        setIsImageLinkValid(validLink);
+        setIsTagValid(validTag);
+        setIsValidForm(validForm);
 
-                setEditFormData(data);
+        if(validForm) {
+            let data = {
+                'noteName': name,
+                'content': content,
+                'imageLink': imageLink,
+                'tags': []
             }
-            setShowErrors(false);
-        })();
+
+            for(const tag of tags) {
+                data.tags.push({'tagName': tag});
+            }
+            setEditFormData(data);
+        }
+
+        setShowErrors(false);
     }, [name, content, tagInput, imageLink]);
-
-    const validateName = () => {
-        let trimmedName = name.trim();
-        let isUnique = true;
-        for(const otherNote of allNotes) {
-            if(otherNote.noteName === trimmedName && otherNote.hashId !== note.hashId) {
-                isUnique = false;
-                break;
-            }
-        }
-        let isValid = isUnique && trimmedName.length > 2;
-        setIsNameValid(true);
-        return true;
-    }
-
-    const validateContent = () => {
-        let isValid = content !== '';
-        setIsContentValid(isValid);
-        return isValid;
-    }
-
-    const validateTag = () => {
-        let trimmedTag = tagInput.trim();
-        let unique = trimmedTag === '' || !tags.includes(trimmedTag);
-        setIsTagValid(unique);
-        return unique;
-    }
-    
-    const validateImageLink = async () => {
-        let isValid = false;
-        if(imageLink === '' || imageLink === null) {
-            isValid = true;
-        }
-        else if((imageLink.endsWith('.jpg') || imageLink.endsWith('.png') || imageLink.endsWith('.jpeg'))
-            && (imageLink.startsWith('https://www') || imageLink.startsWith('http://www'))) {
-            isValid = true;
-        }
-        setIsImageLinkValid(isValid);
-        return isValid;
-    }
 
     const onKeyDown = (e) => {
         const trimmed = tagInput.trim();
