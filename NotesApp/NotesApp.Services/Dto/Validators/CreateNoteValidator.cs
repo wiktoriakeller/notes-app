@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using NotesApp.Domain.Interfaces;
+using NotesApp.Services.Dto.Validators.Extensions;
 
 namespace NotesApp.Services.Dto.Validators
 {
     public class CreateNoteValidator : AbstractValidator<CreateNoteDto>
     {
-        public CreateNoteValidator(INoteRepository notesRepository)
+        public CreateNoteValidator()
         {
             RuleFor(x => x.NoteName)
                 .NotEmpty()
@@ -14,24 +14,9 @@ namespace NotesApp.Services.Dto.Validators
             RuleFor(x => x.Content)
                 .NotEmpty();
 
-            RuleFor(x => x.Tags)
-                .Custom((value, context) =>
-                {
-                    if(value.Where(tag => tag.TagName.Length > 10).Count() > 0)
-                        context.AddFailure("Tags", $"Tag name shouldn't be longer than 10 characters");
-
-                    var namesDict = new Dictionary<string, int>();
-                    foreach(var tag in value)
-                    {
-                        if(!namesDict.ContainsKey(tag.TagName))
-                            namesDict.Add(tag.TagName, 1);
-                        else
-                            namesDict[tag.TagName]++;
-                    }
-
-                    if(namesDict.Where(kvp => kvp.Value > 1).Count() > 0)
-                        context.AddFailure("Tags", $"Tag names shouldn't be duplicated");
-                });
+            RuleFor(x => x.Tags.Select(t => t.TagName))
+                .TagsMustBeUnique()
+                .ForEach(n => n.MaximumLength(10));
         }
     }
 }
