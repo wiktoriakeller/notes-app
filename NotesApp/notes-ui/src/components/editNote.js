@@ -38,7 +38,6 @@ const EditNote = (props) => {
 
             if(validForm) {
                 let data = {
-                    'hashId': note.hashId,
                     'noteName': name,
                     'content': content,
                     'imageLink': imageLink,
@@ -65,8 +64,8 @@ const EditNote = (props) => {
             }
         }
         let isValid = isUnique && trimmedName.length > 2;
-        setIsNameValid(isValid);
-        return isValid;
+        setIsNameValid(true);
+        return true;
     }
 
     const validateContent = () => {

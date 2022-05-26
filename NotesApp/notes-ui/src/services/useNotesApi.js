@@ -12,7 +12,7 @@ function useNotesApi() {
     const postNotePath = '/notes-api/notes';
     const getPublicLinkPath = '/notes-api/notes/';
     const getPublicNotePath = '/notes-api/notes/public/';
-    const editNotePath = '/notes-api/notes';
+    const editNotePath = '/notes-api/notes/';
     const deleteNotePath = '/notes-api/notes/';
     const filterPath = '/notes-api/notes/filter';
 
@@ -84,13 +84,13 @@ function useNotesApi() {
         return result;
     }
 
-    const editNote = async (data) => {
+    const editNote = async (data, hashId) => {
         const user = getUser();
         if(user === '') {
             logout();
         }
 
-        const result = await fetchData(editNotePath, data, 'PUT');
+        const result = await fetchData(editNotePath + hashId, data, 'PUT');
         return result;
     }
 
@@ -169,7 +169,6 @@ function useNotesApi() {
     const fetchData = async (path, data, method) => {
         try {
             const user = getUser();
-
             const fetchData = {
                 method: method,
                 headers: {
@@ -188,31 +187,32 @@ function useNotesApi() {
                 return {success: true, errors: {}, response: response};
             }
             else {
-                try {
-                    let errors = JSON.parse(await response.text()).errors;
-                    return {success: false, errors: errors};
-                }
-                catch(e) {
-                    if(response.status === StatusCodes.Status400) {
-                        setLoginMessage('Invalid request');
-                        setIsLoginMsgError(true);
-                        navigate(clientPaths['login']);
-                    }
-                    else if(response.status === StatusCodes.Status401 || response.status == StatusCodes.Status403){
-                        logout();
-                    }
-                    else if(response.status === StatusCodes.Status404) {
-                        navigate(clientPaths['not-found']); 
-                    }
-                    else if(response.status === StatusCodes.Status500) {
-                        localStorage.removeItem('user');
-                        setLoginMessage('Internal server error');
-                        setIsLoginMsgError(true);
-                        navigate(clientPaths['login']);
-                    }
+                let errors = JSON.parse(await response.text()).errors;
+                if(typeof errors === 'string')
+                    errors = {errors: errors};
 
-                    return {success: false, errors: {}};
+                if(response.status === StatusCodes.Status400 && path.includes(resetPasswordPath)) {
+                    setLoginMessage('Invalid request');
+                    setIsLoginMsgError(true);
+                    navigate(clientPaths['login']);
                 }
+                else if(response.status === StatusCodes.Status401 || response.status == StatusCodes.Status403){
+                    logout();
+                }
+                else if(response.status === StatusCodes.Status404) {
+                    navigate(clientPaths['not-found']); 
+                }
+                else if(response.status === StatusCodes.Status500) {
+                    localStorage.removeItem('user');
+                    setLoginMessage('Internal server error');
+                    setIsLoginMsgError(true);
+                    navigate(clientPaths['login']);
+                }
+                else {
+                    return {success: false, errors: errors};                        
+                }
+                
+                return {success: false, errors: {}};
             }
         }
         catch(e) {

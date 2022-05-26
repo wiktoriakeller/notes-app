@@ -13,7 +13,7 @@ namespace NotesApp.Services.Interfaces
         Task<PublicNoteDto> GetPublicNote(string hashId);
         Task<PublicLinkDto> GeneratePublicLink(CreatePublicLinkDto dto, string hashId);
         Task<string> AddNote(CreateNoteDto noteDto);
-        Task<NoteDto> UpdateNote(UpdateNoteDto noteDto);
+        Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, string hashId);
         Task DeleteNote(string hashId);
     }
 }

@@ -154,23 +154,29 @@ namespace NotesApp.Services.Services
             return note.HashId;
         }
 
-        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto)
+        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, string hashId)
         {
-            var hashId = noteDto.HashId;
             var id = GetRawId(hashId);
-            var note = await _notesRepository.GetByIdAsync(id, "Tags");
-            await CheckAuthorization(note, Operation.Update);
+            var userNote = await _notesRepository.GetByIdAsync(id, "Tags");
+            await CheckAuthorization(userNote, Operation.Update);
 
-            if (note == null)
+            if (userNote == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
 
-            note.NoteName = noteDto.NoteName;
-            note.Content = noteDto.Content;
-            note.ImageLink = noteDto.ImageLink;
-            note.Tags = _mapper.Map<ICollection<Tag>>(noteDto.Tags);
-            await _notesRepository.UpdateAsync(note);
+            var allNotes = await GetAllNotes();
+            foreach (var note in allNotes)
+            {
+                if (note.NoteName == noteDto.NoteName)
+                    throw new BadRequestException("Note name should be unique");
+            }
 
-            return _mapper.Map<NoteDto>(note);
+            userNote.NoteName = noteDto.NoteName;
+            userNote.Content = noteDto.Content;
+            userNote.ImageLink = noteDto.ImageLink;
+            userNote.Tags = _mapper.Map<ICollection<Tag>>(noteDto.Tags);
+            await _notesRepository.UpdateAsync(userNote);
+
+            return _mapper.Map<NoteDto>(userNote);
         }
 
         public async Task DeleteNote(string hashid)
