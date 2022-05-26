@@ -13,9 +13,6 @@ namespace NotesApp.Services.Middleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var response = context.Response;
-            response.ContentType = "application/json";
-
             try
             {
                 await next.Invoke(context);
@@ -23,8 +20,10 @@ namespace NotesApp.Services.Middleware
             catch(Exception e)
             {
                 var statusCode = GetStatusCode(e);
+                var response = context.Response;
                 response.StatusCode = statusCode;
-                var result = JsonSerializer.Serialize( new { error = e?.Message } );
+                response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize( new { errors = e?.Message } );
                 await response.WriteAsync(result);
             }
         }
@@ -35,7 +34,7 @@ namespace NotesApp.Services.Middleware
             ForbiddenException => StatusCodes.Status403Forbidden,
             NotFoundException => StatusCodes.Status404NotFound,
             ExpiredException => StatusCodes.Status400BadRequest,
-            BadHttpRequestException => StatusCodes.Status400BadRequest,
+            BadRequestException => StatusCodes.Status400BadRequest,
             InternalServerErrorException => StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
         };
