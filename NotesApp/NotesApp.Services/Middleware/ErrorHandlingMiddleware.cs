@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using NotesApp.Services.Exceptions;
+using System.Text.Json;
 
 namespace NotesApp.Services.Middleware
 {
@@ -16,34 +17,26 @@ namespace NotesApp.Services.Middleware
             {
                 await next.Invoke(context);
             }
-            catch (UnauthenticatedException e)
+            catch(Exception e)
             {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            }
-            catch (ForbiddenException e)
-            {
-                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            }
-            catch(NotFoundException e)
-            {
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-            }
-            catch(ExpiredException e)
-            {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            }
-            catch(BadRequestException e)
-            {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            }
-            catch(InternalServerErrorException e)
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            }
-            catch (Exception)
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                var statusCode = GetStatusCode(e);
+                var response = context.Response;
+                response.StatusCode = statusCode;
+                response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize( new { errors = e?.Message } );
+                await response.WriteAsync(result);
             }
         }
+
+        private int GetStatusCode(Exception error) => error switch
+        {
+            UnauthenticatedException => StatusCodes.Status401Unauthorized,
+            ForbiddenException => StatusCodes.Status403Forbidden,
+            NotFoundException => StatusCodes.Status404NotFound,
+            ExpiredException => StatusCodes.Status400BadRequest,
+            BadRequestException => StatusCodes.Status400BadRequest,
+            InternalServerErrorException => StatusCodes.Status500InternalServerError,
+            _ => StatusCodes.Status500InternalServerError
+        };
     }
 }
