@@ -21,7 +21,8 @@ namespace NotesApp.Services.Dto.Validators.Extensions
                     return false;
 
                 return true;
-            });
+            })
+            .WithMessage("Tags in note should be unique");
         }
     }
 }

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesApp.DataAccess", "Note
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesApp.Services", "NotesApp.Services\NotesApp.Services.csproj", "{3727E9C0-8354-4B01-885E-84C1F2EA14DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesApp.Tests", "NotesApp.Tests\NotesApp.Tests.csproj", "{C6FA62FC-CDE9-4719-A3DF-923613F1C5B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3727E9C0-8354-4B01-885E-84C1F2EA14DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3727E9C0-8354-4B01-885E-84C1F2EA14DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3727E9C0-8354-4B01-885E-84C1F2EA14DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6FA62FC-CDE9-4719-A3DF-923613F1C5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6FA62FC-CDE9-4719-A3DF-923613F1C5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6FA62FC-CDE9-4719-A3DF-923613F1C5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6FA62FC-CDE9-4719-A3DF-923613F1C5B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
