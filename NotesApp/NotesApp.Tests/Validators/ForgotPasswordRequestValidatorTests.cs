@@ -1,26 +1,36 @@
 ﻿using Xunit;
 using Moq;
-using FluentValidation;
-using System.Collections.Generic;
+using System;
 using NotesApp.Services.Dto;
 using NotesApp.Services.Dto.Validators;
 using FluentValidation.TestHelper;
-using Xunit.Abstractions;
-using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using NotesApp.Domain.Interfaces;
-using System;
 using NotesApp.Domain.Entities;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace NotesApp.Tests.Validators
 {
     [ExcludeFromCodeCoverage]
     public class ForgotPasswordRequestValidatorTests
     {
+        private static IEnumerable<object[]> GetData()
+        {
+            yield return new object[]
+            {
+                new User {},
+                true
+            };
+            yield return new object[]
+            {
+                null,
+                false
+            };
+        }
+
         [Theory]
         [InlineData("email", false)]
-        [InlineData("email@.com", false)]
         [InlineData("email@email.com", true)]
         public void Validate_ForCorrectEmail(string email, bool passes)
         {
@@ -42,18 +52,26 @@ namespace NotesApp.Tests.Validators
             }
         }
 
-        [Fact]
-        public void Validate_ForExistingEmail_ReturnsFailure( )
+        [Theory]
+        [MemberData(nameof(GetData))]
+        public void Validate_ForExistingEmail(User? user, bool passes)
         {
             var email = "email@email.com";
             var userRepositoryMock = new Mock<IUserRepository>();
             var validator = new ForgotPasswordRequestValidator(userRepositoryMock.Object);
 
             userRepositoryMock.Setup(m => m.GetFirstOrDefault(It.IsAny<Expression<Func<User, bool>>>()))
-                .Returns<User?>(null);
+                .Returns(user);
 
             var result = validator.TestValidate(new ForgotPasswordRequestDto { Email = email });
-            result.ShouldHaveValidationErrorFor(x => x.Email).Only();
+            if(passes)
+            {
+                result.ShouldNotHaveAnyValidationErrors();
+            }
+            else
+            {
+                result.ShouldHaveValidationErrorFor(x => x.Email).Only();
+            }
         }
     }
 }

@@ -79,21 +79,6 @@ namespace NotesApp.Tests.Validators
             };
         }
 
-        private CreateNoteDto GetValidNote()
-        {
-            return new CreateNoteDto
-            {
-                NoteName = "Note 5",
-                Content = "lorem ipsum",
-                ImageLink = "",
-                Tags = new List<CreateTagDto>
-                {
-                    new CreateTagDto { TagName = "Tag" },
-                    new CreateTagDto { TagName = "Tag 2"}
-                }
-            };
-        }
-
         private readonly IValidator<CreateNoteDto> _validator;
         private readonly ITestOutputHelper _testOutputHelper;
 
@@ -163,6 +148,21 @@ namespace NotesApp.Tests.Validators
             {
                 result.Errors.Should().BeEmpty();
             }
+        }
+
+        private CreateNoteDto GetValidNote()
+        {
+            return new CreateNoteDto
+            {
+                NoteName = "Note 5",
+                Content = "lorem ipsum",
+                ImageLink = "",
+                Tags = new List<CreateTagDto>
+                {
+                    new CreateTagDto { TagName = "Tag" },
+                    new CreateTagDto { TagName = "Tag 2"}
+                }
+            };
         }
     }
 }
