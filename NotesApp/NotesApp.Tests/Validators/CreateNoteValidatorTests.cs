@@ -1,5 +1,4 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 using FluentValidation;
 using System.Collections.Generic;
 using NotesApp.Services.Dto;
@@ -7,9 +6,11 @@ using NotesApp.Services.Dto.Validators;
 using FluentValidation.TestHelper;
 using Xunit.Abstractions;
 using FluentAssertions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NotesApp.Tests.Validators
 {
+    [ExcludeFromCodeCoverage]
     public class CreateNoteValidatorTests
     {
         private static IEnumerable<object[]> GetValidNotes()
