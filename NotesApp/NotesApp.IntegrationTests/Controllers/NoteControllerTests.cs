@@ -9,22 +9,66 @@ using NotesApp.DataAccess;
 using Microsoft.Extensions.DependencyInjection;
 using NotesApp.Services.Dto;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text;
 using Microsoft.AspNetCore.Authorization.Policy;
 using NotesApp.IntegrationTests.Extensions;
+using NotesApp.Domain.Entities;
+using HashidsNet;
+using Moq;
+using NotesApp.Domain.Interfaces;
+using System.Net;
 
 namespace NotesApp.IntegrationTests.Controllers
 {
     public class NoteControllerTests
     {
+        private readonly WebApplicationFactory<Program> _factoryWithServices;
         private readonly HttpClient _client;
+        private readonly Mock<IHashids> _hashids;
+
+        private static IEnumerable<object[]> GetNotesToDelete()
+        {
+            yield return new object[]
+            {
+                new Note
+                {
+                    NoteName = "Note",
+                    Content = "content",
+                    ImageLink = "",
+                    UserId = 1,
+                    HashId = "hash",
+                    Tags = new List<Tag> { }
+                },
+                System.Net.HttpStatusCode.OK
+            };
+            yield return new object[]
+{
+                new Note
+                {
+                    NoteName = "Note",
+                    Content = "content",
+                    ImageLink = "",
+                    UserId = 2,
+                    HashId = "hash2",
+                    Tags = new List<Tag> { }
+                },
+                System.Net.HttpStatusCode.Forbidden
+            };
+        }
 
         public NoteControllerTests()
         {
             var factory = new WebApplicationFactory<Program>();
-            _client = factory
-                .WithWebHostBuilder(builder => {
+            _hashids = new Mock<IHashids>();
+
+            _hashids.Setup(h => h.Encode(1)).Returns("hash");
+            _hashids.Setup(h => h.Decode("hash")).Returns(new int[] { 1 });
+
+            _hashids.Setup(h => h.Encode(2)).Returns("hash2");
+            _hashids.Setup(h => h.Decode("hash2")).Returns(new int[] { 2 });
+
+            _factoryWithServices = factory
+                .WithWebHostBuilder(builder =>
+                {
                     builder.ConfigureServices(services =>
                     {
                         var dbContextOptions = services.SingleOrDefault(service => service.ServiceType == typeof(DbContextOptions<NotesDbContext>));
@@ -34,10 +78,14 @@ namespace NotesApp.IntegrationTests.Controllers
 
                         services.AddMvc(option => option.Filters.Add(new FakeUserFilter()));
 
+                        var hashIdService = services.SingleOrDefault(service => service.ServiceType == typeof(IHashids));
+                        services.AddScoped(_ => _hashids.Object);
+
                         services.AddDbContext<NotesDbContext>(options => options.UseInMemoryDatabase("NotesInMemoryDb"));
                     });
-                 })
-                .CreateClient();
+                });
+
+            _client = _factoryWithServices.CreateClient();
         }
 
         [Fact]
@@ -45,7 +93,7 @@ namespace NotesApp.IntegrationTests.Controllers
         {
             var response = await _client.GetAsync("/notes-api/notes");
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
@@ -66,7 +114,7 @@ namespace NotesApp.IntegrationTests.Controllers
             var content = model.ToHttpContent();
             var response = await _client.PostAsync("/notes-api/notes", content);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
             response.Headers.Location.Should().NotBeNull();
         }
 
@@ -84,7 +132,27 @@ namespace NotesApp.IntegrationTests.Controllers
             var content = model.ToHttpContent();
             var response = await _client.PostAsync("/notes-api/notes", content);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Delete_ForNonExistingNote_ReturnsNotFound()
+        {
+            var response = await _client.DeleteAsync("/notes-api/notes/63");
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetNotesToDelete))]
+        public async Task Delete_ForExistingNote_ReturnsAppropriateStatus(Note note, HttpStatusCode status)
+        {
+            var scopedFactory = _factoryWithServices.Services.GetService<IServiceScopeFactory>();
+            using var scope = scopedFactory.CreateScope();
+            var notesRepository = scope.ServiceProvider.GetService<INoteRepository>();
+            await notesRepository.AddAsync(note);
+
+            var response = await _client.DeleteAsync($"/notes-api/notes/{note.HashId}");
+            response.StatusCode.Should().Be(status);
         }
     }
 }
