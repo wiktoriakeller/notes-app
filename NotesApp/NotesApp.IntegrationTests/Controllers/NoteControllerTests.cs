@@ -60,12 +60,6 @@ namespace NotesApp.IntegrationTests.Controllers
             var factory = new WebApplicationFactory<Program>();
             _hashids = new Mock<IHashids>();
 
-            _hashids.Setup(h => h.Encode(1)).Returns("hash");
-            _hashids.Setup(h => h.Decode("hash")).Returns(new int[] { 1 });
-
-            _hashids.Setup(h => h.Encode(2)).Returns("hash2");
-            _hashids.Setup(h => h.Decode("hash2")).Returns(new int[] { 2 });
-
             _factoryWithServices = factory
                 .WithWebHostBuilder(builder =>
                 {
@@ -78,7 +72,6 @@ namespace NotesApp.IntegrationTests.Controllers
 
                         services.AddMvc(option => option.Filters.Add(new FakeUserFilter()));
 
-                        var hashIdService = services.SingleOrDefault(service => service.ServiceType == typeof(IHashids));
                         services.AddScoped(_ => _hashids.Object);
 
                         services.AddDbContext<NotesDbContext>(options => options.UseInMemoryDatabase("NotesInMemoryDb"));
@@ -146,6 +139,12 @@ namespace NotesApp.IntegrationTests.Controllers
         [MemberData(nameof(GetNotesToDelete))]
         public async Task Delete_ForExistingNote_ReturnsAppropriateStatus(Note note, HttpStatusCode status)
         {
+            _hashids.Setup(h => h.Encode(1)).Returns("hash");
+            _hashids.Setup(h => h.Decode("hash")).Returns(new int[] { 1 });
+
+            _hashids.Setup(h => h.Encode(2)).Returns("hash2");
+            _hashids.Setup(h => h.Decode("hash2")).Returns(new int[] { 2 });
+
             var scopedFactory = _factoryWithServices.Services.GetService<IServiceScopeFactory>();
             using var scope = scopedFactory.CreateScope();
             var notesRepository = scope.ServiceProvider.GetService<INoteRepository>();
