@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using NotesApp.Domain.Interfaces;
+using NotesApp.Services.Dto.Validators.Extensions;
 
 namespace NotesApp.Services.Dto.Validators
 {
@@ -28,23 +29,9 @@ namespace NotesApp.Services.Dto.Validators
                 .MaximumLength(20)
                 .Matches(@"[A-Za-z]*");
 
-            RuleFor(x => x.Email)
-                .Custom((value, context) =>
-                {
-                    var emailInUse = usersRepository.GetFirstOrDefault(u => u.Email == value) != null;
+            RuleFor(x => x.Email).EmailMustBeUnique(usersRepository);
 
-                    if (emailInUse)
-                        context.AddFailure("Email", $"Email is already taken");
-                });
-
-            RuleFor(x => x.Login)
-                .Custom((value, context) =>
-                {
-                    var loginInUse = usersRepository.GetFirstOrDefault(u => u.Login == value) != null;
-
-                    if (loginInUse)
-                        context.AddFailure("Login", $"Login is already taken");
-                });
+            RuleFor(x => x.Login).LoginMustBeUnique(usersRepository);
 
             RuleFor(x => x.Password)
                 .NotEmpty()
