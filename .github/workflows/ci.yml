@@ -24,11 +24,15 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore NotesApp
+        run: dotnet restore ./NotesApp/NotesApp.sln
       - name: Build
-        run: dotnet build NotesApp --configuration Release --no-restore
-      - name: Test
-        run: dotnet test NotesApp --no-build --verbosity normal
+        run: dotnet build ./NotesApp/NotesApp.sln --configuration Release --no-restore
+      - name: Run tests
+        env:
+          Authentication: ${{ secrets.AUTHENTICATION }}
+          HashIdSalt: ${{ secrets.HASHIDSALT }}
+          EmailConfiguration: ${{ secrets.EMAILCONFIGURATION }}
+        run: dotnet test ./NotesApp/NotesApp.sln --verbosity normal
   
   node-build:
     runs-on: ubuntu-latest
