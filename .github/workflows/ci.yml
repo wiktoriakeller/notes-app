@@ -24,9 +24,9 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore NotesApp
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build NotesApp --configuration Release --no-restore
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test NotesApp --no-build --verbosity normal
         
