@@ -113,7 +113,7 @@ const UserNotes = () => {
         setEditFormErrorMsg([]);
         setShowEditFormErrorMsg(false);
     
-        let response = await notesApi.editNote(editFormData);
+        let response = await notesApi.editNote(editFormData, editedNote.current.hashId);
 
         if(response.success === true) {
             handleCloseEditForm();
@@ -208,7 +208,7 @@ const UserNotes = () => {
                                 errorMsg={postFormErrorMsg}
                                 setErrorMsg={setPostFormErrorMsg}
                                 showErrors={showPostFormErrorMsg}
-                                setShowError={setShowPostFormErrorMsg}
+                                setShowErrors={setShowPostFormErrorMsg}
                             />
                         </DialogContent>
                         <DialogActions>

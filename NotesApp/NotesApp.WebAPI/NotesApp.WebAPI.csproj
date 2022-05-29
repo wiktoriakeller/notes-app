@@ -23,4 +23,8 @@
     <ProjectReference Include="..\NotesApp.Services\NotesApp.Services.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="NotesApp.IntegrationTests"/>
+	</ItemGroup>
+
 </Project>

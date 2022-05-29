@@ -43,6 +43,18 @@ namespace NotesApp.Services.Services
             return _mapper.Map<NoteDto>(note);
         }
 
+        public Task<IEnumerable<NoteDto>> GetNotes(string? type, string? value)
+        {
+            type = type?.ToLower().Trim();
+            return type switch
+            {
+                "name" when (value is not null && value != string.Empty) => GetNotesByName(value),
+                "content" when (value is not null && value != string.Empty) => GetNotesByContent(value),
+                "tags" when (value is not null && value != string.Empty) => GetNotesByTag(value),
+                _ => GetAllNotes()
+            };
+        }
+
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
         {
             var userId = GetUserId();
@@ -83,24 +95,20 @@ namespace NotesApp.Services.Services
             var id = GetRawId(hashId);
             var note = await _notesRepository.GetByIdAsync(id);
             await CheckAuthorization(note);
-            string publicHashId = string.Empty;
 
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
-
-            if(!dto.ResetPublicHashId)
+            
+            note.PublicHashId = string.Empty;
+            if (!dto.ResetPublicHashId)
             {
                 var rng = new Random();
                 var salt = rng.Next();
-                publicHashId = _hashids.EncodeLong(id + salt);
+                var publicHashId = _hashids.EncodeLong(id + salt);
 
                 note.PublicHashId = publicHashId;
                 note.PublicHashIdSalt = salt;
                 note.PublicLinkValidTill = DateTimeOffset.Now.AddDays(1);
-            }
-            else
-            {
-                note.PublicHashId = string.Empty;
             }
 
             await _notesRepository.UpdateAsync(note);
@@ -124,39 +132,24 @@ namespace NotesApp.Services.Services
             throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
         }
 
-        public Task<IEnumerable<NoteDto>> FilterNotes(string type, string value)
-        {
-            type = type.ToLower();
-            if(type == "name")
-            {
-                return GetNotesByName(value);
-            }
-            else if(type == "content")
-            {
-                return GetNotesByContent(value);
-            }
-            else if(type == "tags")
-            {
-                return GetNotesByTag(value);
-            }
-
-            return GetAllNotes();
-        }
-
         public async Task<string> AddNote(CreateNoteDto noteDto)
         {
             var note = _mapper.Map<Note>(noteDto);
             var userId = GetUserId();
             note.UserId = userId;
+
+            var noteNameValidation = await ValidateNoteUniqueness(noteDto.NoteName, "");
+            if (!noteNameValidation)
+                throw new BadRequestException("Note name should be unique");
+
             await _notesRepository.AddAsync(note);
             note.HashId = EncodeId(note.Id);
             await _notesRepository.UpdateAsync(note);
             return note.HashId;
         }
 
-        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto)
+        public async Task<NoteDto> UpdateNote(UpdateNoteDto noteDto, string hashId)
         {
-            var hashId = noteDto.HashId;
             var id = GetRawId(hashId);
             var note = await _notesRepository.GetByIdAsync(id, "Tags");
             await CheckAuthorization(note, Operation.Update);
@@ -164,12 +157,16 @@ namespace NotesApp.Services.Services
             if (note == null)
                 throw new NotFoundException($"Resource with id: {id} couldn't be found");
 
+            var noteNameValidation = await ValidateNoteUniqueness(noteDto.NoteName, hashId);
+            if(!noteNameValidation)
+                throw new BadRequestException("Note name should be unique");
+
             note.NoteName = noteDto.NoteName;
             note.Content = noteDto.Content;
             note.ImageLink = noteDto.ImageLink;
             note.Tags = _mapper.Map<ICollection<Tag>>(noteDto.Tags);
-            await _notesRepository.UpdateAsync(note);
 
+            await _notesRepository.UpdateAsync(note);
             return _mapper.Map<NoteDto>(note);
         }
 
@@ -226,6 +223,18 @@ namespace NotesApp.Services.Services
         private string EncodeId(int id)
         {
             return _hashids.Encode(id);
+        }
+
+        private async Task<bool> ValidateNoteUniqueness(string name, string hashId)
+        {
+            var notes = await GetAllNotes();
+            foreach (var note in notes)
+            {
+                if (note.NoteName == name && note.HashId != hashId)
+                    return false;
+            }
+
+            return true;
         }
     }
 }
