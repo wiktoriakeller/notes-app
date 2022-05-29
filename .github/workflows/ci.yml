@@ -29,9 +29,9 @@ jobs:
         run: dotnet build ./NotesApp/NotesApp.sln --configuration Release --no-restore
       - name: Run tests
         env:
-          Authentication: ${{ secrets.AUTHENTICATION }}
+          Authentication: ${{ toJson(secrets.AUTHENTICATION) }}
           HashIdSalt: ${{ secrets.HASHIDSALT }}
-          EmailConfiguration: ${{ secrets.EMAILCONFIGURATION }}
+          EmailConfiguration: ${{ toJson(secrets.EMAILCONFIGURATION) }}
         run: dotnet test ./NotesApp/NotesApp.sln --verbosity normal
   
   node-build:
