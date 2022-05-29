@@ -49,4 +49,4 @@ jobs:
     - name: Install dependencies
       run: cd ./NotesApp/notes-ui/ && npm ci
     - name: Build
-      run: cd ./NotesApp/notes-ui/ && npm run build --if-present
+      run: cd ./NotesApp/notes-ui/ && CI=false npm run build --if-present
