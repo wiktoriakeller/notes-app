@@ -4,7 +4,7 @@
 REST WebAPI for managing notes with react client app.
 
 ## Backend Technologies
-* ASP.NET 6
+* ASP.NET Core 6
 * Entity Framework
 * FluentValidation
 * AutoMapper
@@ -20,7 +20,7 @@ REST WebAPI for managing notes with react client app.
 * CSS3
 
 ## Features
-* Creating, updating, filtering and reading notes
+* Creating, updating, deleting and filtering notes
 * User registration
 * User authentication and authorization using jwt tokens
 * Password recovery using user email
