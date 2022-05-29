@@ -31,6 +31,7 @@ namespace NotesApp.IntegrationTests.Controllers
             {
                 new Note
                 {
+                    Id = 5,
                     NoteName = "Note",
                     Content = "content",
                     ImageLink = "",
@@ -44,6 +45,7 @@ namespace NotesApp.IntegrationTests.Controllers
 {
                 new Note
                 {
+                    Id = 10,
                     NoteName = "Note",
                     Content = "content",
                     ImageLink = "",
@@ -139,12 +141,9 @@ namespace NotesApp.IntegrationTests.Controllers
         [MemberData(nameof(GetNotesToDelete))]
         public async Task Delete_ForExistingNote_ReturnsAppropriateStatus(Note note, HttpStatusCode status)
         {
-            _hashids.Setup(h => h.Encode(1)).Returns("hash");
-            _hashids.Setup(h => h.Decode("hash")).Returns(new int[] { 1 });
-
-            _hashids.Setup(h => h.Encode(2)).Returns("hash2");
-            _hashids.Setup(h => h.Decode("hash2")).Returns(new int[] { 2 });
-
+            _hashids.Setup(h => h.Encode(note.Id)).Returns(note.HashId);
+            _hashids.Setup(h => h.Decode(note.HashId)).Returns(new int[] { note.Id });
+            
             var scopedFactory = _factoryWithServices.Services.GetService<IServiceScopeFactory>();
             using var scope = scopedFactory.CreateScope();
             var notesRepository = scope.ServiceProvider.GetService<INoteRepository>();
