@@ -27,12 +27,8 @@ jobs:
         run: dotnet restore ./NotesApp/NotesApp.sln
       - name: Build
         run: dotnet build ./NotesApp/NotesApp.sln --configuration Release --no-restore
-      - name: Run tests
-        env:
-          Authentication: ${{ toJson(secrets.AUTHENTICATION) }}
-          HashIdSalt: ${{ secrets.HASHIDSALT }}
-          EmailConfiguration: ${{ toJson(secrets.EMAILCONFIGURATION) }}
-        run: dotnet test ./NotesApp/NotesApp.sln --verbosity normal
+      - name: Run unit tests
+        run: dotnet test ./NotesApp/NotesApp.Tests/NotesApp.Tests.csproj --verbosity normal
   
   node-build:
     runs-on: ubuntu-latest

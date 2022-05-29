@@ -16,7 +16,6 @@ using HashidsNet;
 using Moq;
 using NotesApp.Domain.Interfaces;
 using System.Net;
-using NotesApp.Services.Authorization;
 
 namespace NotesApp.IntegrationTests.Controllers
 {
@@ -78,13 +77,6 @@ namespace NotesApp.IntegrationTests.Controllers
                         services.AddScoped(_ => _hashids.Object);
 
                         services.AddDbContext<NotesDbContext>(options => options.UseInMemoryDatabase("NotesInMemoryDb"));
-
-                        services.AddSingleton(new AuthenticationSettings
-                        {
-                            JwtKey = "Key",
-                            JwtExpireMinutes = 5,
-                            JwtIssuer = "http://notes-api.com"
-                        });
                     });
                 });
 
