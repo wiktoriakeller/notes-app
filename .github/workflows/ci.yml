@@ -33,10 +33,6 @@ jobs:
   node-build:
     runs-on: ubuntu-latest
     
-    defaults:
-      run:
-        working-directory: ./NotesApp/notes-ui
-    
     strategy:
       matrix:
         node-version: [16.x]
@@ -49,7 +45,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: ./NotesApp/notes-ui/
     - name: Install dependencies
-      run: npm ci
+      run: cd ./NotesApp/notes-ui/ && npm ci
     - name: Build
-      run: npm run build --if-present
+      run: cd ./NotesApp/notes-ui/ && npm run build --if-present
