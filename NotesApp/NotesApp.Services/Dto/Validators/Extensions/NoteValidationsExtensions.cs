@@ -2,7 +2,7 @@
 
 namespace NotesApp.Services.Dto.Validators.Extensions
 {
-    public static class NoteValidatorExtensions
+    public static class NoteValidationsExtensions
     {
         public static IRuleBuilderOptions<T, IEnumerable<string>> TagsMustBeUnique<T>(this IRuleBuilder<T, IEnumerable<string>> ruleBuilder)
         {
@@ -21,7 +21,8 @@ namespace NotesApp.Services.Dto.Validators.Extensions
                     return false;
 
                 return true;
-            });
+            })
+            .WithMessage("Tags in note should be unique");
         }
     }
 }

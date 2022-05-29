@@ -14,7 +14,6 @@ function useNotesApi() {
     const getPublicNotePath = '/notes-api/notes/public/';
     const editNotePath = '/notes-api/notes/';
     const deleteNotePath = '/notes-api/notes/';
-    const filterPath = '/notes-api/notes/filter';
 
     const clientPaths = {
         'login': '/accounts/login',
@@ -125,7 +124,7 @@ function useNotesApi() {
             logout();
         }
 
-        const path = `${filterPath}?type=${type}&value=${value}`;
+        const path = `${getAllNotesPath}?type=${type}&value=${value}`;
         const result = await fetchData(path, {}, 'GET');
         if(result.success === true) {
             let data = await result.response.json();

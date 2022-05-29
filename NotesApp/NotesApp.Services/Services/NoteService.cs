@@ -43,6 +43,18 @@ namespace NotesApp.Services.Services
             return _mapper.Map<NoteDto>(note);
         }
 
+        public Task<IEnumerable<NoteDto>> GetNotes(string? type, string? value)
+        {
+            type = type?.ToLower().Trim();
+            return type switch
+            {
+                "name" when (value is not null && value != string.Empty) => GetNotesByName(value),
+                "content" when (value is not null && value != string.Empty) => GetNotesByContent(value),
+                "tags" when (value is not null && value != string.Empty) => GetNotesByTag(value),
+                _ => GetAllNotes()
+            };
+        }
+
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
         {
             var userId = GetUserId();
@@ -118,25 +130,6 @@ namespace NotesApp.Services.Services
             }
 
             throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
-        }
-
-        public Task<IEnumerable<NoteDto>> FilterNotes(string type, string value)
-        {
-            type = type.ToLower().Trim();
-            if(type == "name")
-            {
-                return GetNotesByName(value);
-            }
-            else if(type == "content")
-            {
-                return GetNotesByContent(value);
-            }
-            else if(type == "tags")
-            {
-                return GetNotesByTag(value);
-            }
-
-            return GetAllNotes();
         }
 
         public async Task<string> AddNote(CreateNoteDto noteDto)
