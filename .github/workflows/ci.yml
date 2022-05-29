@@ -1,0 +1,52 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    branches: [ main, release/*, develop ]
+  pull_request:
+    branches: [ main, release/* ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  dotnet-build-and-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2.1.0
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore NotesApp
+      - name: Build
+        run: dotnet build NotesApp --configuration Release --no-restore
+      - name: Test
+        run: dotnet test NotesApp --no-build --verbosity normal
+  
+  node-build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: ./NotesApp/notes-ui/
+    - name: Install dependencies
+      run: cd ./NotesApp/notes-ui/ && npm ci
+    - name: Build
+      run: cd ./NotesApp/notes-ui/ && CI=false npm run build --if-present
