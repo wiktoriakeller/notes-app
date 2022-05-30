@@ -44,6 +44,7 @@ REST WebAPI for managing notes with react client app.
 
 ## Screenshots
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/home-page.png" width="800"/>
+<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/register-page.png" width="800"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/incorrect-password.png" width="400"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/forgot-password-form.png" width="400"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/reading-note.png" width="500"/>
