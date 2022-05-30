@@ -23,9 +23,9 @@ REST WebAPI for managing notes with react client app.
 * Creating, updating, deleting and filtering notes
 * User registration
 * User authentication and authorization using jwt tokens
-* Password recovery using user email
+* Password recovery (an email is send to the user)
 * Notes tagging
-* Public link generation to let guests view our private notes (note id is hashed using random salt)
+* Public link generation to let guests view our private notes (note id is hashed using a random salt)
 
 ## Endpoints
 | Request method 	|                    Path                    	|                                                                    Description                                                                   	|
@@ -38,17 +38,13 @@ REST WebAPI for managing notes with react client app.
 |        POST       	|              /notes-api/notes              	|                                                                 Creates a new note                                                                 	|
 |        GET        	|      /notes-api/notes/public/{hashId}      	|  Returns a publicly accessible note with the specified hashid 	|
 |        POST       	|        /notes-api/accounts/register        	|                                                             Creates a new account                                                             	|
-|        POST       	|          /notes-api/accounts/login         	|                                                               Logging into account                                                               	|
+|        POST       	|          /notes-api/accounts/login         	|                                                               Logs a user into their account                                                              	|
 |        POST       	|     /notes-api/accounts/forgot-password    	|                                       Sends an email with link that allows users to reset their password                                       	|
 |        POST       	| /notes-api/accounts/reset-password/{token} 	|                                                       Allows users to reset their password                                                       	|
 
 ## Screenshots
-<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/login-page.png" width="800"/>
-<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/register-page.png" width="800"/>
+<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/home-page.png" width="800"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/incorrect-password.png" width="400"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/forgot-password-form.png" width="400"/>
-<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/password-recovery-page.png" width="800"/>
-<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/home-page.png" width="800"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/reading-note.png" width="500"/>
-<img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/creating-new-note.png" width="500"/>
 <img src="https://github.com/wiktoriakeller/notes-app/blob/main/images/editing-note.png" width="500"/>
