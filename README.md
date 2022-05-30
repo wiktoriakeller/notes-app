@@ -1,7 +1,7 @@
 [![CI](https://github.com/wiktoriakeller/notes-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wiktoriakeller/notes-app/actions/workflows/ci.yml)
 # Notes App
 
-REST WebAPI for managing notes with react client app.
+REST WebAPI for managing notes with React client app.
 
 ## Backend Technologies
 * ASP.NET Core 6
@@ -22,10 +22,10 @@ REST WebAPI for managing notes with react client app.
 ## Features
 * Creating, updating, deleting and filtering notes
 * User registration
-* User authentication and authorization using jwt tokens
+* User authentication and authorization using JWT tokens
 * Password recovery (an email is send to the user)
 * Notes tagging
-* Public link generation to let guests view our private notes (note id is hashed using a random salt)
+* Public link generation to let the guests view our private notes (note id is hashed using a random salt)
 
 ## Endpoints
 | Request method 	|                    Path                    	|                                                                    Description                                                                   	|
