@@ -37,7 +37,7 @@ const UserNotes = () => {
     const [editFormErrorMsg, setEditFormErrorMsg] = useState([]);
     const [showEditFormErrorMsg, setShowEditFormErrorMsg] = useState(false);
 
-    const [selectedSearch, setSelectedSearch] = useState('Name');
+    const [selectedSearch, setSelectedSearch] = useState('All');
     const [selectedValue, setSelectedValue] = useState('');
 
     const [openQuestionPopup, setOpenQuestionPopup] = useState(false);
@@ -187,7 +187,8 @@ const UserNotes = () => {
             <>
             <div className='home-container'>
                 <div className='search' >
-                    <select className='search-options' defaultValue={'name'} onChange={(e) => setSelectedSearch(e.target.value)}>
+                    <select className='search-options' defaultValue={'all'} onChange={(e) => setSelectedSearch(e.target.value)}>
+                        <option value='all'>All</option>
                         <option value='name'>Name</option>
                         <option value='content'>Content</option>
                         <option value='tags'>Tags</option>

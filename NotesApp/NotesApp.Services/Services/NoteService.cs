@@ -38,7 +38,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
 
             return _mapper.Map<NoteDto>(note);
         }
@@ -48,11 +48,23 @@ namespace NotesApp.Services.Services
             type = type?.ToLower().Trim();
             return type switch
             {
+                "all" when (value is not null && value != string.Empty) => GetAllNotes(value),
                 "name" when (value is not null && value != string.Empty) => GetNotesByName(value),
                 "content" when (value is not null && value != string.Empty) => GetNotesByContent(value),
                 "tags" when (value is not null && value != string.Empty) => GetNotesByTag(value),
                 _ => GetAllNotes()
             };
+        }
+
+        public async Task<IEnumerable<NoteDto>> GetAllNotes(string value)
+        {
+            var userId = GetUserId();
+            var notes = await _notesRepository.GetAllAsync(
+                n => n.UserId == userId && 
+                (n.NoteName.ToLower().Contains(value) || n.Content.ToLower().Contains(value) ||
+                n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(value))), "Tags");
+            await CheckAuthorization(notes);
+            return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
@@ -83,9 +95,10 @@ namespace NotesApp.Services.Services
 
         public async Task<IEnumerable<NoteDto>> GetNotesByTag(string tag)
         {
+            tag = tag.ToLower().Trim();
             var userId = GetUserId();
             var searchedNotes = new List<Note>();
-            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t == tag) && n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(tag)) && n.UserId == userId, "Tags");
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
@@ -97,7 +110,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
             
             note.PublicHashId = string.Empty;
             if (!dto.ResetPublicHashId)
@@ -124,12 +137,12 @@ namespace NotesApp.Services.Services
                 var note = notes.First();
 
                 if(note.PublicLinkValidTill < DateTimeOffset.Now)
-                    throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
+                    throw new NotFoundException("Resource couldn't be found");
 
                 return _mapper.Map<PublicNoteDto>(note);
             }
 
-            throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
+            throw new NotFoundException("Resource couldn't be found");
         }
 
         public async Task<string> AddNote(CreateNoteDto noteDto)
@@ -155,7 +168,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note, Operation.Update);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
 
             var noteNameValidation = await ValidateNoteUniqueness(noteDto.NoteName, hashId);
             if(!noteNameValidation)
@@ -177,7 +190,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note, Operation.Delete);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
 
             await _notesRepository.DeleteAsync(note);
         }
