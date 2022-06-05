@@ -1,5 +1,5 @@
 [![CI](https://github.com/wiktoriakeller/notes-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wiktoriakeller/notes-app/actions/workflows/ci.yml)
-# Notes App
+# NotesHub
 
 REST WebAPI for managing notes with a React client application.
 
