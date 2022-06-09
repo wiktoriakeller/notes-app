@@ -46,7 +46,7 @@ const UserNotes = () => {
         async() => {
             let response = await notesApi.getNotes('', '', 20, 1);
             if(response.success === true) {
-                setUserNotes(response.data);
+                setUserNotes(response.data.items);
                 setEmptyNotesMsg('');
                 if(Object.keys(response.data).length === 0)
                     setEmptyNotesMsg("It's time to add some notes!");
@@ -166,7 +166,7 @@ const UserNotes = () => {
         let response = await notesApi.getNotes(selectedSearch, selectedValue, 20, 1);
 
         if(response.success === true) {
-            setUserNotes(response.data);
+            setUserNotes(response.data.items);
             setEmptyNotesMsg('');
             if(Object.keys(response.data).length === 0)
                 setEmptyNotesMsg("It's empty here!"); 

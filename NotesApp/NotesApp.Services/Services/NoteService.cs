@@ -48,7 +48,7 @@ namespace NotesApp.Services.Services
             query.SearchType = query.SearchType?.ToLower().Trim();
             query.SearchPhrase = query.SearchPhrase?.ToLower().Trim();
 
-            if(query.SearchPhrase is not null && query.SearchType != string.Empty && query.SearchPhrase != string.Empty)
+            if(!string.IsNullOrEmpty(query.SearchType) && !string.IsNullOrEmpty(query.SearchPhrase))
             {
                 return query.SearchType switch
                 {
@@ -76,7 +76,7 @@ namespace NotesApp.Services.Services
             var userId = GetUserId();
             var notes = await _notesRepository.GetAllAsync(
                 n => n.UserId == userId && 
-                (query.SearchPhrase == string.Empty || n.NoteName.ToLower().Contains(query.SearchPhrase) || n.Content.ToLower().Contains(query.SearchPhrase) ||
+                (string.IsNullOrEmpty(query.SearchPhrase) || n.NoteName.ToLower().Contains(query.SearchPhrase) || n.Content.ToLower().Contains(query.SearchPhrase) ||
                 n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase))), "Tags", query.PageSize, query.PageNumber);
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
