@@ -2,6 +2,7 @@
 using NotesApp.Services.Interfaces;
 using NotesApp.Services.Dto;
 using Microsoft.AspNetCore.Authorization;
+using NotesApp.Services;
 
 namespace NotesApp.WebAPI.Controllers
 {
@@ -28,7 +29,8 @@ namespace NotesApp.WebAPI.Controllers
         public async Task<IActionResult> GetAllNotes([FromQuery] NoteQuery query)
         {
             var notes = await _notesService.GetNotes(query);
-            return Ok(notes);
+            var pagedResult = new PagedResult<NoteDto>(notes, notes.Count(), query.PageSize, query.PageNumber); 
+            return Ok(pagedResult);
         }
 
         [HttpGet("public/{hashId}")]
