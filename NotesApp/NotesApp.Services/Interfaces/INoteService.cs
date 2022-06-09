@@ -5,12 +5,12 @@ namespace NotesApp.Services.Interfaces
     public interface INoteService
     {
         Task<NoteDto?> GetNoteById(string hashId);
-        Task<IEnumerable<NoteDto>> GetNotes(string? type, string? value);
+        Task<IEnumerable<NoteDto>> GetNotes(NoteQuery query);
         Task<IEnumerable<NoteDto>> GetAllNotes();
-        Task<IEnumerable<NoteDto>> GetAllNotes(string value);
-        Task<IEnumerable<NoteDto>> GetNotesByName(string name);
-        Task<IEnumerable<NoteDto>> GetNotesByContent(string content);
-        Task<IEnumerable<NoteDto>> GetNotesByTag(string tags);
+        Task<IEnumerable<NoteDto>> GetAllNotes(NoteQuery query);
+        Task<IEnumerable<NoteDto>> GetNotesByName(NoteQuery query);
+        Task<IEnumerable<NoteDto>> GetNotesByContent(NoteQuery query);
+        Task<IEnumerable<NoteDto>> GetNotesByTag(NoteQuery query);
         Task<PublicNoteDto> GetPublicNote(string hashId);
         Task<PublicLinkDto> GeneratePublicLink(CreatePublicLinkDto dto, string hashId);
         Task<string> AddNote(CreateNoteDto noteDto);

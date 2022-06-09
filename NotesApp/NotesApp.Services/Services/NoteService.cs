@@ -43,28 +43,24 @@ namespace NotesApp.Services.Services
             return _mapper.Map<NoteDto>(note);
         }
 
-        public Task<IEnumerable<NoteDto>> GetNotes(string? type, string? value)
+        public Task<IEnumerable<NoteDto>> GetNotes(NoteQuery query)
         {
-            type = type?.ToLower().Trim();
-            return type switch
-            {
-                "all" when (value is not null && value != string.Empty) => GetAllNotes(value),
-                "name" when (value is not null && value != string.Empty) => GetNotesByName(value),
-                "content" when (value is not null && value != string.Empty) => GetNotesByContent(value),
-                "tags" when (value is not null && value != string.Empty) => GetNotesByTag(value),
-                _ => GetAllNotes()
-            };
-        }
+            query.SearchType = query.SearchType?.ToLower().Trim();
+            query.SearchPhrase = query.SearchPhrase?.ToLower().Trim();
 
-        public async Task<IEnumerable<NoteDto>> GetAllNotes(string value)
-        {
-            var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(
-                n => n.UserId == userId && 
-                (n.NoteName.ToLower().Contains(value) || n.Content.ToLower().Contains(value) ||
-                n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(value))), "Tags");
-            await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
+            if(query.SearchPhrase is not null && query.SearchType != string.Empty && query.SearchPhrase != string.Empty)
+            {
+                return query.SearchType switch
+                {
+                    "all" => GetAllNotes(query),
+                    "name" => GetNotesByName(query),
+                    "content" => GetNotesByContent(query),
+                    "tags" => GetNotesByTag(query),
+                    _ => GetAllNotes(query)
+                };
+            }
+
+            return GetAllNotes(query);
         }
 
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
@@ -75,30 +71,40 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByName(string name)
+        public async Task<IEnumerable<NoteDto>> GetAllNotes(NoteQuery query)
         {
-            name = name.ToLower().Trim();
             var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.NoteName.ToLower().Contains(name) && n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(
+                n => n.UserId == userId && 
+                (query.SearchPhrase == string.Empty || n.NoteName.ToLower().Contains(query.SearchPhrase) || n.Content.ToLower().Contains(query.SearchPhrase) ||
+                n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase))), "Tags", query.PageSize, query.PageNumber);
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByContent(string content)
+        public async Task<IEnumerable<NoteDto>> GetNotesByName(NoteQuery query)
         {
-            content = content.ToLower().Trim();
             var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.Content.ToLower().Contains(content) && n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(n => n.NoteName.ToLower().Contains(query.SearchPhrase) && n.UserId == userId, 
+                "Tags", query.PageSize, query.PageNumber);
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByTag(string tag)
+        public async Task<IEnumerable<NoteDto>> GetNotesByContent(NoteQuery query)
         {
-            tag = tag.ToLower().Trim();
             var userId = GetUserId();
-            var searchedNotes = new List<Note>();
-            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(tag)) && n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(n => n.Content.ToLower().Contains(query.SearchPhrase) && n.UserId == userId, 
+                "Tags", query.PageSize, query.PageNumber);
+            await CheckAuthorization(notes);
+            return _mapper.Map<IEnumerable<NoteDto>>(notes);
+        }
+
+        public async Task<IEnumerable<NoteDto>> GetNotesByTag(NoteQuery query)
+        {
+            var userId = GetUserId();
+            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase)) && n.UserId == userId,
+                "Tags", query.PageSize, query.PageNumber);
             await CheckAuthorization(notes);
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }

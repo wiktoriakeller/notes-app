@@ -25,9 +25,9 @@ namespace NotesApp.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllNotes([FromQuery] string? type = "", [FromQuery] string? value = "")
+        public async Task<IActionResult> GetAllNotes([FromQuery] NoteQuery query)
         {
-            var notes = await _notesService.GetNotes(type, value);
+            var notes = await _notesService.GetNotes(query);
             return Ok(notes);
         }
 

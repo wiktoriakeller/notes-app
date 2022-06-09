@@ -19,5 +19,21 @@ namespace NotesApp.DataAccess.Repositories
             .Include(n => n.Tags)
             .Where(predicate)
             .ToListAsync();
+
+        public async Task<ICollection<Note>> GetAllAsync(Expression<Func<Note, bool>> predicate, string include, int pageSize, int pageNumber)
+        {
+            if (include != string.Empty && IsVirtualProperty(include))
+            {
+                return await _dbContext
+                    .Set<Note>()
+                    .Include(include)
+                    .Where(predicate)
+                    .Skip(pageSize * (pageNumber - 1))
+                    .Take(pageSize)
+                    .ToListAsync();
+            }
+
+            return await GetAllAsync(predicate);
+        }
     }
 }

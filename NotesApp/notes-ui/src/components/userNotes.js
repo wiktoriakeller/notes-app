@@ -42,6 +42,19 @@ const UserNotes = () => {
 
     const [openQuestionPopup, setOpenQuestionPopup] = useState(false);
 
+    useEffect(() => {(
+        async() => {
+            let response = await notesApi.getNotes('', '', 20, 1);
+            if(response.success === true) {
+                setUserNotes(response.data);
+                setEmptyNotesMsg('');
+                if(Object.keys(response.data).length === 0)
+                    setEmptyNotesMsg("It's time to add some notes!");
+                notesLoaded.current = true;
+            }
+        })();
+    }, []);
+
     const handleClickOpenPostForm = () => {
         setPostFormOpen(true);
     };
@@ -130,19 +143,6 @@ const UserNotes = () => {
         }
     }
 
-    useEffect(() => {(
-        async() => {
-            let response = await notesApi.getAllNotes();
-            if(response.success === true) {
-                setUserNotes(response.data);
-                setEmptyNotesMsg('');
-                if(Object.keys(response.data).length === 0)
-                    setEmptyNotesMsg("It's time to add some notes!");
-                notesLoaded.current = true;
-            }
-        })();
-    }, []);
-
     const getTags = () => {
         let tagsArr = [];
         for(const tag of editedNote.current.tags) {
@@ -163,13 +163,7 @@ const UserNotes = () => {
     }
 
     const searchNotes = async() => {
-        let response = {};
-        if(selectedValue === '') {
-            response = await notesApi.getAllNotes();
-        }
-        else {
-            response = await notesApi.filterNotes(selectedSearch, selectedValue);
-        }
+        let response = await notesApi.getNotes(selectedSearch, selectedValue, 20, 1);
 
         if(response.success === true) {
             setUserNotes(response.data);
