@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import InputForm from './inputForm';
+import Tags from './tags';
 import './styles/addNote.css';
 import * as validation from '../services/noteValidation.js';
 
@@ -53,27 +54,6 @@ const EditNote = (props) => {
         setErrorMsg([]);
     }, [name, content, tagInput, imageLink]);
 
-    const onKeyDown = (e) => {
-        const trimmed = tagInput.trim();
-
-        if(e.key === "Enter" && trimmed.length > 0 && !tags.includes(trimmed)) {
-            e.preventDefault();
-            setTags(prev => [...prev, trimmed]);
-            setTagInput('');
-        }
-        else if(e.key === "Backspace" && trimmed.length === 0 && tags.length > 0) {
-            e.preventDefault();
-            const tagsCopy = [...tags];
-            const poppedTag = tagsCopy.pop();
-            setTags(tagsCopy);
-            setTagInput(poppedTag);
-        }
-    }
-
-    const deleteTag = (index) => {
-        setTags(prev => prev.filter((tag, i) => i !== index));
-    }
-
     return (
         <form className='form-container'>
             {errorMsg.map((msg) => {
@@ -121,34 +101,18 @@ const EditNote = (props) => {
                 </textarea>
                 <span className={!isContentValid && contentFocus ? 'error-msg' : 'hide-error-msg'}>{validation.contentErrorMsg}</span>
             </div>
-            
-            <InputForm
-                label='Tags'
-                name='tags'
-                type='text'
-                value={tagInput}
-                autoComplete='off'
-                errorMessage={validation.tagErrorMsg}
-                isValid={isTagValid}
-                isFocused={tagFocus}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                onFocus={() => setTagFocus(true)}
-                maxLength={10}
-            />
 
-            <div className='tags-block'>
-                {tags.map((tag, index) => (
-                    <div className='tag'>
-                        <button onClick={() => deleteTag(index)}>
-                            <div className='close'>
-                                x
-                            </div>
-                        </button>
-                        {tag}
-                    </div>
-                ))}
-            </div>
+            <Tags
+                tags={tags}
+                setTags={setTags}
+                tagInput={tagInput}
+                setTagInput={setTagInput}
+                isTagValid={isTagValid}
+                tagFocus={tagFocus}
+                allowDeleting={true}
+                onChange={(e) => setTagInput(e.target.value)}
+                onFocus={() => setTagFocus(true)}
+            />
         </form>
     )
 }

@@ -217,8 +217,7 @@ const UserNotes = () => {
                         open={isQuestionPopupOpened}
                         onClose={() => openQuestionPopup(false)}
                         aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                    >
+                        aria-describedby="alert-dialog-description">
                         <DialogTitle id="alert-dialog-title">
                             {"Delete note"}
                         </DialogTitle>
@@ -228,9 +227,7 @@ const UserNotes = () => {
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <button className='form-button cancel' onClick={handleAgreeQuestionPopup} autoFocus>
-                                Yes
-                            </button>
+                            <button className='form-button cancel' onClick={handleAgreeQuestionPopup} autoFocus>Yes</button>
                             <button className='form-button' onClick={() => openQuestionPopup(false)}>No</button>
                         </DialogActions>
                     </Dialog>

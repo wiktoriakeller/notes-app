@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import InputForm from './inputForm';
+import Tags from './tags';
 import * as validation from '../services/noteValidation.js';
 import './styles/addNote.css';
 
@@ -123,33 +124,17 @@ const AddNote = (props) => {
                 <span className={!isContentValid && contentFocus ? 'error-msg' : 'hide-error-msg'}>{validation.contentErrorMsg}</span>
             </div>
             
-            <InputForm
-                label='Tags'
-                name='tags'
-                type='text'
-                value={tagInput}
-                autoComplete='off'
-                errorMessage={validation.tagErrorMsg}
-                isValid={isTagValid}
-                isFocused={tagFocus}
+            <Tags
+                tags={tags}
+                setTags={setTags}
+                tagInput={tagInput}
+                setTagInput={setTagInput}
+                isTagValid={isTagValid}
+                tagFocus={tagFocus}
+                allowDeleting={true}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={onKeyDown}
                 onFocus={() => setTagFocus(true)}
-                maxLength={10}
             />
-
-            <div className='tags-block'>
-                {tags.map((tag, index) => (
-                    <div className='tag'>
-                        <button onClick={() => deleteTag(index)}>
-                            <div className='close'>
-                                x
-                            </div>
-                        </button>
-                        {tag}
-                    </div>
-                ))}
-            </div>
         </form>
     )
 }
