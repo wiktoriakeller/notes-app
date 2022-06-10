@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { DialogContentText } from '@mui/material';
 import AddNote from './addNote';
-import ShowNote from './showNote';
+import NoteView from './noteView';
 import EditNote from './editNote';
 import ReactPaginate from 'react-paginate';
 import './styles/userNotes.css';
@@ -59,8 +59,9 @@ const UserNotes = () => {
 
     const openNoteView = (isOpen) => {
         setIsNoteViewOpened(isOpen);
-        if (isOpen === false) 
+        if (isOpen === false) {
             openedNote.current = '';
+        }
     }
 
     const openEditForm = (isOpen) => {
@@ -181,7 +182,7 @@ const UserNotes = () => {
                     <Dialog open={isNoteViewOpened} onClose={() => openNoteView(false)}>
                         <DialogTitle>{openedNote.current.noteName}</DialogTitle>
                         <DialogContent>
-                            <ShowNote note={openedNote.current} />
+                            <NoteView noteRef={openedNote} note={openedNote.current} />
                         </DialogContent>
                         <DialogActions>
                             <button className='form-button' onClick={() => openEditForm(true)}>Edit</button>
