@@ -55,27 +55,6 @@ const AddNote = (props) => {
         setErrorMsg([]);
     }, [name, content, tagInput, imageLink]);
 
-    const onKeyDown = (e) => {
-        const trimmed = tagInput.trim();
-
-        if(e.key === "Enter" && trimmed.length > 0 && !tags.includes(trimmed)) {
-            e.preventDefault();
-            setTags(prev => [...prev, trimmed]);
-            setTagInput('');
-        }
-        else if(e.key === "Backspace" && trimmed.length === 0 && tags.length > 0) {
-            e.preventDefault();
-            const tagsCopy = [...tags];
-            const poppedTag = tagsCopy.pop();
-            setTags(tagsCopy);
-            setTagInput(poppedTag);
-        }
-    }
-
-    const deleteTag = (index) => {
-        setTags(prev => prev.filter((tag, i) => i !== index));
-    }
-
     return (
         <form className='form-container'>
             {errorMsg.map((msg) => {

@@ -4,14 +4,15 @@ export const contentErrorMsg = "Content is required.";
 export const tagErrorMsg = "Tags should be unique with maximum length of 10 characters.";
 
 export function validateName(name, noteHashId, notes) {
-    let trimmedName = name.trim();
+    let trimmedName = name.toLowerCase().trim();
     let isUnique = true;
     for(const note of notes) {
-        if(note.noteName === trimmedName && note.hashId !== noteHashId) {
+        if(note.noteName.trim().toLowerCase() === trimmedName && note.hashId !== noteHashId) {
             isUnique = false;
             break;
         }
     }
+    
     let isValid = isUnique && trimmedName.length > 2;
     return isValid;
 }
