@@ -1,38 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import InputForm from './inputForm';
-import {validateName, validateContent, validateTag, validateImageLink} from '../services/noteValidation.js';
+import * as validation from '../services/noteValidation.js';
 import './styles/addNote.css';
 
 const AddNote = (props) => {
-    const {isFormValid, setIsValidForm, setPostFormData, notes, 
-        errorMsg, setErrorMsg, showErrors, setShowErrors} = props;
+    const {setIsValidForm, setPostFormData, notes, errorMsg, setErrorMsg} = props;
 
     const [name, setName] = useState('');
     const [isNameValid, setIsNameValid] = useState(false);
     const [nameFocus, setNameFocus] = useState(false);
-    const nameErrorMsg = "Name should be unique and should contain minimum 3 characters.";
 
     const [imageLink, setImageLink] = useState('');
     const [isImageLinkValid, setIsImageLinkValid] = useState(true);
     const [imageLinkFocus, setImageLinkFocus] = useState(false);
-    const imageLinkErrorMsg = "Link should lead to an image.";
 
     const [content, setContent] = useState('');
     const [isContentValid, setIsContentValid] = useState(false);
     const [contentFocus, setContentFocus] = useState(false);
-    const contentErrorMsg = "Content is required.";
 
     const [tagInput, setTagInput] = useState('');
     const [tagFocus, setTagFocus] = useState(false);
     const [isTagValid, setIsTagValid] = useState(true);
     const [tags, setTags] = useState([]);
-    const tagErrorMsg = 'Tags should be unique with maximum length of 10 characters.';
 
     useEffect(() => {
-        let validName = validateName(name, "", notes);
-        let validContent = validateContent(content);
-        let validLink = validateImageLink(imageLink);
-        let validTag = validateTag(tagInput, tags);
+        let validName = validation.validateName(name, "", notes);
+        let validContent = validation.validateContent(content);
+        let validLink = validation.validateImageLink(imageLink);
+        let validTag = validation.validateTag(tagInput, tags);
         let validForm = validName && validContent && validLink && validTag;
 
         setIsNameValid(validName);
@@ -56,7 +51,7 @@ const AddNote = (props) => {
             setPostFormData(data);
         }
         
-        setShowErrors(false);
+        setErrorMsg([]);
     }, [name, content, tagInput, imageLink]);
 
     const onKeyDown = (e) => {
@@ -83,7 +78,7 @@ const AddNote = (props) => {
     return (
         <form className='form-container'>
             {errorMsg.map((msg) => {
-                return <p className={showErrors ? 'error' : 'hide'}>{msg}</p>;
+                return <p className={msg.length > 0 ? 'error-form' : 'hide'}>{msg}</p>;
             })}
             <InputForm
                 label='Name'
@@ -91,7 +86,7 @@ const AddNote = (props) => {
                 type='text'
                 value={name}
                 autoComplete='off'
-                errorMessage={nameErrorMsg}
+                errorMessage={validation.nameErrorMsg}
                 isValid={isNameValid}
                 isFocused={nameFocus}
                 maxLength={40}
@@ -105,7 +100,7 @@ const AddNote = (props) => {
                 type='text'
                 value={imageLink}
                 autoComplete='off'
-                errorMessage={imageLinkErrorMsg}
+                errorMessage={validation.imageLinkErrorMsg}
                 isValid={isImageLinkValid}
                 isFocused={imageLinkFocus}
                 onChange={(e) => setImageLink(e.target.value)}
@@ -125,7 +120,7 @@ const AddNote = (props) => {
                     className={isContentValid && contentFocus ? 'textarea-valid' : contentFocus ? 'textarea-invalid' : 'textarea-normal'}
                     >
                 </textarea>
-                <span className={!isContentValid && contentFocus ? 'error-msg' : 'hide-error-msg'}>{contentErrorMsg}</span>
+                <span className={!isContentValid && contentFocus ? 'error-msg' : 'hide-error-msg'}>{validation.contentErrorMsg}</span>
             </div>
             
             <InputForm
@@ -134,7 +129,7 @@ const AddNote = (props) => {
                 type='text'
                 value={tagInput}
                 autoComplete='off'
-                errorMessage={tagErrorMsg}
+                errorMessage={validation.tagErrorMsg}
                 isValid={isTagValid}
                 isFocused={tagFocus}
                 onChange={(e) => setTagInput(e.target.value)}
@@ -142,6 +137,7 @@ const AddNote = (props) => {
                 onFocus={() => setTagFocus(true)}
                 maxLength={10}
             />
+
             <div className='tags-block'>
                 {tags.map((tag, index) => (
                     <div className='tag'>

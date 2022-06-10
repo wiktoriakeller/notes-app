@@ -1,4 +1,9 @@
-function validateName(name, noteHashId, notes) {
+export const nameErrorMsg = "Name should be unique and should contain minimum 3 characters.";
+export const imageLinkErrorMsg = "Link should lead to an image.";
+export const contentErrorMsg = "Content is required.";
+export const tagErrorMsg = "Tags should be unique with maximum length of 10 characters.";
+
+export function validateName(name, noteHashId, notes) {
     let trimmedName = name.trim();
     let isUnique = true;
     for(const note of notes) {
@@ -11,18 +16,18 @@ function validateName(name, noteHashId, notes) {
     return isValid;
 }
 
-function validateContent(content) {
+export function validateContent(content) {
     let isValid = content !== '';
     return isValid;
 }
 
-function validateTag(tag, tags) {
+export function validateTag(tag, tags) {
     let trimmedTag = tag.trim();
     let unique = trimmedTag === '' || !tags.includes(trimmedTag);
     return unique;
 }
 
-function validateImageLink(imageLink) {
+export function validateImageLink(imageLink) {
     let isValid = false;
     if(imageLink === '' || imageLink === null) {
         isValid = true;
@@ -33,5 +38,3 @@ function validateImageLink(imageLink) {
     }
     return isValid;
 }
-
-export {validateName, validateContent, validateTag, validateImageLink};
