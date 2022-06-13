@@ -13,6 +13,7 @@ import NoteView from './noteView';
 import EditNote from './editNote';
 import ReactPaginate from 'react-paginate';
 import './styles/userNotes.css';
+import './styles/pagination.css';
 
 const UserNotes = () => {
     const [userNotes, setUserNotes] = useState([]);
@@ -38,17 +39,22 @@ const UserNotes = () => {
 
     const [isQuestionPopupOpened, setQuestionPopupOpened] = useState(false);
 
+    const pageSize = 20;
+    const [currentPageNumber, setCurrentPageNumber] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     useEffect(() => {(
         async() => {
             await searchNotes();
         })();
-    }, []);
+    }, [currentPageNumber]);
 
     const searchNotes = async() => {
-        let response = await notesApi.getNotes(selectedSearch, selectedValue, 20, 1);
+        let response = await notesApi.getNotes(selectedSearch, selectedValue, pageSize, currentPageNumber);
 
         if(response.success === true) {
             setUserNotes(response.data.items);
+            setTotalPages(response.data.totalPages);
             notesLoaded.current = true;
         }
     }
@@ -141,6 +147,10 @@ const UserNotes = () => {
             openEditForm(false);
             window.location.reload(false);
         }
+    }
+
+    const handlePageClick = ({ selected: selectedPage}) => {
+        setCurrentPageNumber(selectedPage + 1);
     }
     
     return (
@@ -253,6 +263,23 @@ const UserNotes = () => {
                         title={note.noteName} content={contentSubstrig} imageLink={note.imageLink} key={note.id} />
                     })}  
                 </div>
+                <ReactPaginate
+                    breakLabel={"..."}
+                    previousLabel={"Previous"}
+                    nextLabel={"Next"}
+                    pageCount={totalPages}
+                    onPageChange={handlePageClick}
+                    containerClassName={"pagination"}
+                    pageLinkClassName={"pagination-link-active"}
+                    pageClassName={"pagination-link-active"}
+                    previousClassName={"pagination-link-active"}
+                    nextClassName={"pagination-link-active"}
+                    previousLinkClassName={"pagination-link-active"}
+                    nextLinkClassName={"pagination-link"}
+                    disabledClassName={"pagination-link-disabled"}
+                    activeClassName={"active-page"}
+                    activeLinkClassName={"pagination-link-active"}
+                />
             </div>
             </> : <></>
         }

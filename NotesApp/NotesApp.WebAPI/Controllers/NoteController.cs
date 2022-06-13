@@ -29,8 +29,7 @@ namespace NotesApp.WebAPI.Controllers
         public async Task<IActionResult> GetAllNotes([FromQuery] NoteQuery query)
         {
             var notes = await _notesService.GetNotes(query);
-            var pagedResult = new PagedResult<NoteDto>(notes, notes.Count(), query.PageSize, query.PageNumber); 
-            return Ok(pagedResult);
+            return Ok(notes);
         }
 
         [HttpGet("public/{hashId}")]

@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using NotesApp.Services.Authorization;
 using NotesApp.Services.Exceptions;
+using System.Linq.Expressions;
 using HashidsNet;
 
 namespace NotesApp.Services.Services
@@ -43,24 +44,25 @@ namespace NotesApp.Services.Services
             return _mapper.Map<NoteDto>(note);
         }
 
-        public Task<IEnumerable<NoteDto>> GetNotes(NoteQuery query)
+        public Task<PagedResult<NoteDto>> GetNotes(NoteQuery query)
         {
             query.SearchType = query.SearchType?.ToLower().Trim();
             query.SearchPhrase = query.SearchPhrase?.ToLower().Trim();
 
             if(!string.IsNullOrEmpty(query.SearchType) && !string.IsNullOrEmpty(query.SearchPhrase))
             {
+                var userId = GetUserId();
                 return query.SearchType switch
                 {
-                    "all" => GetAllNotes(query),
-                    "name" => GetNotesByName(query),
-                    "content" => GetNotesByContent(query),
-                    "tags" => GetNotesByTag(query),
-                    _ => GetAllNotes(query)
+                    "all" => GetPagedNotes(query),
+                    "name" => GetPagedNotes(query, n => n.NoteName.ToLower().Contains(query.SearchPhrase) && n.UserId == userId),
+                    "content" => GetPagedNotes(query, n => n.Content.ToLower().Contains(query.SearchPhrase) && n.UserId == userId),
+                    "tags" => GetPagedNotes(query, n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase)) && n.UserId == userId),
+                    _ => GetPagedNotes(query)
                 };
             }
 
-            return GetAllNotes(query);
+            return GetPagedNotes(query);
         }
 
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
@@ -71,42 +73,36 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetAllNotes(NoteQuery query)
+        public async Task<PagedResult<NoteDto>> GetPagedNotes(NoteQuery query)
         {
             var userId = GetUserId();
             var notes = await _notesRepository.GetAllAsync(
                 n => n.UserId == userId && 
                 (string.IsNullOrEmpty(query.SearchPhrase) || n.NoteName.ToLower().Contains(query.SearchPhrase) || n.Content.ToLower().Contains(query.SearchPhrase) ||
-                n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase))), "Tags", query.PageSize, query.PageNumber);
+                n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase))), "Tags");
+            
             await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
+
+            var pagedNotes = notes
+                    .Skip(query.PageSize * (query.PageNumber - 1))
+                    .Take(query.PageSize);
+            var notesDto = _mapper.Map<IEnumerable<NoteDto>>(pagedNotes);
+            var pagedResult = new PagedResult<NoteDto>(notesDto, notes.Count, query.PageSize, query.PageNumber);
+            return pagedResult;
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByName(NoteQuery query)
+        public async Task<PagedResult<NoteDto>> GetPagedNotes(NoteQuery query, Expression<Func<Note, bool>> predicate)
         {
-            var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.NoteName.ToLower().Contains(query.SearchPhrase) && n.UserId == userId, 
-                "Tags", query.PageSize, query.PageNumber);
+            var notes = await _notesRepository.GetAllAsync(predicate, "Tags");
             await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
-        }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByContent(NoteQuery query)
-        {
-            var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.Content.ToLower().Contains(query.SearchPhrase) && n.UserId == userId, 
-                "Tags", query.PageSize, query.PageNumber);
-            await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
-        }
+            var pagedNotes = notes
+                    .Skip(query.PageSize * (query.PageNumber - 1))
+                    .Take(query.PageSize);
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByTag(NoteQuery query)
-        {
-            var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase)) && n.UserId == userId,
-                "Tags", query.PageSize, query.PageNumber);
-            await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
+            var notesDto = _mapper.Map<IEnumerable<NoteDto>>(pagedNotes);
+            var pagedResult = new PagedResult<NoteDto>(notesDto, notes.Count, query.PageSize, query.PageNumber);
+            return pagedResult;
         }
 
         public async Task<PublicLinkDto> GeneratePublicLink(CreatePublicLinkDto dto, string hashId)

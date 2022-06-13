@@ -1,4 +1,4 @@
-﻿namespace NotesApp.Services
+﻿namespace NotesApp.Services.Dto
 {
     public class PagedResult<T>
     {
