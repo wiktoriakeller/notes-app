@@ -26,6 +26,7 @@ REST WebAPI for managing notes with a React client application.
 * Password recovery (an email is send to the user)
 * Notes tagging
 * Public link generation to let the guests view our private notes (note id is hashed using a random salt)
+* Server-side pagination
 
 ## Endpoints
 | Request method 	|                    Path                    	|                                                                    Description                                                                   	|
@@ -34,7 +35,7 @@ REST WebAPI for managing notes with a React client application.
 |       PATCH       	|          /notes-api/notes/{hashId}         	|                                                 Partially updates a user note with the specified hashid                                                	|
 |        PUT        	|          /notes-api/notes/{hashId}         	|                                                      Updates a user note with the specified hashid                                                     	|
 |       DELETE      	|          /notes-api/notes/{hashId}         	|                                                      Deletes a user note with the specified hashid                                                     	|
-|        GET        	|              /notes-api/notes              	|                                                              Returns all user notes                                                              	|
+|        GET        	|              /notes-api/notes?searchType={type}&searchPhrase={phrase}&pageSize={size}&pageNumber={number}              	|                                                              Returns paginated user notes                                                              	|
 |        POST       	|              /notes-api/notes              	|                                                                 Creates a new note                                                                 	|
 |        GET        	|      /notes-api/notes/public/{hashId}      	|  Returns a publicly accessible note with the specified hashid 	|
 |        POST       	|        /notes-api/accounts/register        	|                                                             Creates a new account                                                             	|
