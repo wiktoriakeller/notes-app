@@ -234,23 +234,25 @@ const UserNotes = () => {
                     </Dialog>
                 </div>
             </div> 
-            <div className='notes'>
-                {
-                    userNotes.length === 0 ?
-                    <p className='empty-notes-msg'>{"It's empty here!"}</p> : <></>
-                }
-                {userNotes.map((note) => {
-                    const cutOff = 100;
-                    let contentSubstrig = note.content.substring(0, cutOff);
-                    if(note.content.length > cutOff)
-                        contentSubstrig += '...';
+            <div className='notes-wrapper'>
+                <div className='notes'>
+                    {
+                        userNotes.length === 0 ?
+                        <p className='empty-notes-msg'>{"It's empty here!"}</p> : <></>
+                    }
+                    {userNotes.map((note) => {
+                        const cutOff = 100;
+                        let contentSubstrig = note.content.substring(0, cutOff);
+                        if(note.content.length > cutOff)
+                            contentSubstrig += '...';
 
-                    return <NoteComponent onClick={() => {
-                        openedNote.current = note;
-                        openNoteView(true);
-                    }} 
-                    title={note.noteName} content={contentSubstrig} imageLink={note.imageLink} key={note.id} />
-                })}  
+                        return <NoteComponent onClick={() => {
+                            openedNote.current = note;
+                            openNoteView(true);
+                        }} 
+                        title={note.noteName} content={contentSubstrig} imageLink={note.imageLink} key={note.id} />
+                    })}  
+                </div>
             </div>
             </> : <></>
         }
