@@ -50,6 +50,27 @@ function useNotesApi() {
         return result;
     }
 
+    const logout = () => {
+        localStorage.removeItem('user');
+        setLoginMessage('');
+        setIsLoginMsgError(false);
+        navigate(clientPaths['login']);
+    }
+
+    const isUserLogged = () => {
+        let user = getUser();
+        if(user !== '')
+            return true;
+
+        return false;
+    }
+
+    const getUser = () => {
+        let user = localStorage.getItem('user');
+        let jwtToken = user === null ? '' : user; 
+        return jwtToken;
+    }
+
     const forgotPassword = async (data) => {
         return await fetchData(forgotPasswordPath, data, 'POST');
     }
@@ -58,18 +79,29 @@ function useNotesApi() {
         return await fetchData(resetPasswordPath + '/' + token, data, 'POST');
     }
     
-    const getAllNotes = async () => {
+    const getNotes = async (type, value, pageSize, pageNumber) => {
         const user = getUser();
         if(user === '') {
             logout();
         }
 
-        const result = await fetchData(getAllNotesPath, {}, 'GET');
+        const path = `${getAllNotesPath}?searchType=${type}&searchPhrase=${value}&pageSize=${pageSize}&pageNumber=${pageNumber}`;
+        const result = await fetchData(path, {}, 'GET');
         if(result.success === true) {
             let data = await result.response.json();
             result.data = data;
         }
     
+        return result;
+    }
+
+    const getPublicNote = async (hashid) => {
+        const result = await fetchData(getPublicNotePath + hashid, {}, 'GET');
+        if(result.success === true) {
+            let data = await result.response.json();
+            result.data = data;
+        }
+
         return result;
     }
 
@@ -116,53 +148,6 @@ function useNotesApi() {
         }
 
         return result;
-    }
-
-    const filterNotes = async(type, value) => {
-        const user = getUser();
-        if(user === '') {
-            logout();
-        }
-
-        const path = `${getAllNotesPath}?type=${type}&value=${value}`;
-        const result = await fetchData(path, {}, 'GET');
-        if(result.success === true) {
-            let data = await result.response.json();
-            result.data = data;
-        }
-    
-        return result;
-    }
-
-    const getPublicNote = async (hashid) => {
-        const result = await fetchData(getPublicNotePath + hashid, {}, 'GET');
-        if(result.success === true) {
-            let data = await result.response.json();
-            result.data = data;
-        }
-
-        return result;
-    }
-
-    const logout = () => {
-        localStorage.removeItem('user');
-        setLoginMessage('');
-        setIsLoginMsgError(false);
-        navigate(clientPaths['login']);
-    }
-
-    const isUserLogged = () => {
-        let user = getUser();
-        if(user !== '')
-            return true;
-
-        return false;
-    }
-
-    const getUser = () => {
-        let user = localStorage.getItem('user');
-        let jwtToken = user === null ? '' : user; 
-        return jwtToken;
     }
 
     const fetchData = async (path, data, method) => {
@@ -237,11 +222,10 @@ function useNotesApi() {
             isUserLogged,
             forgotPassword,
             resetPassword,
-            getAllNotes,
+            getNotes,
             generatePublicLink,
             deleteNote,
             getPublicNote,
-            filterNotes,
             editNote,
             postNote
         }

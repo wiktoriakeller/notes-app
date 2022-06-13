@@ -112,15 +112,26 @@ option {
     color: white;
 }
 
-.notes {
+.notes-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+
+.notes {
+    width: 90%;
+    display: grid;
+    justify-items: center;
+    justify-content: center;
+    grid-template-columns: repeat(4, 22%);
+    grid-auto-rows: 1fr;
     margin-top: 30px;
     margin-left: 2%;
     margin-right: 2%;
-    flex-wrap: wrap;
-    gap: 2%;
+    max-width: auto;
+    grid-column-gap: 1.2%;
+    grid-row-gap: 10px;
 }
 
 .form-button {
@@ -160,16 +171,6 @@ option {
     color: white;
 }
 
-@media screen and (max-width: 800px) {
-    .search-field {
-        min-width: 10rem
-    }
-
-    .add-button {
-        margin-left: 5%;
-    }
-}
-
 .delete-button {
     background-color: var(--error-block, red);
     color: white;
@@ -188,4 +189,28 @@ option {
 
 .form-title-text {
     font-size: 1.3rem;
+}
+
+@media screen and (max-width: 600px) {
+    .notes {
+        width: 90%;
+        display: flex;
+        justify-items: center;
+        align-items: center;
+        margin-top: 30px;
+        margin-left: 2%;
+        margin-right: 2%;
+        flex-wrap: wrap;
+        gap: 1%;
+    }    
+}
+
+@media screen and (max-width: 800px) {
+    .search-field {
+        min-width: 10rem
+    }
+
+    .add-button {
+        margin-left: 5%;
+    }
 }

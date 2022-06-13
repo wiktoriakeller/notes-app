@@ -5,10 +5,9 @@ import { faRotate, faTrash } from '@fortawesome/free-solid-svg-icons';
 import useNotesApi from '../services/useNotesApi';
 import './styles/showNote.css';
 
-const ShowNote = (props) => {
-    const {note} = props;
-    const [publicLink, setPublicLink] = useState('');
-
+const NoteView = (props) => {
+    const {noteRef, note} = props;
+    const [publicLink, setPublicLink] = useState(note.publicHashId !== '' && note.publicHashId !== null ? `http://localhost:3000/notes/public/${note.publicHashId}` : '');
     const notesApi = useNotesApi();
 
     const generateLink = async() => {
@@ -18,7 +17,8 @@ const ShowNote = (props) => {
 
         let response = await notesApi.generatePublicLink(data, note.hashId);
         if(response.success === true) {
-            setPublicLink(`http://localhost:3000/notes/public/${response.data.publicHashId}`);
+            setPublicLink(prepareLink(response.data.publicHashId));
+            noteRef.current.publicHashId = response.data.publicHashId; 
         }
         else {
             setPublicLink('');
@@ -33,7 +33,12 @@ const ShowNote = (props) => {
         let response = await notesApi.generatePublicLink(data, note.hashId);
         if(response.success === true) {
             setPublicLink('');
+            noteRef.current.publicHashId = '';
         }
+    }
+
+    const prepareLink = (publicHashId) => {
+        return `http://localhost:3000/notes/public/${publicHashId}`;
     }
 
     return (
@@ -59,4 +64,4 @@ const ShowNote = (props) => {
     )
 }
 
-export default ShowNote
+export default NoteView

@@ -1,0 +1,52 @@
+@import url('base.css');
+
+.pagination {
+    display: flex;
+    justify-content: flex-start;
+    list-style: none;
+    cursor: pointer;
+}
+
+.pagination a {
+    padding: 10px;
+    border: 1px solid var(--button, green);
+    color: white;
+    margin: 0px 1px;
+    border-radius: 3px;
+    padding: 12px;
+}
+
+.pagination-link a{
+    color: var(--button, green);
+    background-color: white;
+}
+
+.pagination-link-active a {
+    color: var(--button, green);
+    background-color: white;
+}
+
+.pagination-link-active a:hover {
+    background-color: var(--button, green);
+    transition: background-color 0.5s ease;
+    color: white;
+}
+
+.active-page a {
+    background-color: var(--button, green);
+    color: white;
+}
+
+.pagination-link-disabled a {
+    color: white;
+    background-color: var(--button-disabled, gray);
+    cursor: default;
+    border: 1px solid var(--button-disabled, gray);
+}
+
+.pagination-link-disabled a:hover {
+    color: white;
+    background-color: var(--button-disabled, gray);
+    cursor: default;
+    border: 1px solid var(--button-disabled, gray);
+}

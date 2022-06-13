@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using NotesApp.Services.Authorization;
 using NotesApp.Services.Exceptions;
+using System.Linq.Expressions;
 using HashidsNet;
 
 namespace NotesApp.Services.Services
@@ -38,21 +39,30 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
 
             return _mapper.Map<NoteDto>(note);
         }
 
-        public Task<IEnumerable<NoteDto>> GetNotes(string? type, string? value)
+        public Task<PagedResult<NoteDto>> GetNotes(NoteQuery query)
         {
-            type = type?.ToLower().Trim();
-            return type switch
+            query.SearchType = query.SearchType?.ToLower().Trim();
+            query.SearchPhrase = query.SearchPhrase?.ToLower().Trim();
+
+            if(!string.IsNullOrEmpty(query.SearchType) && !string.IsNullOrEmpty(query.SearchPhrase))
             {
-                "name" when (value is not null && value != string.Empty) => GetNotesByName(value),
-                "content" when (value is not null && value != string.Empty) => GetNotesByContent(value),
-                "tags" when (value is not null && value != string.Empty) => GetNotesByTag(value),
-                _ => GetAllNotes()
-            };
+                var userId = GetUserId();
+                return query.SearchType switch
+                {
+                    "all" => GetPagedNotes(query),
+                    "name" => GetPagedNotes(query, n => n.NoteName.ToLower().Contains(query.SearchPhrase) && n.UserId == userId),
+                    "content" => GetPagedNotes(query, n => n.Content.ToLower().Contains(query.SearchPhrase) && n.UserId == userId),
+                    "tags" => GetPagedNotes(query, n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase)) && n.UserId == userId),
+                    _ => GetPagedNotes(query)
+                };
+            }
+
+            return GetPagedNotes(query);
         }
 
         public async Task<IEnumerable<NoteDto>> GetAllNotes()
@@ -63,31 +73,36 @@ namespace NotesApp.Services.Services
             return _mapper.Map<IEnumerable<NoteDto>>(notes);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByName(string name)
+        public async Task<PagedResult<NoteDto>> GetPagedNotes(NoteQuery query)
         {
-            name = name.ToLower().Trim();
             var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.NoteName.ToLower().Contains(name) && n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(
+                n => n.UserId == userId && 
+                (string.IsNullOrEmpty(query.SearchPhrase) || n.NoteName.ToLower().Contains(query.SearchPhrase) || n.Content.ToLower().Contains(query.SearchPhrase) ||
+                n.Tags.Select(t => t.TagName.ToLower()).Any(t => t.Contains(query.SearchPhrase))), "Tags");
+            
             await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
+
+            var pagedNotes = notes
+                    .Skip(query.PageSize * (query.PageNumber - 1))
+                    .Take(query.PageSize);
+            var notesDto = _mapper.Map<IEnumerable<NoteDto>>(pagedNotes);
+            var pagedResult = new PagedResult<NoteDto>(notesDto, notes.Count, query.PageSize, query.PageNumber);
+            return pagedResult;
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByContent(string content)
+        public async Task<PagedResult<NoteDto>> GetPagedNotes(NoteQuery query, Expression<Func<Note, bool>> predicate)
         {
-            content = content.ToLower().Trim();
-            var userId = GetUserId();
-            var notes = await _notesRepository.GetAllAsync(n => n.Content.ToLower().Contains(content) && n.UserId == userId, "Tags");
+            var notes = await _notesRepository.GetAllAsync(predicate, "Tags");
             await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
-        }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByTag(string tag)
-        {
-            var userId = GetUserId();
-            var searchedNotes = new List<Note>();
-            var notes = await _notesRepository.GetAllAsync(n => n.Tags.Select(t => t.TagName.ToLower()).Any(t => t == tag) && n.UserId == userId, "Tags");
-            await CheckAuthorization(notes);
-            return _mapper.Map<IEnumerable<NoteDto>>(notes);
+            var pagedNotes = notes
+                    .Skip(query.PageSize * (query.PageNumber - 1))
+                    .Take(query.PageSize);
+
+            var notesDto = _mapper.Map<IEnumerable<NoteDto>>(pagedNotes);
+            var pagedResult = new PagedResult<NoteDto>(notesDto, notes.Count, query.PageSize, query.PageNumber);
+            return pagedResult;
         }
 
         public async Task<PublicLinkDto> GeneratePublicLink(CreatePublicLinkDto dto, string hashId)
@@ -97,7 +112,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
             
             note.PublicHashId = string.Empty;
             if (!dto.ResetPublicHashId)
@@ -124,12 +139,12 @@ namespace NotesApp.Services.Services
                 var note = notes.First();
 
                 if(note.PublicLinkValidTill < DateTimeOffset.Now)
-                    throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
+                    throw new NotFoundException("Resource couldn't be found");
 
                 return _mapper.Map<PublicNoteDto>(note);
             }
 
-            throw new NotFoundException($"Resource with hashid: {publicHashId} couldn't be found");
+            throw new NotFoundException("Resource couldn't be found");
         }
 
         public async Task<string> AddNote(CreateNoteDto noteDto)
@@ -155,7 +170,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note, Operation.Update);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
 
             var noteNameValidation = await ValidateNoteUniqueness(noteDto.NoteName, hashId);
             if(!noteNameValidation)
@@ -177,7 +192,7 @@ namespace NotesApp.Services.Services
             await CheckAuthorization(note, Operation.Delete);
 
             if (note == null)
-                throw new NotFoundException($"Resource with id: {id} couldn't be found");
+                throw new NotFoundException("Resource couldn't be found");
 
             await _notesRepository.DeleteAsync(note);
         }
