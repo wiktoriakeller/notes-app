@@ -60,6 +60,7 @@ const AddNote = (props) => {
             {errorMsg.map((msg) => {
                 return <p className={msg.length > 0 ? 'error-form' : 'hide'}>{msg}</p>;
             })}
+            <span className='not-visible'>Form for providing information about note content and the title.</span>
             <InputForm
                 label='Name'
                 name='name'

@@ -16,6 +16,11 @@
     width: 100%;
 }
 
+.not-visible {
+    color: rgba(255, 255, 255, 1);
+    margin-bottom: -6%;
+}
+
 .tag {
     display: flex;
     flex-direction: column;

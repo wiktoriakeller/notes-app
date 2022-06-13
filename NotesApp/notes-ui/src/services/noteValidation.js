@@ -1,7 +1,7 @@
-export const nameErrorMsg = "Name should be unique and should contain minimum 3 characters.";
+export const nameErrorMsg = "Name should be unique with at least 3 characters.";
 export const imageLinkErrorMsg = "Link should lead to an image.";
 export const contentErrorMsg = "Content is required.";
-export const tagErrorMsg = "Tags should be unique with maximum length of 10 characters.";
+export const tagErrorMsg = "Tag should be unique.";
 
 export function validateName(name, noteHashId, notes) {
     let trimmedName = name.toLowerCase().trim();

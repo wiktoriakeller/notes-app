@@ -32,6 +32,8 @@
 .note-text {
     text-align: left;
     text-justify: auto;
+    width: 100%;
+    overflow-wrap: break-word;
 }
 
 .note-image {
@@ -45,9 +47,8 @@
     justify-content: flex-start;
     align-items: center;
     gap: 3%;
-    width: auto;
+    width: 100%;
     height: auto;
-    overflow-wrap: break-word;
 }
 
 @media screen and (max-width: 1100px) {

@@ -59,6 +59,7 @@ const EditNote = (props) => {
             {errorMsg.map((msg) => {
                 return <p className={msg.length > 0 ? 'error' : 'hide'}>{msg}</p>;
             })}
+            <span className='not-visible'>Form for editing information about note content and the title.</span>
             <InputForm
                 label='Name'
                 name='name'
