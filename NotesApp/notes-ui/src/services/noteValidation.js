@@ -1,28 +1,34 @@
-function validateName(name, noteHashId, notes) {
-    let trimmedName = name.trim();
+export const nameErrorMsg = "Name should be unique with at least 3 characters.";
+export const imageLinkErrorMsg = "Link should lead to an image.";
+export const contentErrorMsg = "Content is required.";
+export const tagErrorMsg = "Tag should be unique.";
+
+export function validateName(name, noteHashId, notes) {
+    let trimmedName = name.toLowerCase().trim();
     let isUnique = true;
     for(const note of notes) {
-        if(note.noteName === trimmedName && note.hashId !== noteHashId) {
+        if(note.noteName.trim().toLowerCase() === trimmedName && note.hashId !== noteHashId) {
             isUnique = false;
             break;
         }
     }
+    
     let isValid = isUnique && trimmedName.length > 2;
     return isValid;
 }
 
-function validateContent(content) {
+export function validateContent(content) {
     let isValid = content !== '';
     return isValid;
 }
 
-function validateTag(tag, tags) {
+export function validateTag(tag, tags) {
     let trimmedTag = tag.trim();
     let unique = trimmedTag === '' || !tags.includes(trimmedTag);
     return unique;
 }
 
-function validateImageLink(imageLink) {
+export function validateImageLink(imageLink) {
     let isValid = false;
     if(imageLink === '' || imageLink === null) {
         isValid = true;
@@ -33,5 +39,3 @@ function validateImageLink(imageLink) {
     }
     return isValid;
 }
-
-export {validateName, validateContent, validateTag, validateImageLink};

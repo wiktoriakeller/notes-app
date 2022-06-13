@@ -89,7 +89,7 @@ namespace NotesApp.DataAccess.Repositories
             return _dbContext.SaveChangesAsync();
         }
 
-        private bool IsVirtualProperty(string include) =>
+        protected bool IsVirtualProperty(string include) =>
             properties
             .Any(p => p.Name.ToLower() == include.ToLower().Trim());
     }

@@ -16,6 +16,11 @@
     width: 100%;
 }
 
+.not-visible {
+    color: rgba(255, 255, 255, 1);
+    margin-bottom: -6%;
+}
+
 .tag {
     display: flex;
     flex-direction: column;
@@ -78,4 +83,16 @@
 
 .input-form-label {
     margin-bottom: 8px;
+}
+
+.error-form {
+    color: white;
+    text-align: center;
+    padding: 7px 0px;
+    margin-top: 1px;
+    margin-bottom: 4px;
+    background-color: var(--error-block, red);
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
 }
